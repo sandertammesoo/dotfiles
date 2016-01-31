@@ -1,0 +1,8 @@
+# all of our .bash files
+# load the path files
+for file in $HOME/.dotfiles/**/{path,setup,bash_prompt,exports,aliases,functions,extra,completion}.bash
+do
+    # [ -r $file ] && [ -f $file ] && source $file && echo $file;
+    [ -r $file ] && [ -f $file ] && source $file;
+done;
+unset file;

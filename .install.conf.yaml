@@ -1,0 +1,22 @@
+
+- clean: ['~']
+
+- link:
+    ~/.dotfiles:
+        relink: true
+        path: ''
+    ~/.bashrc: bash/bashrc
+    ~/.bash_profile: bash/bash_profile
+    ~/.hushlogin: system/hushlogin
+    ~/.editorconfig: system/editorconfig
+    ~/.inputrc: system/inputrc
+    ~/.gitconfig: git/gitconfig
+    ~/.gitattributes: git/gitattributes
+    ~/.gitignore: git/gitignore_global
+    ~/.vim: vim/
+    ~/.vimrc: vim/vimrc
+
+
+- shell:
+  # - git update-submodules # after linking ~/.gitconfig
+  - [git submodule update --init --recursive, Installing submodules]

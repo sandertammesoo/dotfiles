@@ -20,11 +20,3 @@ export MANPAGER="less -X";
 
 # Always enable colored `grep` output
 export GREP_OPTIONS="--color=auto";
-
-#export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/"
-export ANDROID_HOME=/usr/local/opt/android-sdk
-export GOPATH=$HOME/projects/go
-export CPPUTEST_HOME=~/Documents/Dropbox/projects/cpputest
-export JENV_ROOT=/usr/local/var/jenv
-
-export HOMEBREW_GITHUB_API_TOKEN=f9b42aeeda3f07c316bd4b92b4dcce996a3b0790

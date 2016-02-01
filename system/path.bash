@@ -1,4 +1,2 @@
-export PATH="/usr/local/sbin:$PATH";
-
-# Add `~/bin` to the `$PATH`
-export PATH="$HOME/bin:$PATH";
+# Add `~/.dotfiles/bin` to the `$PATH`
+export PATH="$HOME/.dotfiles/bin:$PATH";

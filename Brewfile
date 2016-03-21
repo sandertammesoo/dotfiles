@@ -12,6 +12,7 @@ tap 'homebrew/bundle'
 # Version Control
 brew 'git'
 brew 'git-flow'
+brew 'uncrustify'
 
 # brew 'coreutils'
 # brew 'moreutils'
@@ -26,6 +27,7 @@ brew 'git-flow'
 # brew 'brew-cask-completion'
 # brew 'tree'
 # brew 'jenv'
+# brew 'rbenv'
 #
 # brew 'libgit2'
 # brew 'openssl'
@@ -69,6 +71,7 @@ brew 'git-flow'
 # brew 'webkit2png'
 # brew 'zopfli'
 
+cask 'gcc-arm-embedded'
 # cask '1password'
 # cask 'adium'
 # cask 'atom'

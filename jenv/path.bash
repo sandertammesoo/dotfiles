@@ -1,1 +1,1 @@
-export PATH="$HOME/.jenv/bin:$PATH";
+export PATH="$JENV_ROOT/bin:$PATH";

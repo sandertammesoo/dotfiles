@@ -1,6 +1,6 @@
 # all of our .bash files
 # load the path files
-for file in $HOME/.dotfiles/**/{path,setup,bash_prompt,exports,aliases,functions,extra,completion}.bash
+for file in $HOME/.dotfiles/**/{bash_prompt,exports,aliases,functions,extra,completion,path,setup}.bash
 do
     # [ -r $file ] && [ -f $file ] && source $file && echo $file;
     [ -r $file ] && [ -f $file ] && source $file;

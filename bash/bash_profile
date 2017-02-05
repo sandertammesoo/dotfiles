@@ -5,4 +5,11 @@ do
     # [ -r $file ] && [ -f $file ] && source $file && echo $file;
     [ -r $file ] && [ -f $file ] && source $file;
 done;
+
+for file in $HOME/.dotfiles/system/{bash_prompt,exports,aliases,functions,extra,completion,path,setup}.bash
+do
+    # [ -r $file ] && [ -f $file ] && source $file && echo $file;
+    [ -r $file ] && [ -f $file ] && source $file;
+done;
+
 unset file;

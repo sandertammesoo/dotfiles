@@ -1,6 +1,6 @@
 # Always list directory contents upon 'cd'
 function cd() {
-	builtin cd "$@"; ls -lF ${colorflag};
+	builtin cd "$@"; ls -lF ${colorflag}; autoenv_init;
 }
 
 # Create a new directory and enter it
@@ -100,4 +100,27 @@ function o() {
 # small enough for one screen.
 function tre() {
 	tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
+}
+
+function new_window {
+    TMP_FILE="tmp.command"
+    echo "#!/usr/bin/env bash" > $TMP_FILE
+
+    # # Copy over environment (including functions), but filter out readonly stuff
+    # set | grep -v "\(BASH_VERSINFO\|EUID\|PPID\|SHELLOPTS\|UID\)" >> $TMP_FILE
+	#
+    # # Copy over exported envrionment
+    # export -p >> $TMP_FILE
+
+    # Change to directory
+    echo "cd $(pwd)" >> $TMP_FILE
+
+    # Copy over target command line
+    echo "$@" >> $TMP_FILE
+
+    chmod +x "$TMP_FILE"
+    open -b com.apple.terminal "$TMP_FILE"
+
+    sleep 1.1 # Wait for terminal to start
+    rm "$TMP_FILE"
 }

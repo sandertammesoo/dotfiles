@@ -18,16 +18,16 @@ brew 'uncrustify'
 # brew 'moreutils'
 # brew 'findutils'
 # brew 'gnu-sed', args: ['with-default-names']
-# brew 'bash'
-# brew 'bash-completion'
+brew 'bash'
+brew 'bash-completion'
 # brew 'wget', args: ['with-iri']
-# brew 'vim', args: ['override-system-vi']
-# brew 'grep'
-# brew 'screen'
+brew 'vim', args: ['override-system-vi']
+brew 'grep'
+brew 'screen'
 # brew 'brew-cask-completion'
-# brew 'tree'
-# brew 'jenv'
-# brew 'rbenv'
+brew 'tree'
+brew 'jenv'
+brew 'rbenv'
 #
 # brew 'libgit2'
 # brew 'openssl'
@@ -86,5 +86,6 @@ cask 'gcc-arm-embedded'
 # cask 'transmission'
 # cask 'tunnelbear'
 # cask 'vlc'
+# cask 'cocoapods'
 
 # cleanup

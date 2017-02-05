@@ -11,3 +11,6 @@
 [submodule "vim/bundle/vim-neatstatus"]
 	path = vim/bundle/vim-neatstatus
 	url = https://github.com/maciakl/vim-neatstatus.git
+[submodule "uncrustify-config"]
+	path = uncrustify-config
+	url = https://sandertammesoo@bitbucket.org/snippets/sandertammesoo/p6eBq/uncrustify-config.git

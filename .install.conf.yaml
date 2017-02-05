@@ -15,6 +15,9 @@
     ~/.gitignore: git/gitignore_global
     ~/.vim: vim/
     ~/.vimrc: vim/vimrc
+    ~/.jenv: jenv/var/
+    ~/.rbenv: rbenv/var/
+    ~/.gem: gem/var/
 
 
 - shell:

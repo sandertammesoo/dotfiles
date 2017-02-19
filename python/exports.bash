@@ -5,3 +5,5 @@ export WORKON_HOME=~/Dropbox/Virtualenvs
 export PROJECT_HOME=~/Dropbox/projects
 
 export VIRTUALENVWRAPPER_VIRTUALENV_ARGS='--no-site-packages'
+
+export PYTHONDONTWRITEBYTECODE=1

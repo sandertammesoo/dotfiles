@@ -1,3 +1,44 @@
+
+function update {
+	dry=0
+	while test $# != 0
+	do
+	    case "$1" in
+	    -d) dry=1
+				;;
+	    --dry-run) dry=1
+				;;
+	    esac
+			shift
+	done
+
+	if [ $dry -eq 0 ]; then
+		echo " "
+		echo "››› sudo softwareupdate -l -i -a; "
+    sudo softwareupdate -l -i -a;
+
+		echo " "
+		echo "››› brew update; "
+		brew update;
+
+		echo " "
+		echo "››› brew upgrade; "
+		brew upgrade;
+
+		echo " "
+		echo "››› brew cleanup;"
+		brew cleanup;
+	else
+		echo " "
+		echo "››› sudo softwareupdate -l -a; "
+		sudo softwareupdate -l -a;
+
+		echo " "
+		echo "››› brew doctor; "
+		brew doctor;
+	fi;
+}
+
 # Always list directory contents upon 'cd'
 function cd() {
 	builtin cd "$@"; ls -lF ${colorflag}; autoenv_init;

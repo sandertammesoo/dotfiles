@@ -8,10 +8,12 @@ info () {
 
 user () {
   printf "\r  [ \033[0;33m??\033[0m ] $1\n"
+  echo ''
 }
 
 success () {
   printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+  echo ''
 }
 
 fail () {
@@ -25,4 +27,7 @@ set -e
 # cd "$(dirname $0)"/..
 
 # find the installers and run them iteratively
-find . -name install.sh | while read installer ; do echo ''; info 'Running '${installer}; sh -c "${installer}"; user ${installer} ; done
+echo ''
+find . -name install.sh | while read installer ; do info 'Found installer '${installer}; done
+info "Starting installers"
+find . -name install.sh | while read installer ; do echo ''; info 'Running '${installer}; echo ''; sh -c "${installer}"; echo ''; user ${installer}; done

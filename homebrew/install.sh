@@ -2,15 +2,15 @@
 
 set -e
 
-echo "› brew update"
+echo "››› brew update"
 brew update
 
-echo "› brew upgrade"
+echo "››› brew upgrade"
 brew upgrade
 
 # Run Homebrew through the Brewfile
-echo "› brew bundle"
+echo "››› brew bundle"
 brew bundle
 
-echo "› brew cleanup"
+echo "››› brew cleanup"
 brew cleanup

@@ -6,13 +6,13 @@
 
 cask_args appdir: '/Applications'
 
-tap 'caskroom/cask'
+tap 'homebrew/cask'
 tap 'homebrew/bundle'
 
 # Version Control
 brew 'git'
 brew 'git-flow'
-brew 'uncrustify'
+# brew 'uncrustify'
 
 # brew 'coreutils'
 # brew 'moreutils'
@@ -24,10 +24,10 @@ brew 'bash-completion'
 brew 'vim', args: ['override-system-vi']
 brew 'grep'
 brew 'screen'
-# brew 'brew-cask-completion'
+brew 'brew-cask-completion'
 brew 'tree'
 brew 'jenv'
-brew 'rbenv'
+# brew 'rbenv'
 #
 # brew 'libgit2'
 # brew 'openssl'
@@ -71,7 +71,7 @@ brew 'rbenv'
 # brew 'webkit2png'
 # brew 'zopfli'
 
-cask 'gcc-arm-embedded'
+# cask 'gcc-arm-embedded'
 # cask '1password'
 # cask 'adium'
 # cask 'atom'
@@ -87,5 +87,3 @@ cask 'gcc-arm-embedded'
 # cask 'tunnelbear'
 # cask 'vlc'
 # cask 'cocoapods'
-
-# cleanup

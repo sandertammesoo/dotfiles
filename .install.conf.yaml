@@ -1,3 +1,6 @@
+- defaults:
+    link:
+      relink: true
 
 - clean: ['~']
 
@@ -5,19 +8,36 @@
     ~/.dotfiles:
         relink: true
         path: ''
-    ~/.bashrc: bash/bashrc
-    ~/.bash_profile: bash/bash_profile
-    ~/.hushlogin: system/hushlogin
-    ~/.editorconfig: system/editorconfig
-    ~/.inputrc: system/inputrc
-    ~/.gitconfig: git/gitconfig
-    ~/.gitattributes: git/gitattributes
-    ~/.gitignore: git/gitignore_global
-    ~/.vim: vim/
-    ~/.vimrc: vim/vimrc
-    ~/.jenv: jenv/var/
-    ~/.rbenv: rbenv/var/
-    ~/.gem: gem/var/
+    ~/.bashrc:
+        relink: true
+        path: 'bash/bashrc'
+    ~/.bash_profile:
+        relink: true
+        path: 'bash/bash_profile'
+    ~/.hushlogin:
+        relink: true
+        path: 'system/hushlogin'
+    ~/.editorconfig:
+        relink: true
+        path: 'system/editorconfig'
+    ~/.inputrc:
+        relink: true
+        path: 'system/inputrc'
+    ~/.gitconfig:
+        relink: true
+        path: 'git/gitconfig'
+    ~/.gitattributes:
+        relink: true
+        path: 'git/gitattributes'
+    ~/.gitignore:
+        relink: true
+        path: 'git/gitignore_global'
+    ~/.vim:
+        relink: true
+        path: 'vim'
+    ~/.vimrc:
+        relink: true
+        path: 'vim/vimrc'
 
 
 - shell:

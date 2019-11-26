@@ -1,11 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =9
-let g:netrw_dirhist_1='/Users/sander/Dropbox/nrf51_sdk/projects/TinyEKF/Documentation'
-let g:netrw_dirhist_2='/Users/sander/Dropbox/nrf51_sdk/projects/TinyEKF/Documentation/latex'
-let g:netrw_dirhist_3='/Users/sander/Dropbox/nrf51_sdk/projects/nrf51_bootloader'
-let g:netrw_dirhist_4='/Users/sander/Dropbox/nrf51_sdk/sdk/wazombi/board_definitions'
-let g:netrw_dirhist_5='/Users/sander/Dropbox/nrf51_sdk/sdk/wazombi/board_definitions/boards'
-let g:netrw_dirhist_6='/Users/sander/Dropbox/nrf51_sdk/projects/sprayprinter_lite_peripheral/.git'
-let g:netrw_dirhist_7='/Users/sander/Dropbox/nrf51_sdk/projects/sprayprinter_lite_peripheral/.git/info'
-let g:netrw_dirhist_8='/Users/sander/Dropbox/nrf51_sdk/projects/sprayprinter_lite_peripheral/.git'
-let g:netrw_dirhist_9='/Users/sander/Dropbox/nrf51_sdk/projects/sprayprinter_lite_peripheral'
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/'
+let g:netrw_dirhist_2='/bin'
+let g:netrw_dirhist_3='/'
+let g:netrw_dirhist_4='/etc'

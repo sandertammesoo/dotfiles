@@ -16,10 +16,12 @@ info () {
 
 user () {
   printf "\r  [ \033[0;33m??\033[0m ] $1\n"
+  echo ''
 }
 
 success () {
   printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+  echo ''
 }
 
 fail () {
@@ -39,7 +41,12 @@ fail () {
 # Ask for the administrator password upfront
 echo ''
 info "Get sudo"
-sudo -v
+if sudo -v 2>&1
+then
+  success "Got sudo"
+else
+  fail "Error getting sudo"
+fi
 
 # Keep-alive: update existing `sudo` time stamp until `.osx` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
@@ -61,13 +68,19 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}"
 
 info "Update Dotbot git submodule dependencies"
-git submodule update --init --recursive "${DOTBOT_DIR}"
+# git submodule update --init --recursive "${DOTBOT_DIR}"
+if git submodule update --init --recursive "${DOTBOT_DIR}" 2>&1
+then
+  success "Update successfull"
+else
+  fail "Error while updating"
+fi
 
 info "Start Dotbot"
 echo ''
 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
 echo ''
-info "Dotbot finished"
+success "Dotbot finished"
 
 
 # ##     ##    ###     ######      ######  ######## ##     ## ######## ########
@@ -82,36 +95,52 @@ if [ "$(uname -s)" == "Darwin" ]
 then
     export DOTS=$HOME/.dotfiles
 
-#  #######   ######  ##     ##    ########  ######## ########    ###    ##     ## ##       ########  ######
-# ##     ## ##    ##  ##   ##     ##     ## ##       ##         ## ##   ##     ## ##          ##    ##    ##
-# ##     ## ##         ## ##      ##     ## ##       ##        ##   ##  ##     ## ##          ##    ##
-# ##     ##  ######     ###       ##     ## ######   ######   ##     ## ##     ## ##          ##     ######
-# ##     ##       ##   ## ##      ##     ## ##       ##       ######### ##     ## ##          ##          ##
-# ##     ## ##    ##  ##   ##     ##     ## ##       ##       ##     ## ##     ## ##          ##    ##    ##
-#  #######   ######  ##     ##    ########  ######## ##       ##     ##  #######  ########    ##     ######
+  #  #######   ######  ##     ##    ########  ######## ########    ###    ##     ## ##       ########  ######
+  # ##     ## ##    ##  ##   ##     ##     ## ##       ##         ## ##   ##     ## ##          ##    ##    ##
+  # ##     ## ##         ## ##      ##     ## ##       ##        ##   ##  ##     ## ##          ##    ##
+  # ##     ##  ######     ###       ##     ## ######   ######   ##     ## ##     ## ##          ##     ######
+  # ##     ##       ##   ## ##      ##     ## ##       ##       ######### ##     ## ##          ##          ##
+  # ##     ## ##    ##  ##   ##     ##     ## ##       ##       ##     ## ##     ## ##          ##    ##    ##
+  #  #######   ######  ##     ##    ########  ######## ##       ##     ##  #######  ########    ##     ######
   info "Set OS X defaults"
-  # $DOTS/osx/set-defaults.sh
+
+  echo ''
+  if $DOTS/osx/set-defaults.sh 2>&1
+  echo ''
+
+  then
+    success "OS X defaults set"
+  else
+    fail "Error setting OS X defaults"
+  fi
   user "Note that some of these changes require a logout/restart to take effect."
 
-# ##     ##  #######  ##     ## ######## ########  ########  ######## ##      ##
-# ##     ## ##     ## ###   ### ##       ##     ## ##     ## ##       ##  ##  ##
-# ##     ## ##     ## #### #### ##       ##     ## ##     ## ##       ##  ##  ##
-# ######### ##     ## ## ### ## ######   ########  ########  ######   ##  ##  ##
-# ##     ## ##     ## ##     ## ##       ##     ## ##   ##   ##       ##  ##  ##
-# ##     ## ##     ## ##     ## ##       ##     ## ##    ##  ##       ##  ##  ##
-# ##     ##  #######  ##     ## ######## ########  ##     ## ########  ###  ###
-  info "Installing homebrew"
-  $DOTS/homebrew/install-homebrew.sh 2>&1
+  # ##     ##  #######  ##     ## ######## ########  ########  ######## ##      ##
+  # ##     ## ##     ## ###   ### ##       ##     ## ##     ## ##       ##  ##  ##
+  # ##     ## ##     ## #### #### ##       ##     ## ##     ## ##       ##  ##  ##
+  # ######### ##     ## ## ### ## ######   ########  ########  ######   ##  ##  ##
+  # ##     ## ##     ## ##     ## ##       ##     ## ##   ##   ##       ##  ##  ##
+  # ##     ## ##     ## ##     ## ##       ##     ## ##    ##  ##       ##  ##  ##
+  # ##     ##  #######  ##     ## ######## ########  ##     ## ########  ###  ###
+  if ! which brew > /dev/null; then
+    info "Installing homebrew"
+    echo ''
+    $DOTS/homebrew/install-homebrew.sh 2>&1
+    echo ''
+    success "Homebrew installed"
+  else
+    success "Homebrew already installed"
+  fi;
 
-# #### ##    ##  ######  ########    ###    ##       ##           ######   #######  ######## ######## ##      ##    ###    ########  ########
-#  ##  ###   ## ##    ##    ##      ## ##   ##       ##          ##    ## ##     ## ##          ##    ##  ##  ##   ## ##   ##     ## ##
-#  ##  ####  ## ##          ##     ##   ##  ##       ##          ##       ##     ## ##          ##    ##  ##  ##  ##   ##  ##     ## ##
-#  ##  ## ## ##  ######     ##    ##     ## ##       ##           ######  ##     ## ######      ##    ##  ##  ## ##     ## ########  ######
-#  ##  ##  ####       ##    ##    ######### ##       ##                ## ##     ## ##          ##    ##  ##  ## ######### ##   ##   ##
-#  ##  ##   ### ##    ##    ##    ##     ## ##       ##          ##    ## ##     ## ##          ##    ##  ##  ## ##     ## ##    ##  ##
-# #### ##    ##  ######     ##    ##     ## ######## ########     ######   #######  ##          ##     ###  ###  ##     ## ##     ## ########
+  # #### ##    ##  ######  ########    ###    ##       ##           ######   #######  ######## ######## ##      ##    ###    ########  ########
+  #  ##  ###   ## ##    ##    ##      ## ##   ##       ##          ##    ## ##     ## ##          ##    ##  ##  ##   ## ##   ##     ## ##
+  #  ##  ####  ## ##          ##     ##   ##  ##       ##          ##       ##     ## ##          ##    ##  ##  ##  ##   ##  ##     ## ##
+  #  ##  ## ## ##  ######     ##    ##     ## ##       ##           ######  ##     ## ######      ##    ##  ##  ## ##     ## ########  ######
+  #  ##  ##  ####       ##    ##    ######### ##       ##                ## ##     ## ##          ##    ##  ##  ## ######### ##   ##   ##
+  #  ##  ##   ### ##    ##    ##    ##     ## ##       ##          ##    ## ##     ## ##          ##    ##  ##  ## ##     ## ##    ##  ##
+  # #### ##    ##  ######     ##    ##     ## ######## ########     ######   #######  ##          ##     ###  ###  ##     ## ##     ## ########
   info "Installing dependencies and software using $DOTS/script/install"
-  if source $DOTS/script/install > /tmp/dotfiles-install 2>&1
+  if source $DOTS/script/install 2>&1
   then
     success "Dependencies installed"
   else

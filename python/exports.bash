@@ -7,3 +7,5 @@ export PROJECT_HOME=~/Dropbox/projects
 export VIRTUALENVWRAPPER_VIRTUALENV_ARGS='--no-site-packages'
 
 export PYTHONDONTWRITEBYTECODE=1
+
+export PATH="/usr/local/opt/python/libexec/bin:$PATH"

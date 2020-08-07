@@ -216,7 +216,7 @@ sudo systemsetup -settimezone "Europe/Tallinn" > /dev/null
 #defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 # Save screenshots to the desktop
-defaults write com.apple.screencapture location -string "${HOME}/Desktop"
+defaults write com.apple.screencapture location -string "${HOME}/Desktop/Screenshots"
 
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
 defaults write com.apple.screencapture type -string "png"
@@ -270,10 +270,10 @@ defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
 
 # When performing a search, search the current folder by default
-#defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
 # Disable the warning when changing a file extension
-#defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
 # Enable spring loading for directories
 #defaults write NSGlobalDomain com.apple.springing.enabled -bool true
@@ -393,7 +393,7 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 defaults write com.apple.dock dashboard-in-overlay -bool true
 
 # Don’t automatically rearrange Spaces based on most recent use
-#defaults write com.apple.dock mru-spaces -bool false
+defaults write com.apple.dock mru-spaces -bool false
 
 # Remove the auto-hiding Dock delay
 #defaults write com.apple.dock autohide-delay -float 0
@@ -413,7 +413,7 @@ defaults write com.apple.dock dashboard-in-overlay -bool true
 #find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete
 
 # Add iOS Simulator to Launchpad
-sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/iOS Simulator.app" "/Applications/iOS Simulator.app"
+#sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/iOS Simulator.app" "/Applications/iOS Simulator.app"
 
 # Add a spacer to the left side of the Dock (where the applications are)
 #defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type="spacer-tile";}'
@@ -433,11 +433,11 @@ sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/iOS Simulat
 # 11: Launchpad
 # 12: Notification Center
 # Top left screen corner → Mission Control
-#defaults write com.apple.dock wvous-tl-corner -int 2
-#defaults write com.apple.dock wvous-tl-modifier -int 0
+defaults write com.apple.dock wvous-tl-corner -int 2
+defaults write com.apple.dock wvous-tl-modifier -int 0
 # Top right screen corner → Desktop
-#defaults write com.apple.dock wvous-tr-corner -int 4
-#defaults write com.apple.dock wvous-tr-modifier -int 0
+defaults write com.apple.dock wvous-tr-corner -int 4
+defaults write com.apple.dock wvous-tr-modifier -int 0
 # Bottom left screen corner → Start screen saver
 defaults write com.apple.dock wvous-bl-corner -int 5
 defaults write com.apple.dock wvous-bl-modifier -int 0
@@ -455,7 +455,7 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 #defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true
 
 # Show the full URL in the address bar (note: this still hides the scheme)
-#defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 
 # Set Safari’s home page to `about:blank` for faster loading
 defaults write com.apple.Safari HomePage -string "about:blank"
@@ -573,10 +573,11 @@ defaults write com.apple.mail NSUserKeyEquivalents -dict-add "Send" -string "@\\
 defaults write com.apple.terminal StringEncodings -array 4
 
 # Use a modified version of the Solarized Dark theme by default in Terminal.app
+# https://ethanschoonover.com/solarized/
 TERM_PROFILE='Solarized Dark xterm-256color';
 CURRENT_PROFILE="$(defaults read com.apple.terminal 'Default Window Settings')";
 if [ "${CURRENT_PROFILE}" != "${TERM_PROFILE}" ]; then
-	open "${HOME}/init/${TERM_PROFILE}.terminal";
+	open "${HOME}/.dotfiles/xterm-256color/${TERM_PROFILE}.terminal";
 	sleep 1; # Wait a bit to make sure the theme is loaded
 	defaults write com.apple.terminal 'Default Window Settings' -string "${TERM_PROFILE}";
 	defaults write com.apple.terminal 'Startup Window Settings' -string "${TERM_PROFILE}";
@@ -584,11 +585,11 @@ fi;
 
 # Enable “focus follows mouse” for Terminal.app and all X11 apps
 # i.e. hover over a window and start typing in it without clicking first
-defaults write com.apple.terminal FocusFollowsMouse -bool true
+#defaults write com.apple.terminal FocusFollowsMouse -bool true
 #defaults write org.x.X11 wm_ffm -bool true
 
 # Install the Solarized Dark theme for iTerm
-#open "${HOME}/init/Solarized Dark.itermcolors"
+open "${HOME}/.dotfiles/xterm-256color/Solarized Dark.itermcolors"
 
 # Don’t display the annoying prompt when quitting iTerm
 #defaults write com.googlecode.iterm2 PromptOnQuit -bool false
@@ -754,12 +755,12 @@ defaults write com.twitter.twitter-mac HideInBackground -bool true
 # Kill affected applications                                                  #
 ###############################################################################
 
-# for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \
-# 	"Dock" "Finder" "Mail" "Messages" "Safari" "SizeUp" "SystemUIServer" \
-# 	"Terminal" "Transmission" "Twitter" "iCal"; do
-# 	killall "${app}" > /dev/null 2>&1
-# done
-# echo "Done. Note that some of these changes require a logout/restart to take effect."
+for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \
+	"Dock" "Finder" "Mail" "Messages" "Safari" "SizeUp" "SystemUIServer" \
+	"Transmission" "Twitter" "iCal"; do
+	killall "${app}" > /dev/null 2>&1
+done
+echo "Done. Note that some of these changes require a logout/restart to take effect."
 
 ## Defaults used by holman
 # # Disable press-and-hold for keys in favor of key repeat.
@@ -768,8 +769,8 @@ defaults write com.twitter.twitter-mac HideInBackground -bool true
 # # Use AirDrop over every interface. srsly this should be a default.
 # defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
 #
-# # Always open everything in Finder's list view. This is important.
-# defaults write com.apple.Finder FXPreferredViewStyle Nlsv
+# Always open everything in Finder's list view. This is important.
+defaults write com.apple.Finder FXPreferredViewStyle Nlsv
 #
 # # Show the ~/Library folder.
 # chflags nohidden ~/Library

@@ -24,10 +24,39 @@ success () {
   echo ''
 }
 
+info_stream () {
+  while read data; do
+      printf "\r  [ \033[00;34m..\033[0m ] $data\n"
+  done
+  # echo ''
+}
+
 fail () {
   printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
-  echo ''
+  # echo ''
   exit
+}
+
+setup_gitconfig () {
+  if ! [ -f git/gitconfig.local.symlink ]
+  then
+    info 'setup gitconfig'
+
+    git_credential='cache'
+    if [ "$(uname -s)" == "Darwin" ]
+    then
+      git_credential='osxkeychain'
+    fi
+
+    user ' - What is your github author name?'
+    read -e git_authorname
+    user ' - What is your github author email?'
+    read -e git_authoremail
+
+    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
+
+    success 'gitconfig'
+  fi
 }
 
 #  ######  ########    ###    ########  ########
@@ -39,14 +68,23 @@ fail () {
 #  ######     ##    ##     ## ##     ##    ##
 
 # Ask for the administrator password upfront
-echo ''
-info "Get sudo"
+# info "Get sudo"
 if sudo -v 2>&1
 then
   success "Got sudo"
 else
   fail "Error getting sudo"
 fi
+
+# setup_gitconfig
+
+# if setup_gitconfig 2>&1
+# then
+#   success "Git config setup done"
+# else
+#   fail "Error setting up git config"
+# fi
+
 
 # Keep-alive: update existing `sudo` time stamp until `.osx` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
@@ -77,9 +115,7 @@ else
 fi
 
 info "Start Dotbot"
-echo ''
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
-echo ''
+"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}" | info_stream
 success "Dotbot finished"
 
 
@@ -103,34 +139,13 @@ then
   # ##     ## ##    ##  ##   ##     ##     ## ##       ##       ##     ## ##     ## ##          ##    ##    ##
   #  #######   ######  ##     ##    ########  ######## ##       ##     ##  #######  ########    ##     ######
   info "Set OS X defaults"
-
-  echo ''
   if $DOTS/osx/set-defaults.sh 2>&1
-  echo ''
-
   then
     success "OS X defaults set"
   else
     fail "Error setting OS X defaults"
   fi
   user "Note that some of these changes require a logout/restart to take effect."
-
-  # ##     ##  #######  ##     ## ######## ########  ########  ######## ##      ##
-  # ##     ## ##     ## ###   ### ##       ##     ## ##     ## ##       ##  ##  ##
-  # ##     ## ##     ## #### #### ##       ##     ## ##     ## ##       ##  ##  ##
-  # ######### ##     ## ## ### ## ######   ########  ########  ######   ##  ##  ##
-  # ##     ## ##     ## ##     ## ##       ##     ## ##   ##   ##       ##  ##  ##
-  # ##     ## ##     ## ##     ## ##       ##     ## ##    ##  ##       ##  ##  ##
-  # ##     ##  #######  ##     ## ######## ########  ##     ## ########  ###  ###
-  if ! which brew > /dev/null; then
-    info "Installing homebrew"
-    echo ''
-    $DOTS/homebrew/install-homebrew.sh 2>&1
-    echo ''
-    success "Homebrew installed"
-  else
-    success "Homebrew already installed"
-  fi;
 
   # #### ##    ##  ######  ########    ###    ##       ##           ######   #######  ######## ######## ##      ##    ###    ########  ########
   #  ##  ###   ## ##    ##    ##      ## ##   ##       ##          ##    ## ##     ## ##          ##    ##  ##  ##   ## ##   ##     ## ##
@@ -140,7 +155,7 @@ then
   #  ##  ##   ### ##    ##    ##    ##     ## ##       ##          ##    ## ##     ## ##          ##    ##  ##  ## ##     ## ##    ##  ##
   # #### ##    ##  ######     ##    ##     ## ######## ########     ######   #######  ##          ##     ###  ###  ##     ## ##     ## ########
   info "Installing dependencies and software using $DOTS/script/install"
-  if source $DOTS/script/install 2>&1
+  if source $DOTS/script/install  | info_stream #2>&1
   then
     success "Dependencies installed"
   else

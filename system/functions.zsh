@@ -1,0 +1,51 @@
+
+
+# Always list directory contents upon 'cd'
+function cd() {
+	builtin cd "$@"; la; #autoenv_init;
+}
+
+# Create a new directory and enter it
+function mkd() {
+	mkdir -p "$@" && cd "$_";
+}
+
+# Remove directory
+function rmd() {
+	rmdir "$@" && lsd;
+}
+
+# Determine size of a file or total size of a directory
+function fs() {
+	if du -b /dev/null > /dev/null 2>&1; then
+		local arg=-sbh;
+	else
+		local arg=-sh;
+	fi
+	if [[ -n "$@" ]]; then
+		du $arg -- "$@";
+	else
+		du $arg .[^.]* *;
+	fi;
+}
+
+# `v` with no arguments opens the current directory in Vim, otherwise opens the
+# given location
+function v() {
+	if [ $# -eq 0 ]; then
+		vim .;
+	else
+		vim "$@";
+	fi;
+}
+
+# `o` with no arguments opens the current directory, otherwise opens the given
+# location
+function o() {
+	if [ $# -eq 0 ]; then
+		open .;
+	else
+		open "$@";
+	fi;
+}
+

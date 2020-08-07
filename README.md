@@ -1,5 +1,4 @@
 # my dotfiles
->>>>>>> 198df66b31a6ff3641ea22dd931b593c0099392b
 
 <!-- Your dotfiles are how you personalize your system. These are mine.
 
@@ -12,6 +11,8 @@ structured the project accordingly.
 If you're interested in the philosophy behind why projects like these are
 awesome, you might want to [read my post on the
 subject](http://zachholman.com/2010/08/dotfiles-are-meant-to-be-forked/). -->
+
+https://github.com/holman/dotfiles
 
 ## topical
 

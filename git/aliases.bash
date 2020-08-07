@@ -1,2 +1,0 @@
-# Shortcuts
-alias g="git"

@@ -1,5 +1,10 @@
 [alias]
 
+    promote = !$ZSH/bin/git-promote
+    wtf     = !$ZSH/bin/git-wtf
+    rank-contributors = !$ZSH/bin/git-rank-contributors
+    count   = !git shortlog -sn
+
     # View abbreviated SHA, description, and history graph of the latest 20 commits
     #l = log --pretty=oneline -n 20 --graph --abbrev-commit
     lt = log --graph --pretty=format:'%Cred%h%Creset - %C(auto)%d%Creset %s %Cgreen(%cr by %C(bold blue)<%an>%Cgreen)%Creset %C(yellow)(%cd)' --date=local -n 20 --abbrev-commit --topo-order
@@ -103,6 +108,8 @@
     # More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
     trustctime = false
 
+    editor = vim
+
 [color]
 
     # Use colors in Git commands that are capable of colored output when
@@ -178,3 +185,6 @@
     
 [credential]
 	helper = osxkeychain
+
+[hub]
+        protocol = https

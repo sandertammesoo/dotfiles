@@ -1,19 +1,26 @@
-- defaults:
-    link:
-      relink: true
+#- defaults:
+#    link:
+#      relink: true
 
 - clean: ['~']
+
+- shell:
+  # - git update-submodules # after linking ~/.gitconfig
+  - [git submodule update --init --recursive, Installing submodules]
 
 - link:
     ~/.dotfiles:
         relink: true
         path: ''
-    ~/.bashrc:
+    # ~/.bashrc:
+    #     relink: true
+    #     path: 'bash/bashrc'
+    ~/.zshrc:
         relink: true
-        path: 'bash/bashrc'
-    ~/.bash_profile:
-        relink: true
-        path: 'bash/bash_profile'
+        path: 'zsh/zshrc'
+    # ~/.bash_profile:
+    #     relink: true
+    #     path: 'bash/bash_profile'
     ~/.hushlogin:
         relink: true
         path: 'system/hushlogin'
@@ -38,6 +45,9 @@
     ~/.vimrc:
         relink: true
         path: 'vim/vimrc'
+    # ~/projects:
+    #     relink: true
+    #     path: '../projects'
 
 
 - shell:

@@ -14,7 +14,7 @@ brew 'git'
 brew 'git-flow'
 # brew 'uncrustify'
 
-# brew 'coreutils'
+brew 'coreutils'
 # brew 'moreutils'
 # brew 'findutils'
 # brew 'gnu-sed', args: ['with-default-names']
@@ -31,7 +31,7 @@ brew 'jenv'
 #
 # brew 'libgit2'
 # brew 'openssl'
-# brew 'unrar'
+brew 'unrar'
 
 # Install some CTF tools; see https://github.com/ctfs/write-ups.
 # brew 'bfg'

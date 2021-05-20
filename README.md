@@ -30,11 +30,11 @@ There's a few special files in the hierarchy.
 - **bin/**: Anything in `bin/` will get added to your `$PATH` and be made
   available everywhere.
 - **Brewfile**: This is a list of applications for [Homebrew Cask](http://caskroom.io) to install: things like Chrome and 1Password and Adium and stuff. Might want to edit this file before running any initial setup.
-- **topic/\*.bash**: Any files ending in `.bash` get loaded into your
+- **topic/\*.bash**: Any files ending in `.zsh` get loaded into your
   environment.
-- **topic/path.bash**: Any file named `path.bash` is loaded first and is
+- **topic/path.bash**: Any file named `path.zsh` is loaded first and is
   expected to setup `$PATH` or similar.
-- **topic/completion.bash**: Any file named `completion.bash` is loaded
+- **topic/completion.bash**: Any file named `completion.zsh` is loaded
   last and is expected to setup autocomplete.
 
 ## install
@@ -44,13 +44,13 @@ Run this:
 ```sh
 git clone https://github.com/holman/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
-script/bootstrap
+install-all
 ```
 
 This will symlink the appropriate files in `.dotfiles` to your home directory.
 Everything is configured and tweaked within `~/.dotfiles`.
 
-The main file you'll want to change right off the bat is `zsh/zshrc.symlink`,
+The main file you'll want to change right off the bat is `zsh/zshrc`,
 which sets up a few paths that'll be different on your particular machine.
 
 `dot` is a simple script that installs some dependencies, sets sane OS X

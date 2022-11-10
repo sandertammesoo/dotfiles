@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # set -e
 
@@ -98,20 +98,26 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # ########   #######     ##    ########   #######     ##
 
 CONFIG=".install.conf.yaml"
-DOTBOT_DIR=".dotbot"
+DOTBOT_DIR="dotbot"
 
 DOTBOT_BIN="bin/dotbot"
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+info "Update Dotbot git submodule dependencies"
 cd "${BASEDIR}"
 
-info "Update Dotbot git submodule dependencies"
-# git submodule update --init --recursive "${DOTBOT_DIR}"
+if git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive 2>&1
+then
+  success "Submodule sync successfull"
+else
+  fail "Error while: Submodule sync"
+fi
+
 if git submodule update --init --recursive "${DOTBOT_DIR}" 2>&1
 then
-  success "Update successfull"
+  success "Submodule update successfull"
 else
-  fail "Error while updating"
+  fail "Error while: Submodule update"
 fi
 
 info "Start Dotbot"

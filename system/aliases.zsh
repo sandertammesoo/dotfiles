@@ -24,6 +24,7 @@ alias -- -="cd -"
 alias dr="cd ~/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
+alias p="cd ~/sander.tammesoo@gmail.com\ -\ Google\ Drive/My\ Drive/9\ -\ Arhiiv/910\ -\ Personal/919.\ Self\ dev/919.2.\ SW\ Projects"
 
 # Show/hide hidden files in Finder
 alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"

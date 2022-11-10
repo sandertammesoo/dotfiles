@@ -1,6 +1,3 @@
-[submodule ".dotbot"]
-	path = .dotbot
-	url = https://github.com/anishathalye/dotbot
 [submodule "vim/bundle/vim-pathogen"]
 	path = vim/bundle/vim-pathogen
 	url = https://github.com/tpope/vim-pathogen.git
@@ -14,3 +11,7 @@
 [submodule "uncrustify-config"]
 	path = uncrustify-config
 	url = https://sandertammesoo@bitbucket.org/snippets/sandertammesoo/p6eBq/uncrustify-config.git
+[submodule "dotbot"]
+	path = dotbot
+	url = https://github.com/anishathalye/dotbot
+	ignore = dirty

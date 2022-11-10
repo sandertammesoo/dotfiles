@@ -42,6 +42,9 @@
     ~/.vim:
         relink: true
         path: 'vim'
+    ~/.nvm:
+        relink: true
+        path: 'nvm'
     ~/.vimrc:
         relink: true
         path: 'vim/vimrc'

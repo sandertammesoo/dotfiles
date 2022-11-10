@@ -85,8 +85,7 @@
         fi \
     }; f"
 
-	wazombiprofile = config user.email \"sander@wazombi.com\"
-	myprofile = config user.email \"sander.tammesoo@gmail.com\"
+	myprofile = config user.email \"raultammesoo@gmail.com\"
 
 [apply]
 
@@ -180,8 +179,8 @@
     insteadOf = "gist:"
 
 [user]
-	name = Sander Tammesoo
-	email = sander.tammesoo@gmail.com
+	name = Raul Tammesoo
+	email = raultammesoo@gmail.com
     
 [credential]
 	helper = osxkeychain

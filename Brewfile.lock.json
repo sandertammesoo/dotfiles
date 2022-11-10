@@ -2,7 +2,7 @@
   "entries": {
     "tap": {
       "homebrew/cask": {
-        "revision": "ded77a49e0e6271a74c54f5725e4f86ee038f9ec"
+        "revision": "e607b7e27f90316df5213fc9061f7dfa608e7f84"
       },
       "homebrew/bundle": {
         "revision": "5216bbdd9d47b1cb01c0d2cb656de32540ada95d"
@@ -758,6 +758,24 @@
             "appdir": "/Applications"
           }
         }
+      },
+      "google-chrome": {
+        "version": "107.0.5304.110",
+        "options": {
+          "full_name": "google-chrome",
+          "args": {
+            "appdir": "/Applications"
+          }
+        }
+      },
+      "freemind": {
+        "version": "1.0.1",
+        "options": {
+          "full_name": "freemind",
+          "args": {
+            "appdir": "/Applications"
+          }
+        }
       }
     }
   },
@@ -788,12 +806,12 @@
         "macOS": "11.6"
       },
       "monterey": {
-        "HOMEBREW_VERSION": "3.5.9",
+        "HOMEBREW_VERSION": "3.6.10",
         "HOMEBREW_PREFIX": "/opt/homebrew",
-        "Homebrew/homebrew-core": "51ab013d9bad2b1386c3aed4374bbe2bf1697fe7",
+        "Homebrew/homebrew-core": "8c48127cb3dcd6784ca64da37c957f2c4ba3f299",
         "CLT": "13.4.0.0.1.1651278267",
-        "Xcode": "13.4",
-        "macOS": "12.5"
+        "Xcode": "13.4.1",
+        "macOS": "12.3"
       },
       "ventura": {
         "HOMEBREW_VERSION": "3.6.10",

@@ -9,9 +9,9 @@
   - [git submodule update --init --recursive, Installing submodules]
 
 - link:
-    ~/.dotfiles:
-        relink: true
-        path: ''
+    #~/.dotfiles:
+    #    relink: true
+    #    path: ''
     # ~/.bashrc:
     #     relink: true
     #     path: 'bash/bashrc'
@@ -33,18 +33,18 @@
     ~/.gitconfig:
         relink: true
         path: 'git/gitconfig'
-    ~/.gitattributes:
-        relink: true
-        path: 'git/gitattributes'
+    #~/.gitattributes:
+    #    relink: true
+    #    path: 'git/gitattributes'
     ~/.gitignore:
         relink: true
         path: 'git/gitignore_global'
     ~/.vim:
         relink: true
         path: 'vim'
-    ~/.nvm:
-        relink: true
-        path: 'nvm'
+    #~/.nvm:
+    #    relink: true
+    #    path: 'nvm'
     ~/.vimrc:
         relink: true
         path: 'vim/vimrc'

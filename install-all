@@ -16,12 +16,12 @@ info () {
 
 user () {
   printf "\r  [ \033[0;33m??\033[0m ] $1\n"
-  echo ''
+  #echo ''
 }
 
 success () {
   printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
-  echo ''
+  #echo ''
 }
 
 info_stream () {
@@ -133,9 +133,9 @@ success "Dotbot finished"
 # ##     ## ##     ## ##    ##    ##    ##    ##    ##     ## ##       ##
 # ##     ## ##     ##  ######      ######     ##     #######  ##       ##
 # If we're on a Mac, let's install and setup other stuff.
-if [ "$(uname -s)" == "Darwin" ]
+if [ "$(uname -s)" = "Darwin" ]
 then
-    export DOTS=$HOME/.dotfiles
+  export DOTS=$HOME/.dotfiles
 
   #  #######   ######  ##     ##    ########  ######## ########    ###    ##     ## ##       ########  ######
   # ##     ## ##    ##  ##   ##     ##     ## ##       ##         ## ##   ##     ## ##          ##    ##    ##

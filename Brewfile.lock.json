@@ -2,7 +2,7 @@
   "entries": {
     "tap": {
       "homebrew/cask": {
-        "revision": "ded77a49e0e6271a74c54f5725e4f86ee038f9ec"
+        "revision": "e607b7e27f90316df5213fc9061f7dfa608e7f84"
       },
       "homebrew/bundle": {
         "revision": "5216bbdd9d47b1cb01c0d2cb656de32540ada95d"
@@ -798,7 +798,7 @@
       "ventura": {
         "HOMEBREW_VERSION": "3.6.10",
         "HOMEBREW_PREFIX": "/opt/homebrew",
-        "Homebrew/homebrew-core": "2498880becef3304984aa4fccc26880d74286ba3",
+        "Homebrew/homebrew-core": "8c48127cb3dcd6784ca64da37c957f2c4ba3f299",
         "CLT": "14.1.0.0.1.1666437224",
         "Xcode": "14.1",
         "macOS": "13.0"

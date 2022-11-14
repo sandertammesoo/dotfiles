@@ -48,6 +48,15 @@
     ~/.vimrc:
         relink: true
         path: 'vim/vimrc'
+    ~/.warp:
+        relink: true
+        path: 'warp'
+    ~/.cheatsheet:
+        relink: true
+        path: 'cheatsheet'
+    ~/.config/starship.toml:
+        relink: true
+        path: 'zsh/starship.toml'
     # ~/projects:
     #     relink: true
     #     path: '../projects'

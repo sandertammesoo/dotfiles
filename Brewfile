@@ -110,3 +110,6 @@ cask 'visual-studio-code'
 cask 'airtable'
 cask 'parallels'
 cask 'skype'
+cask 'warp'
+cask 'signal'
+

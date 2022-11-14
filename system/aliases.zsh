@@ -3,10 +3,10 @@
 #   `brew install coreutils`
 if $(gls &>/dev/null)
 then
-  alias ls="gls -F --color"
-  alias l="gls -lAh --color"
-  alias ll="gls -l --color"
-  alias la='gls -A --color'
+  alias ls="gls -F --color --group-directories-first"
+  alias l="gls -lAh --color --group-directories-first"
+  alias ll="gls -l --color --group-directories-first"
+  alias la='gls -A --color --group-directories-first'
 
   # List only directories
   alias lsd="gls -lF --color | grep --color=never '^d'"

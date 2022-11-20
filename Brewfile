@@ -34,6 +34,7 @@ brew 'tree'
 
 # Software Development & Environment control
 cask 'visual-studio-code'
+brew 'gh'
 brew 'nvim'
 # cask 'atom'
 # cask 'cocoapods'

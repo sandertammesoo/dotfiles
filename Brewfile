@@ -22,6 +22,8 @@ brew 'findutils'
 # CLI Applications
 brew 'cliclick' # Control mouse vie CLI
 brew 'grep'
+brew 'ripgrep' # Needed for Nvim Telescope
+brew 'fd' # Needed for Nvim Telescope
 brew 'screen'
 brew 'brew-cask-completion'
 brew 'tree'
@@ -39,6 +41,7 @@ brew 'starship'
 cask 'visual-studio-code'
 brew 'gh'
 brew 'nvim'
+brew 'node'
 # cask 'atom'
 # cask 'cocoapods'
 # brew 'jenv'

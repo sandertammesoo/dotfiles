@@ -1,8 +1,8 @@
 # # Make sure we’re using the latest Homebrew
-# brew update
-#
+brew update
+
 # # Upgrade any already-installed formulae
-# brew upgrade
+brew upgrade
 
 cask_args appdir: '/Applications'
 
@@ -14,19 +14,29 @@ brew 'git'
 brew 'git-flow'
 # brew 'uncrustify'
 
+# CLI Utils
 brew 'coreutils'
 brew 'moreutils'
 brew 'findutils'
-# brew 'cliclick'
+
+# CLI Applications
+brew 'cliclick' # Control mouse vie CLI
+brew 'grep'
+brew 'screen'
+brew 'brew-cask-completion'
+brew 'tree'
 # brew 'gnu-sed', args: ['with-default-names']
 # brew 'bash'
 # brew 'bash-completion'
 # brew 'wget', args: ['with-iri']
 # brew 'vim', args: ['override-system-vi']
-brew 'grep'
-brew 'screen'
-brew 'brew-cask-completion'
-brew 'tree'
+# brew 'unrar'
+
+# Software Development & Environment control
+cask 'visual-studio-code'
+brew 'nvim'
+# cask 'atom'
+# cask 'cocoapods'
 # brew 'jenv'
 # brew 'rbenv'
 # brew 'pyenv'
@@ -35,11 +45,67 @@ brew 'tree'
 # brew 'yarn'
 # brew 'docker'
 # brew 'postgresql'
-#
 # brew 'libgit2'
 # brew 'openssl'
-# brew 'unrar'
+# cask 'gcc-arm-embedded'
 
+# Browsers
+cask 'brave-browser'
+cask 'microsoft-edge'
+cask 'firefox'
+cask 'google-chrome'
+
+# Messangers
+cask 'slack'
+cask 'messenger'
+cask 'signal'
+cask 'skype'
+cask 'discord'
+cask 'microsoft-teams'
+cask 'mattermost'
+# cask 'adium'
+
+# Video players & music
+cask 'vlc'
+cask 'iina'
+cask 'spotify'
+
+# Quality of life and productivity applications
+cask '1password' # Password manager
+cask 'spectacle' # Window manager
+cask 'alfred' # Better Spotlight replacement
+cask 'freedom' # Block apps and webcontet to focus on deep work
+cask 'loom' # Screen recorder
+# cask 'bartender'
+# cask 'toggl-track'
+
+# Networking Applications
+cask 'nordvpn' # VPN
+# cask 'transmission'
+# cask 'tunnelbear'
+
+# Other Applications
+cask 'freemind'
+cask 'trader-workstation'
+cask 'teamviewer'
+cask 'projectlibre'
+cask 'notion'
+cask 'airtable'
+cask 'parallels'
+cask 'tempbox' # Temporary email inbox
+cask 'shottr' # Screenshot application
+cask 'hiddenbar' # Bartender like app to hide 'trayicons'
+cask 'menubar-stats' # Shows system performance indicators on menubar
+# cask 'handbrake' # Open-source video transcoder
+# cask 'steam'
+
+# Later.app https://github.com/alyssaxuu/later
+# Raycast.app https://www.raycast.com/
+
+
+
+
+########################################
 # Install some CTF tools; see https://github.com/ctfs/write-ups.
 # brew 'bfg'
 # brew 'binutils'
@@ -78,44 +144,3 @@ brew 'tree'
 # brew 'webkit2png'
 # brew 'zopfli'
 
-# cask 'gcc-arm-embedded'
-# cask '1password'
-# cask 'lastpass'
-# cask 'adium'
-# cask 'atom'
-# cask 'firefox'
-# cask 'garmin-express'
-cask 'google-chrome'
-cask 'brave-browser'
-# cask 'handbrake'
-# cask 'mapbox-studio'
-# cask 'seashore'
-cask 'slack'
-# cask 'steam'
-# cask 'transmission'
-# cask 'tunnelbear'
-# cask 'vlc'
-# cask 'cocoapods'
-# cask 'notion'
-cask 'messenger'
-# cask 'nordvpn'
-cask 'spectacle'
-# cask 'alfred'
-# cask 'spotify'
-# cask 'toggl-track'
-# cask 'freedom'
-# cask 'bartender'
-# cask 'loom'
-cask 'visual-studio-code'
-# cask 'airtable'
-# cask 'parallels'
-cask 'skype'
-cask 'freemind'
-cask 'vlc'
-cask 'trader-workstation'
-cask 'alfred'
-cask 'microsoft-teams'
-cask 'teamviewer'
-cask 'mattermost'
-cask 'projectlibre'
-cask 'firefox'

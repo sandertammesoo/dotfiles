@@ -25,6 +25,8 @@ brew 'grep'
 brew 'screen'
 brew 'brew-cask-completion'
 brew 'tree'
+brew 'zsh-autosuggestions'
+brew 'zsh-syntax-highlighting'
 # brew 'gnu-sed', args: ['with-default-names']
 # brew 'bash'
 # brew 'bash-completion'

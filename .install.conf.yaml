@@ -18,6 +18,9 @@
     ~/.zshrc:
         relink: true
         path: 'zsh/zshrc'
+    ~/.localrc:
+        relink: true
+        path: 'zsh/.localrc'
     # ~/.bash_profile:
     #     relink: true
     #     path: 'bash/bash_profile'
@@ -57,9 +60,9 @@
     ~/.config/starship.toml:
         relink: true
         path: 'zsh/starship.toml'
-    # ~/projects:
-    #     relink: true
-    #     path: '../projects'
+    ~/projects:
+         relink: true
+         path: '$PROJECTS'
 
 
 - shell:

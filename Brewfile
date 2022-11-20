@@ -1,8 +1,8 @@
 # # Make sure we’re using the latest Homebrew
-brew update
+#brew update
 
 # # Upgrade any already-installed formulae
-brew upgrade
+#brew upgrade
 
 cask_args appdir: '/Applications'
 
@@ -52,7 +52,7 @@ brew 'nvim'
 
 # Browsers
 cask 'brave-browser'
-# cask microsoft-edge
+# cask 'microsoft-edge'
 # cask 'firefox'
 # cask 'google-chrome'
 

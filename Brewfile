@@ -20,7 +20,7 @@ brew 'moreutils'
 brew 'findutils'
 
 # CLI Applications
-brew 'cliclick' # Control mouse vie CLI
+# brew 'cliclick' # Control mouse vie CLI
 brew 'grep'
 brew 'screen'
 brew 'brew-cask-completion'
@@ -51,9 +51,9 @@ brew 'nvim'
 
 # Browsers
 cask 'brave-browser'
-# cask microsoft-edge
-# cask 'firefox'
-# cask 'google-chrome'
+cask 'microsoft-edge'
+cask 'firefox'
+cask 'google-chrome'
 
 # Messangers & other communication
 cask 'slack'
@@ -66,31 +66,31 @@ cask 'zoom'
 
 # Video players & music
 cask 'vlc'
-cask 'iina'
+# cask 'iina'
 cask 'spotify'
 
 # Quality of life and productivity applications
-cask '1password' # Password manager
+# cask '1password' # Password manager
 cask 'spectacle' # Window manager
 cask 'alfred' # Better Spotlight replacement
-cask 'freedom' # Block apps and webcontet to focus on deep work
-cask 'loom' # Screen recorder
+# cask 'freedom' # Block apps and webcontet to focus on deep work
+# cask 'loom' # Screen recorder
 # cask 'bartender'
 # cask 'toggl-track'
 
 # Networking Applications
-cask 'nordvpn' # VPN
+# cask 'nordvpn' # VPN
 # cask 'transmission'
 # cask 'tunnelbear'
 
 # Other Applications
-cask 'notion'
-cask 'airtable'
-cask 'parallels'
-cask 'tempbox' # Temporary email inbox
-cask 'shottr' # Screenshot application
-cask 'hiddenbar' # Bartender like app to hide 'trayicons'
-cask 'menubar-stats' # Shows system performance indicators on menubar
+# cask 'notion'
+# cask 'airtable'
+# cask 'parallels'
+# cask 'tempbox' # Temporary email inbox
+# cask 'shottr' # Screenshot application
+# cask 'hiddenbar' # Bartender like app to hide 'trayicons'
+# cask 'menubar-stats' # Shows system performance indicators on menubar
 # cask 'handbrake' # Open-source video transcoder
 # cask 'steam'
 

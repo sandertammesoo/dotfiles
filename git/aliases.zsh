@@ -27,3 +27,4 @@ alias gac='git add -A && git commit -m'
 alias ge='git-edit-new'
 
 alias pulldots='git fetch upstream;git checkout raul;git merge upstream/raul'
+alias pushdots='git commit; git push; gh pr create --base raul --body "";gh pr merge --merge;gh pr status'

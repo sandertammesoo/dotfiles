@@ -60,6 +60,7 @@ format = "via [$symbol$branch]($style) "
 # truncation_length = 4
 truncation_symbol = "…/"
 style = "bold green"
+disabled = true
 
 [git_status]
 format = '[\($all_status$ahead_behind\)]($style) '
@@ -75,14 +76,15 @@ modified = " "
 staged = '[++\($count\)](green)'
 renamed = "襁 "
 deleted = " "
+disabled = true
 
 [status]
-disabled = false
+disabled = true
 format = '[\[$status - $common_meaning\]](green)'
 
 [kubernetes]
 format = 'via [ﴱ $context\($namespace\)](bold purple) '
-disabled = false
+disabled = true
 
 [time]
 disabled = false

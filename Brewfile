@@ -27,6 +27,7 @@ brew 'brew-cask-completion'
 brew 'tree'
 brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting'
+brew 'starship'
 # brew 'gnu-sed', args: ['with-default-names']
 # brew 'bash'
 # brew 'bash-completion'

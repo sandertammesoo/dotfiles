@@ -185,6 +185,7 @@
     
 [credential]
 	helper = osxkeychain
+	username = raultammesoo
 
 [hub]
         protocol = https

@@ -1,5 +1,7 @@
 nvm
 .python-version
 .dotbot_old
+./dotbot/
 *.netrwhist
-Brewfile.lock.json
+*.lock.json
+packer_compiled.lua

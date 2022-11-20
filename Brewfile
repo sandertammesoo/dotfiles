@@ -51,18 +51,17 @@ brew 'nvim'
 
 # Browsers
 cask 'brave-browser'
-cask 'microsoft-edge'
-cask 'firefox'
-cask 'google-chrome'
+# cask microsoft-edge
+# cask 'firefox'
+# cask 'google-chrome'
 
-# Messangers
+# Messangers & other communication
 cask 'slack'
 cask 'messenger'
 cask 'signal'
 cask 'skype'
 cask 'discord'
-cask 'microsoft-teams'
-cask 'mattermost'
+cask 'zoom'
 # cask 'adium'
 
 # Video players & music
@@ -85,10 +84,6 @@ cask 'nordvpn' # VPN
 # cask 'tunnelbear'
 
 # Other Applications
-cask 'freemind'
-cask 'trader-workstation'
-cask 'teamviewer'
-cask 'projectlibre'
 cask 'notion'
 cask 'airtable'
 cask 'parallels'

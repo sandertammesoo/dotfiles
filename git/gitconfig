@@ -109,6 +109,7 @@
     trustctime = false
 
     editor = vim
+	excludesfile = ~/.gitignore
 
 [color]
 

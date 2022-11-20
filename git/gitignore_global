@@ -10,7 +10,7 @@
 
 # Config files #
 ##########################
-*.localconf
+*.localrc
 
 # Editing tools and IDEs #
 ##########################

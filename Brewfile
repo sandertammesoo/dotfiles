@@ -1,8 +1,8 @@
 # # Make sure we’re using the latest Homebrew
-brew update
+#brew update
 
 # # Upgrade any already-installed formulae
-brew upgrade
+#brew upgrade
 
 cask_args appdir: '/Applications'
 
@@ -25,6 +25,8 @@ brew 'grep'
 brew 'screen'
 brew 'brew-cask-completion'
 brew 'tree'
+brew 'zsh-autosuggestions'
+brew 'zsh-syntax-highlighting'
 # brew 'gnu-sed', args: ['with-default-names']
 # brew 'bash'
 # brew 'bash-completion'
@@ -34,6 +36,7 @@ brew 'tree'
 
 # Software Development & Environment control
 cask 'visual-studio-code'
+brew 'gh'
 brew 'nvim'
 # cask 'atom'
 # cask 'cocoapods'

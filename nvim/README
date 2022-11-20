@@ -1,0 +1,28 @@
+https://www.youtube.com/watch?v=vdn_pKJUda8
+
+ys <MOTION> <CHARACTER> -- adds surrounding characters
+ds <CHARACTER> -- deletes surrounding characters
+cs <FROM CHARACTER> <To CHARACTER> -- Change surrounding characters
+
+yw -- copy(yank) word
+grw -- replace word with clipboard buffer
+
+gcc -- (un)comment line
+gc3j -- (un)comment 3 lines 
+
+space + e -- open/close file explorer
+a -- add file in the explorer
+
+Telescope
+Ctrl + k - move to prev selection
+Ctrl + j - move to next selection
+Ctrl + q - send items to quick fix list
+
+Find ei t66ta miski p2rast
+Space + ff -- find file
+Space + fs -- find string
+Space + fc -- find current string the cursor is on
+Space + fb -- find string in the active buffer
+Space + fh -- show help tags
+
+

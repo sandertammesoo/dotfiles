@@ -45,6 +45,9 @@
     ~/.vim:
         relink: true
         path: 'vim'
+    ~/.config/nvim:
+        relink: true
+        path: 'nvim'
     ~/.nvm:
         relink: true
         path: 'nvm'

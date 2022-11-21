@@ -24,8 +24,6 @@ brew 'cliclick' # Control mouse vie CLI
 brew 'grep'
 brew 'ripgrep' # Needed for Nvim Telescope
 brew 'fd' # Needed for Nvim Telescope
-<<<<<<< Updated upstream
-=======
 brew 'glow' # Needed for Nvim Telescope-repo
 brew 'bat' # Needed for Nvim Telescope-repo
 brew 'wget' # Needed for Nvim Mason
@@ -33,7 +31,6 @@ brew 'rust' # Needed for Nvim Mason
 brew 'luarocks' # Needed for Nvim Mason
 brew 'composer' # Needed for Nvim Mason
 brew 'php' # Needed for Nvim Mason
->>>>>>> Stashed changes
 brew 'screen'
 brew 'brew-cask-completion'
 brew 'tree'

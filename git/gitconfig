@@ -85,9 +85,6 @@
         fi \
     }; f"
 
-	wazombiprofile = config user.email \"sander@wazombi.com\"
-	myprofile = config user.email \"sander.tammesoo@gmail.com\"
-
 [apply]
 
     # Detect whitespace errors when applying a patch
@@ -181,8 +178,8 @@
     insteadOf = "gist:"
 
 [user]
-	name = Sander Tammesoo
-	email = sander.tammesoo@gmail.com
+	name = 
+	email = 
     
 [credential]
 	helper = osxkeychain

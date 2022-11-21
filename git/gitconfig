@@ -180,8 +180,8 @@
     insteadOf = "gist:"
 
 [user]
-	name =Raul Tammesoo
-	email =raultammesoo@gmail.com
+	name = Raul Tammesoo
+	email = raultammesoo@gmail.com
     
 [credential]
 	helper = osxkeychain

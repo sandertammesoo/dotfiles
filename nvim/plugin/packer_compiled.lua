@@ -196,6 +196,11 @@ _G.packer_plugins = {
     path = "/Users/sander/.local/share/nvim/site/pack/packer/start/plenary.nvim",
     url = "https://github.com/nvim-lua/plenary.nvim"
   },
+  ["telescope-command-palette.nvim"] = {
+    loaded = true,
+    path = "/Users/sander/.local/share/nvim/site/pack/packer/start/telescope-command-palette.nvim",
+    url = "https://github.com/LinArcX/telescope-command-palette.nvim"
+  },
   ["telescope-file-browser.nvim"] = {
     loaded = true,
     path = "/Users/sander/.local/share/nvim/site/pack/packer/start/telescope-file-browser.nvim",

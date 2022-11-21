@@ -22,6 +22,18 @@ brew 'findutils'
 # CLI Applications
 # brew 'cliclick' # Control mouse vie CLI
 brew 'grep'
+brew 'ripgrep' # Needed for Nvim Telescope
+brew 'fd' # Needed for Nvim Telescope
+<<<<<<< Updated upstream
+=======
+brew 'glow' # Needed for Nvim Telescope-repo
+brew 'bat' # Needed for Nvim Telescope-repo
+brew 'wget' # Needed for Nvim Mason
+brew 'rust' # Needed for Nvim Mason
+brew 'luarocks' # Needed for Nvim Mason
+brew 'composer' # Needed for Nvim Mason
+brew 'php' # Needed for Nvim Mason
+>>>>>>> Stashed changes
 brew 'screen'
 brew 'brew-cask-completion'
 brew 'tree'
@@ -29,16 +41,13 @@ brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting'
 brew 'starship'
 # brew 'gnu-sed', args: ['with-default-names']
-# brew 'bash'
-# brew 'bash-completion'
-# brew 'wget', args: ['with-iri']
-# brew 'vim', args: ['override-system-vi']
 # brew 'unrar'
 
 # Software Development & Environment control
 cask 'visual-studio-code'
 brew 'gh'
 brew 'nvim'
+brew 'node'
 # cask 'atom'
 # cask 'cocoapods'
 # brew 'jenv'
@@ -130,7 +139,8 @@ cask 'alfred' # Better Spotlight replacement
 # brew 'xz'
 
 # Install other useful binaries.
-# brew 'ack'
+brew 'ack'
+brew 'youtube-dl'
 # brew 'exiv2'
 # brew 'imagemagick', args: ['with-webp']
 # brew 'lua'

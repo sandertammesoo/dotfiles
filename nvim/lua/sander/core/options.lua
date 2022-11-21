@@ -36,3 +36,5 @@ opt.splitright = true
 opt.splitbelow = true
 
 opt.iskeyword:append("-")
+
+opt.mousescroll = "ver:1,hor:1"

@@ -79,6 +79,15 @@ telescope.setup({
 				{ "", ":" },
 			},
 			{
+				"Diffview",
+				{ "View all git history diffs", ":DiffviewFileHistory" },
+				{ "View current file git histroy diffs", ":DiffviewFileHistory %" },
+				{ "Open current diff", ":DiffviewOpen" },
+				{ "Close current diff", ":DiffviewClose" },
+				{ "Toggle File Explorer", ":DiffviewToggleFiles" },
+				{ "Update file list", ":DiffviewRefresh" },
+			},
+			{
 				"File",
 				{ "toggle project explorer", ":NvimTreeToggle" },
 				{ "entire selection (C-a)", ':call feedkeys("GVgg")' },

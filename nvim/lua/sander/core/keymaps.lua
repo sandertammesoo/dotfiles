@@ -11,9 +11,10 @@ local keymap = vim.keymap -- for conciseness
 keymap.set("i", "jk", "<ESC>")
 
 -- use sf and sa to save files
-keymap.set("n", "<leader>sf", ":w<CR>")
-keymap.set("n", "<leader>sa", ":wa<CR>")
+keymap.set("n", "<leader>wf", ":w<CR>")
+keymap.set("n", "<leader>wa", ":wa<CR>")
 keymap.set("n", "<leader>qa", ":qa<CR>")
+keymap.set("n", "<leader>wqa", ":wqa<CR>")
 
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>")
@@ -82,3 +83,11 @@ keymap.set("n", "<leader>gs", "<cmd>Telescope git_status<cr>") -- list current c
 
 -- restart lsp server (not on youtube nvim video)
 keymap.set("n", "<leader>rs", ":LspRestart<CR>") -- mapping to restart lsp if necessary
+
+-- diffview
+keymap.set("n", "<leader>dha", "<cmd>DiffviewFileHistory<CR>") -- mapping to restart lsp if necessary
+keymap.set("n", "<leader>dhf", "<cmd>DiffviewFileHistory %<CR>") -- mapping to restart lsp if necessary
+keymap.set("n", "<leader>do", "<cmd>DiffviewOpen<CR>") -- mapping to restart lsp if necessary
+keymap.set("n", "<leader>dx", "<cmd>DiffviewClose<CR>") -- mapping to restart lsp if necessary
+keymap.set("n", "<leader>de", "<cmd>DiffviewToggleFiles<CR>") -- mapping to restart lsp if necessary
+keymap.set("n", "<leader>du", "<cmd>DiffviewRefresh<CR>") -- mapping to restart lsp if necessary

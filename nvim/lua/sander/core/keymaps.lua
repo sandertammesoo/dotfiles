@@ -50,6 +50,7 @@ keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>") -- toggle split window max
 
 -- nvim-tree
 keymap.set("n", "<leader>et", ":NvimTreeToggle<CR>") -- toggle file explorer
+keymap.set("n", "<leader>ef", ":NvimTreeFindFile<CR>") -- find current in file explorer
 keymap.set("n", "<leader>cx", ":NvimTreeCollapse<CR>") -- collapse file explorer
 keymap.set("n", "<leader>cc", ":NvimTreeCollapseKeepBuffers<CR>") -- collapse file explorer
 keymap.set("n", "<leader>mn", require("nvim-tree.api").marks.navigate.next)
@@ -75,7 +76,7 @@ keymap.set(
 keymap.set(
 	"n",
 	"<leader>r",
-  "<cmd>lua require'telescope'.extensions.repo.cached_list{locate_opts={'-d', vim.env.HOME .. '/locatedb'}}<CR>"
+	"<cmd>lua require'telescope'.extensions.repo.cached_list{locate_opts={'-d', vim.env.HOME .. '/locatedb'}}<CR>"
 )
 keymap.set("n", "<leader>ed", "<cmd>lua require'sander.edit-dotfiles'.edit_neovim()<CR>")
 keymap.set("n", "<leader>cp", "<cmd>Telescope command_palette<cr>") -- list available commands

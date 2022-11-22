@@ -60,6 +60,9 @@
     ~/.cheatsheet:
         relink: true
         path: 'cheatsheet'
+    ~/.config/lazygit:
+      relink: true
+      path: "lazygit"
     ~/.config/starship.toml:
         relink: true
         path: 'zsh/starship.toml'

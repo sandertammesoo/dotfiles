@@ -72,7 +72,11 @@ keymap.set(
 	"<cmd>lua require'telescope'.extensions.file_browser.file_browser{}<CR>"
 	-- { noremap = true }
 )
-keymap.set("n", "<leader>r", "<cmd>Telescope repo cached_list<CR>")
+keymap.set(
+	"n",
+	"<leader>r",
+  "<cmd>lua require'telescope'.extensions.repo.cached_list{locate_opts={'-d', vim.env.HOME .. '/locatedb'}}<CR>"
+)
 keymap.set("n", "<leader>ed", "<cmd>lua require'sander.edit-dotfiles'.edit_neovim()<CR>")
 keymap.set("n", "<leader>cp", "<cmd>Telescope command_palette<cr>") -- list available commands
 

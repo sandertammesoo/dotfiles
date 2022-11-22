@@ -133,15 +133,15 @@ telescope.setup({
 
 	-- configure custom mappings
 	defaults = {
-		path_display = function(opts, path)
-			local pathLength = string.len(path)
-			local maxLength = 41
-			local tail = require("telescope.utils").path_tail(path)
-			if pathLength > maxLength then
-				path = "..." .. string.sub(path, pathLength - maxLength - 3)
-			end
-			return string.format("(%s)    %s", path, tail)
-		end,
+		-- path_display = function(opts, path)
+		-- 	local pathLength = string.len(path)
+		-- 	local maxLength = 41
+		-- 	local tail = require("telescope.utils").path_tail(path)
+		-- 	if pathLength > maxLength then
+		-- 		path = "..." .. string.sub(path, pathLength - maxLength - 3)
+		-- 	end
+		-- 	return string.format("(%s)    %s", path, tail)
+		-- end,
 		mappings = {
 			i = {
 				["<C-k>"] = actions.move_selection_previous, -- move to prev result

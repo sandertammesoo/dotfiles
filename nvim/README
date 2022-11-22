@@ -26,3 +26,5 @@ Space + fb -- find string in the active buffer
 Space + fh -- show help tags
 
 
+How to use macros in vim -- https://www.youtube.com/watch?v=ZMA6MghrpWM
+

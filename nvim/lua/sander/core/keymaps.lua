@@ -15,6 +15,7 @@ keymap.set("n", "<leader>wf", ":w<CR>")
 keymap.set("n", "<leader>wa", ":wa<CR>")
 keymap.set("n", "<leader>qa", ":qa<CR>")
 keymap.set("n", "<leader>wqa", ":wqa<CR>")
+keymap.set("n", "<leader>cf", ":bd<CR>")
 
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>")

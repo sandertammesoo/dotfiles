@@ -84,6 +84,11 @@ _G.packer_plugins = {
     path = "/Users/sander/.local/share/nvim/site/pack/packer/start/LuaSnip",
     url = "https://github.com/L3MON4D3/LuaSnip"
   },
+  base46 = {
+    loaded = true,
+    path = "/Users/sander/.local/share/nvim/site/pack/packer/start/base46",
+    url = "https://github.com/NvChad/base46"
+  },
   ["cmp-buffer"] = {
     loaded = true,
     path = "/Users/sander/.local/share/nvim/site/pack/packer/start/cmp-buffer",

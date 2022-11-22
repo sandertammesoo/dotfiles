@@ -4,7 +4,7 @@ local M = {} -- initialize an empty table (or object in JS terms)
 
 function M.edit_neovim()
 	require("telescope.builtin").git_files({
-		shorte_path = true,
+		shorten_path = true,
 		cwd = "~/.dotfiles",
 		prompt = "~ dotfiles",
 		height = 10,

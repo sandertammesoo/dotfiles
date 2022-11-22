@@ -1,3 +1,4 @@
+-- https://vonheikemen.github.io/devlog/tools/configuring-neovim-using-lua/
 require("sander.plugins-setup")
 require("sander.core.options")
 require("sander.core.keymaps")

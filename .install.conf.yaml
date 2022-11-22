@@ -2,75 +2,74 @@
 #    link:
 #      relink: true
 
-- clean: ['~']
+- clean: ["~"]
 
 - shell:
-  # - git update-submodules # after linking ~/.gitconfig
-  - [git submodule update --init --recursive, Installing submodules]
+    # - git update-submodules # after linking ~/.gitconfig
+    - [git submodule update --init --recursive, Installing submodules]
 
 - link:
     ~/.dotfiles:
-        relink: true
-        path: ''
+      relink: true
+      path: ""
     # ~/.bashrc:
     #     relink: true
     #     path: 'bash/bashrc'
     ~/.zshrc:
-        relink: true
-        path: 'zsh/zshrc'
+      relink: true
+      path: "zsh/zshrc"
     ~/.localrc:
-        relink: true
-        path: 'zsh/.localrc'
+      relink: true
+      path: "zsh/.localrc"
     # ~/.bash_profile:
     #     relink: true
     #     path: 'bash/bash_profile'
     ~/.hushlogin:
-        relink: true
-        path: 'system/hushlogin'
+      relink: true
+      path: "system/hushlogin"
     ~/.editorconfig:
-        relink: true
-        path: 'system/editorconfig'
+      relink: true
+      path: "system/editorconfig"
     ~/.inputrc:
-        relink: true
-        path: 'system/inputrc'
+      relink: true
+      path: "system/inputrc"
     ~/.gitconfig:
-        relink: true
-        path: 'git/gitconfig'
+      relink: true
+      path: "git/gitconfig"
     ~/.gitattributes:
-        relink: true
-        path: 'git/gitattributes'
+      relink: true
+      path: "git/gitattributes"
     ~/.gitignore:
-        relink: true
-        path: 'git/gitignore_global'
+      relink: true
+      path: "git/gitignore_global"
     ~/.vim:
-        relink: true
-        path: 'vim'
+      relink: true
+      path: "vim"
     ~/.config/nvim:
-        relink: true
-        path: 'nvim'
+      relink: true
+      path: "nvim"
     ~/.nvm:
-        relink: true
-        path: 'nvm'
+      relink: true
+      path: "nvm"
     ~/.vimrc:
-        relink: true
-        path: 'vim/vimrc'
+      relink: true
+      path: "vim/vimrc"
     ~/.warp:
-        relink: true
-        path: 'warp'
+      relink: true
+      path: "warp"
     ~/.cheatsheet:
-        relink: true
-        path: 'cheatsheet'
+      relink: true
+      path: "cheatsheet"
     ~/.config/lazygit:
       relink: true
       path: "lazygit"
     ~/.config/starship.toml:
-        relink: true
-        path: 'zsh/starship.toml'
+      relink: true
+      path: "zsh/starship.toml"
     ~/projects:
-         relink: true
-         path: '$PROJECTS'
-
+      relink: true
+      path: "$PROJECTS"
 
 - shell:
-  # - git update-submodules # after linking ~/.gitconfig
-  - [git submodule update --init --recursive, Installing submodules]
+    # - git update-submodules # after linking ~/.gitconfig
+    - [git submodule update --init --recursive, Installing submodules]

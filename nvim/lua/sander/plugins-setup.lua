@@ -110,6 +110,9 @@ return packer.startup(function(use)
 	-- toggleterm
 	use("akinsho/toggleterm.nvim")
 
+	-- which-key
+	use("folke/which-key.nvim")
+
 	if packer_bootstrap then
 		require("packer").sync()
 	end

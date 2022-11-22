@@ -8,7 +8,7 @@ local keymap = vim.keymap -- for conciseness
 ---------------------
 
 -- use jk to exit insert mode
-keymap.set("i", "jk", "<ESC>")
+keymap.set("i", "<leader>jk", "<ESC>")
 
 -- use sf and sa to save files
 keymap.set("n", "<leader>wf", ":w<CR>")

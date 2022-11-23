@@ -33,7 +33,7 @@ function fs() {
 # given location
 function v() {
 	if [ $# -eq 0 ]; then
-		nvim .;
+		nvim;
 	else
 		nvim "$@";
 	fi;

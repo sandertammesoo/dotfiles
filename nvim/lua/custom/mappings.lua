@@ -183,7 +183,7 @@ M.telescope = {
     ["<leader>gc"] = { "<cmd> Telescope git_commits <CR>", "git commits" },
     ["<leader>gs"] = { "<cmd> Telescope git_status <CR>", "git status" },
     ["<leader>gfc"] = { "<cmd> Telescope git_bcommits <CR>", "git commits for current file" },
-    ["<leader>gb"] = { "<cmd> Telescope git_branches <CR>", "git branches" },
+    ["<leader>gbr"] = { "<cmd> Telescope git_branches <CR>", "git branches" },
 
     -- command palette
     -- ["<leader>cp"] = { "<cmd> Telescope command_palette <CR>", "show command palette" },

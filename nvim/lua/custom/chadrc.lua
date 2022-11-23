@@ -1,6 +1,7 @@
 -- First read our docs (completely) then check the example_config repo
 
 local M = {}
+-- M.options, M.ui, M.mappings, M.plugins = {}, {}, {}, {}
 
 M.ui = {
   theme = "onedark",

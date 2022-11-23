@@ -19,11 +19,17 @@ return {
     override_options = overrides.telescope,
   },
 
-  -- -- Override plugin definition options
-  -- ["goolord/alpha-nvim"] = {
-  --   disable = false,
-  --   cmd = "Alpha",
-  -- },
+  ["folke/which-key.nvim"] = {
+    disable = false,
+    cmd = "WhichKey",
+    override_options = overrides.whichkey,
+  },
+
+  -- Override plugin definition options
+  ["goolord/alpha-nvim"] = {
+    disable = false,
+    cmd = "Alpha",
+  },
   --
   -- -- Override plugin config
   -- ["williamboman/mason.nvim"] = {

@@ -1,0 +1,24 @@
+-- -- https://vonheikemen.github.io/devlog/tools/configuring-neovim-using-lua/
+-- require("sander.plugins-setup")
+-- require("sander.core.options")
+-- require("sander.core.keymaps")
+-- require("sander.core.colorscheme")
+-- -- require("sander.core.utils")
+-- require("sander.plugins.comment")
+-- require("sander.plugins.nvim-tree")
+-- require("sander.plugins.lualine")
+-- require("sander.plugins.diffview")
+-- require("sander.plugins.telescope")
+-- require("sander.plugins.nvim-cmp")
+-- require("sander.plugins.lsp.mason")
+-- require("sander.plugins.lsp.lspsaga")
+-- require("sander.plugins.lsp.lspconfig")
+-- require("sander.plugins.lsp.null-ls")
+-- require("sander.plugins.autopairs")
+-- require("sander.plugins.treesitter")
+-- require("sander.plugins.gitsigns")
+-- require("sander.plugins.toggleterm")
+-- require("sander.plugins.which-key")
+-- -- https://github.com/anuvyklack/pretty-fold.nvim
+-- -- https://github.com/p00f/nvim-ts-rainbow
+-- -- https://github.com/NvChad/NvChad

@@ -27,4 +27,13 @@ Space + fh -- show help tags
 
 
 How to use macros in vim -- https://www.youtube.com/watch?v=ZMA6MghrpWM
+https://github.com/tjdevries/config_manager/tree/master/xdg_config/nvim
 
+
+[verbose] nmap <leader>
+[verbose] imap <leader>
+[verbose] tmap <leader>
+
+<C-w>T - open buf in new tab
+gt - go tab
+<C-w>c - close window

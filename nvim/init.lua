@@ -1,21 +1,34 @@
--- https://vonheikemen.github.io/devlog/tools/configuring-neovim-using-lua/
-require("sander.plugins-setup")
-require("sander.core.options")
-require("sander.core.keymaps")
-require("sander.core.colorscheme")
--- require("sander.core.utils")
-require("sander.plugins.comment")
-require("sander.plugins.nvim-tree")
-require("sander.plugins.lualine")
-require("sander.plugins.diffview")
-require("sander.plugins.telescope")
-require("sander.plugins.nvim-cmp")
-require("sander.plugins.lsp.mason")
-require("sander.plugins.lsp.lspsaga")
-require("sander.plugins.lsp.lspconfig")
-require("sander.plugins.lsp.null-ls")
-require("sander.plugins.autopairs")
-require("sander.plugins.treesitter")
-require("sander.plugins.gitsigns")
-require("sander.plugins.toggleterm")
-require("sander.plugins.which-key")
+vim.defer_fn(function()
+	pcall(require, "impatient")
+end, 0)
+
+require("core")
+require("core.options")
+
+-- setup packer + plugins
+local fn = vim.fn
+local install_path = fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim"
+
+if fn.empty(fn.glob(install_path)) > 0 then
+	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#1e222a" })
+	print("Cloning packer ..")
+	fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
+
+	-- install plugins + compile their configs
+	vim.cmd("packadd packer.nvim")
+	require("plugins")
+	vim.cmd("PackerSync")
+
+	-- install binaries from mason.nvim & tsparsers
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "PackerComplete",
+		callback = function()
+			vim.cmd("bw | silent! MasonInstallAll") -- close packer window
+			require("packer").loader("nvim-treesitter")
+		end,
+	})
+end
+
+pcall(require, "custom")
+
+require("core.utils").load_mappings()

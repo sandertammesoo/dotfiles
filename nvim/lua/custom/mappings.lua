@@ -45,7 +45,7 @@ M.general = {
     -- ["<leader>tp"] = { "<cmd> tabp <CR>", "prev tab" }, -- maybe switch to <SC-TAB>
 
     -- edit dotfiles
-    -- ["<leader>ed"] = { "<cmd> lua require'sander.edit-dotfiles'.edit_neovim() <CR>", "edit dotfiles" },
+    ["<leader>ed"] = { "<cmd> lua require'custom.edit-dotfiles'.edit_neovim() <CR>", "edit dotfiles" },
   },
 }
 

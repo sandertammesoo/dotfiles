@@ -5,3 +5,6 @@ nvm
 *.netrwhist
 *.lock.json
 packer_compiled.lua
+nvim/plugin
+.luarc.json
+coc-settings.json

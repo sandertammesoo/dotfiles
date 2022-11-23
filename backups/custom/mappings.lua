@@ -1,13 +1,13 @@
--- lua/custom/mappings
+-- lua/custom/mappings 
 local M = {}
 -- add this table only when you want to disable default keys
--- M.disabled = {
---   n = {
---     ["<leader>tk"] = "",
---     ["<leader>cm"] = "",
---     ["<leader>gt"] = "",
---   },
--- }
+M.disabled = {
+  n = {
+      ["<leader>tk"] = "",
+      ["<leader>cm"] = "",
+      ["<leader>gt"] = "",
+  }
+}
 ---------------------
 -- General Keymaps
 ---------------------
@@ -47,34 +47,35 @@ M.general = {
     -- edit dotfiles
     -- ["<leader>ed"] = { "<cmd> lua require'sander.edit-dotfiles'.edit_neovim() <CR>", "edit dotfiles" },
   },
+
 }
 
--- M.lspconfig = {
---   plugin = true,
---
---   -- See `<cmd> :help vim.lsp.*` for documentation on any of the below functions
---
---   -- -- set keybinds
---   -- keymap.set("n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts) -- show definition, references
---   -- keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", opts) -- got to declaration
---   -- keymap.set("n", "gd", "<cmd>Lspsaga peek_definition<CR>", opts) -- see definition and make edits in window
---   -- keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) -- go to implementation
---   -- keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts) -- see available code actions
---   -- keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts) -- smart rename
---   -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_line_diagnostics<CR>", opts) -- show  diagnostics for line
---   -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts) -- show diagnostics for cursor
---   -- keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts) -- jump to previous diagnostic in buffer
---   -- keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts) -- jump to next diagnostic in buffer
---   -- keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts) -- show documentation for what is under cursor
---   -- keymap.set("n", "<leader>o", "<cmd>LSoutlineToggle<CR>", opts) -- see outline on right hand side
---   --
---   -- -- typescript specific keymaps (e.g. rename file and update imports)
---   -- if client.name == "tsserver" then
---   --   keymap.set("n", "<leader>rf", ":TypescriptRenameFile<CR>") -- rename file and update imports
---   --   keymap.set("n", "<leader>oi", ":TypescriptOrganizeImports<CR>") -- organize imports (not in youtube nvim video)
---   --   keymap.set("n", "<leader>ru", ":TypescriptRemoveUnused<CR>") -- remove unused variables (not in youtube nvim video)
---   -- end
--- }
+M.lspconfig = {
+  plugin = true,
+
+  -- See `<cmd> :help vim.lsp.*` for documentation on any of the below functions
+
+  -- -- set keybinds
+  -- keymap.set("n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts) -- show definition, references
+  -- keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", opts) -- got to declaration
+  -- keymap.set("n", "gd", "<cmd>Lspsaga peek_definition<CR>", opts) -- see definition and make edits in window
+  -- keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) -- go to implementation
+  -- keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts) -- see available code actions
+  -- keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts) -- smart rename
+  -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_line_diagnostics<CR>", opts) -- show  diagnostics for line
+  -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts) -- show diagnostics for cursor
+  -- keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts) -- jump to previous diagnostic in buffer
+  -- keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts) -- jump to next diagnostic in buffer
+  -- keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts) -- show documentation for what is under cursor
+  -- keymap.set("n", "<leader>o", "<cmd>LSoutlineToggle<CR>", opts) -- see outline on right hand side
+  --
+  -- -- typescript specific keymaps (e.g. rename file and update imports)
+  -- if client.name == "tsserver" then
+  --   keymap.set("n", "<leader>rf", ":TypescriptRenameFile<CR>") -- rename file and update imports
+  --   keymap.set("n", "<leader>oi", ":TypescriptOrganizeImports<CR>") -- organize imports (not in youtube nvim video)
+  --   keymap.set("n", "<leader>ru", ":TypescriptRemoveUnused<CR>") -- remove unused variables (not in youtube nvim video)
+  -- end
+}
 
 -- M.vimmaximizer = {
 --   plugin = true,
@@ -138,30 +139,6 @@ M.nvimtree = {
 
 M.telescope = {
   plugin = true,
-
-  --[[
-  -- HACK: NOT WORKING PROPERLY HERE / IMPLEMENTED IN lua/plugins/telescope.lua
-  i = {
-    ["<C-k>"] = {
-      function()
-        require("telescope.actions").move_selection_previous()
-      end,
-      "move to prev result",
-    },
-    ["<C-j>"] = {
-      function()
-        require("telescope.actions").move_selection_next()
-      end,
-      "move to next result",
-    },
-    ["<C-q>"] = {
-      function()
-        require("telescope.actions").send_selection_to_qflist()
-      end,
-      "send to quickfixlist",
-    },
-  },
-  --]]
 
   n = {
     -- find

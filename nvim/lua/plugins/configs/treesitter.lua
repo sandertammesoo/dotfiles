@@ -8,21 +8,7 @@ require("base46").load_highlight "treesitter"
 
 local options = {
   ensure_installed = {
-		"json",
-		"javascript",
-		"typescript",
-		"tsx",
-		"yaml",
-		"html",
-		"css",
-		"markdown",
-		"svelte",
-		"graphql",
-		"bash",
-		"lua",
-		"vim",
-		"dockerfile",
-		"gitignore",
+    "lua",
   },
 
   highlight = {
@@ -33,13 +19,6 @@ local options = {
   indent = {
     enable = true,
   },
-
-	autotag = {
-    enable = true
-  },
-
-	-- auto install above language parsers
-	auto_install = true,
 }
 
 -- check for any override

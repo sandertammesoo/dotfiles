@@ -56,8 +56,14 @@ local options = {
     buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
     mappings = {
       n = { ["q"] = require("telescope.actions").close },
+      i = {
+        ["<C-k>"] = require("telescope.actions").move_selection_previous, -- move to prev result
+        ["<C-j>"] = require("telescope.actions").move_selection_next, -- move to next result
+        ["<C-q>"] = require("telescope.actions").send_selected_to_qflist + require("telescope.actions").open_qflist, -- send selected to quickfixlist
+      },
     },
   },
+
   extensions_list = { "themes", "terms" },
 }
 
@@ -68,7 +74,6 @@ telescope.setup(options)
 -- load extensions
 pcall(function()
   for _, ext in ipairs(options.extensions_list) do
-    print(ext)
     telescope.load_extension(ext)
   end
 end)

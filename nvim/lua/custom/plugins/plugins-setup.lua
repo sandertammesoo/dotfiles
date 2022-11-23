@@ -1,11 +1,5 @@
 local overrides = require "custom.plugins.configs.overrides"
 
--- local function cd_dot_cb(node)
---   nvimtree.change_dir(vim.fn.getcwd(-1))
---   if node.name ~= ".." then
---     require("nvim-tree.lib").set_index_and_redraw(node.absolute_path)
---   end
--- end
 
 return {
   -- overrde plugin configs
@@ -21,19 +15,9 @@ return {
     override_options = overrides.nvimtree,
   },
 
-  ["nvim-telescope/telescope.nvim"] = {},
-  --   override_options = {
-  --     defaults = {
-  --       mappings = {
-  --         i = {
-  --           ["<C-k>"] = require("telescope.actions").move_selection_previous, -- move to prev result
-  --           ["<C-j>"] = require("telescope.actions").move_selection_next, -- move to next result
-  --           ["<C-q>"] = require("telescope.actions").send_selected_to_qflist + require("telescope.actions").open_qflist, -- send selected to quickfixlist
-  --         },
-  --       },
-  --     },
-  --   },
-  -- },
+  ["nvim-telescope/telescope.nvim"] = {
+    override_options = overrides.telescope,
+  },
 
   -- -- Override plugin definition options
   -- ["goolord/alpha-nvim"] = {

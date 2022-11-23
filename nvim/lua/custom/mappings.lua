@@ -37,6 +37,8 @@ M.general = {
     -- increment/decrement numbers
     ["<leader>+"] = { "<C-a>", "increment number" },
     ["<leader>-"] = { "<C-x>", "decrement number" },
+    ["<leader><leader>x"] = { "<cmd> PackerSync <CR>", "PackerSync" },
+    ["<leader><leader>z"] = { "<cmd> PackerCompile <CR>", "PackerCompile" },
 
     -- tabs
     -- ["<leader>to"] = { "<cmd> tabnew <CR>", "new tab" },

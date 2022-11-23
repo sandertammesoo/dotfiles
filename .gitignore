@@ -8,3 +8,4 @@ packer_compiled.lua
 nvim/plugin
 .luarc.json
 coc-settings.json
+lazygit/state.yml

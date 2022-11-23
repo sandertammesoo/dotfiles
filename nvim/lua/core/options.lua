@@ -10,10 +10,8 @@ g.theme_switcher_loaded = false
 opt.laststatus = 3 -- global statusline
 opt.showmode = false
 
--- opt.clipboard:append("unnamedplus")
 opt.clipboard = "unnamedplus"
 opt.cursorline = true
-opt.wrap = false
 
 -- Indenting
 opt.expandtab = true
@@ -21,7 +19,6 @@ opt.shiftwidth = 2
 opt.smartindent = true
 opt.tabstop = 2
 opt.softtabstop = 2
-opt.autoindent = true
 
 opt.fillchars = { eob = " " }
 opt.ignorecase = true
@@ -30,7 +27,6 @@ opt.mouse = "a"
 
 -- Numbers
 opt.number = true
-opt.relativenumber = true
 opt.numberwidth = 2
 opt.ruler = false
 
@@ -41,15 +37,8 @@ opt.signcolumn = "yes"
 opt.splitbelow = true
 opt.splitright = true
 opt.termguicolors = true
--- opt.background = "dark"
 opt.timeoutlen = 400
--- opt.timeoutlen = 0
 opt.undofile = true
-
--- backspace
-opt.backspace = "indent,eol,start"
-opt.iskeyword:append "-"
-opt.mousescroll = "ver:1,hor:1"
 
 -- interval for writing swap file to disk, also used by gitsigns
 opt.updatetime = 250

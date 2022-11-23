@@ -6,15 +6,8 @@ end
 
 local M = {}
 
----------------------
--- General Keymaps
----------------------
-
 M.general = {
   i = {
-    -- use jk to exit insert mode
-    ["jk"] = { "<ESC>", "exit insert mode" },
-
     -- go to  beginning and end
     ["<C-b>"] = { "<ESC>^i", "beginning of line" },
     ["<C-e>"] = { "<End>", "end of line" },
@@ -34,18 +27,9 @@ M.general = {
     ["<C-l>"] = { "<C-w>l", "window right" },
     ["<C-j>"] = { "<C-w>j", "window down" },
     ["<C-k>"] = { "<C-w>k", "window up" },
-    -- ["<leader>sv"] = { "<C-w>v", "split window vertically" },
-    -- ["<leader>sh"] = { "<C-w>h", "split window horisontally" },
-    -- ["<leader>se"] = { "<C-w>+", "make slipts equal" },
-    -- ["<leader>sx"] = { "<cmd> close <CR>", "close current split" },
 
     -- save
     ["<C-s>"] = { "<cmd> w <CR>", "save file" },
-    ["<C-s><C-a>"] = { "<cmd> wa <CR>", "save all files" },
-
-    -- quit
-    -- ["<C-q>"] = { "<cmd> q <CR>", "close file" },
-    ["<C-q><C-a>"] = { "<cmd> qa <CR>", "quit" },
 
     -- Copy all
     ["<C-c>"] = { "<cmd> %y+ <CR>", "copy whole file" },
@@ -53,13 +37,6 @@ M.general = {
     -- line numbers
     ["<leader>n"] = { "<cmd> set nu! <CR>", "toggle line number" },
     ["<leader>rn"] = { "<cmd> set rnu! <CR>", "toggle relative number" },
-
-    -- delete single character without copying into register
-    ["x"] = { "_x" },
-
-    -- increment/decrement numbers
-    ["<leader>+"] = { "<C-a>", "increment number" },
-    ["<leader>-"] = { "<C-x>", "decrement number" },
 
     -- update nvchad
     ["<leader>uu"] = { "<cmd> :NvChadUpdate <CR>", "update nvchad" },
@@ -82,15 +59,6 @@ M.general = {
 
     -- new buffer
     ["<leader>b"] = { "<cmd> enew <CR>", "new buffer" },
-
-    -- tabs
-    -- ["<leader>to"] = { "<cmd> tabnew <CR>", "new tab" },
-    -- ["<leader>tx"] = { "<cmd> tabclose <CR>", "close tab" },
-    -- ["<leader>tn"] = { "<cmd> tabn <CR>", "next tab" },
-    -- ["<leader>tp"] = { "<cmd> tabp <CR>", "prev tab" }, -- maybe switch to <SC-TAB>
-
-    -- edit dotfiles
-    -- ["<leader>ed"] = { "<cmd> lua require'sander.edit-dotfiles'.edit_neovim() <CR>", "edit dotfiles" },
   },
 
   t = { ["<C-x>"] = { termcodes "<C-\\><C-N>", "escape terminal mode" } },
@@ -166,27 +134,6 @@ M.lspconfig = {
   plugin = true,
 
   -- See `<cmd> :help vim.lsp.*` for documentation on any of the below functions
-
-  -- -- set keybinds
-  -- keymap.set("n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts) -- show definition, references
-  -- keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", opts) -- got to declaration
-  -- keymap.set("n", "gd", "<cmd>Lspsaga peek_definition<CR>", opts) -- see definition and make edits in window
-  -- keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) -- go to implementation
-  -- keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts) -- see available code actions
-  -- keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts) -- smart rename
-  -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_line_diagnostics<CR>", opts) -- show  diagnostics for line
-  -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts) -- show diagnostics for cursor
-  -- keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts) -- jump to previous diagnostic in buffer
-  -- keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts) -- jump to next diagnostic in buffer
-  -- keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts) -- show documentation for what is under cursor
-  -- keymap.set("n", "<leader>o", "<cmd>LSoutlineToggle<CR>", opts) -- see outline on right hand side
-  --
-  -- -- typescript specific keymaps (e.g. rename file and update imports)
-  -- if client.name == "tsserver" then
-  --   keymap.set("n", "<leader>rf", ":TypescriptRenameFile<CR>") -- rename file and update imports
-  --   keymap.set("n", "<leader>oi", ":TypescriptOrganizeImports<CR>") -- organize imports (not in youtube nvim video)
-  --   keymap.set("n", "<leader>ru", ":TypescriptRemoveUnused<CR>") -- remove unused variables (not in youtube nvim video)
-  -- end
 
   n = {
     ["gD"] = {
@@ -310,31 +257,6 @@ M.lspconfig = {
   },
 }
 
--- M.vimmaximizer = {
---   plugin = true,
---
---   n = {
---     -- toggle maximization
---     ["<leader>sm"] = { "<cmd> MaximizerToggle <CR>", "toggle split window maximization" },
---   },
--- }
-
--- M.diffview = {
---   plugin = true,
---
---   n = {
---     -- general
---     ["<leader>do"] = { "<cmd> DiffviewOpen <CR>", "open diffview" },
---     ["<leader>dx"] = { "<cmd> DiffviewClose <CR>", "close diffview" },
---     ["<leader>de"] = { "<cmd> DiffviewToggleFiles <CR>", "toggle files in diffview" },
---     ["<leader>du"] = { "<cmd> DiffviewRefresh <CR>", "refresh diffview" },
---
---     -- history
---     ["<leader>dha"] = { "<cmd> DiffviewFileHistory <CR>", "all history diffview" },
---     ["<leader>dhf"] = { "<cmd> DiffviewFileHistory % <CR>", "cur file history diffview" },
---   },
--- }
-
 M.nvimtree = {
   plugin = true,
 
@@ -344,35 +266,6 @@ M.nvimtree = {
 
     -- focus
     ["<leader>e"] = { "<cmd> NvimTreeFocus <CR>", "focus nvimtree" },
-
-    -- find file
-    ["<leader>ef"] = { "<cmd> NvimTreeFindFile <CR>", "focus current file in nvimtree" },
-
-    -- marks
-    ["<leader>mn"] = {
-      function()
-        require("nvim-tree.api").marks.navigate.next()
-      end,
-      "next mark",
-    },
-    ["<leader>mp"] = {
-      function()
-        require("nvim-tree.api").marks.navigate.prev()
-      end,
-      "prev mark",
-    },
-    ["<leader>ms"] = {
-      function()
-        require("nvim-tree.api").marks.navigate.select()
-      end,
-      "select mark",
-    },
-    ["<leader>ml"] = {
-      function()
-        require("nvim-tree.api").marks.list()
-      end,
-      "list  marks",
-    },
   },
 }
 
@@ -387,25 +280,17 @@ M.telescope = {
     ["<leader>fb"] = { "<cmd> Telescope buffers <CR>", "find buffers" },
     ["<leader>fh"] = { "<cmd> Telescope help_tags <CR>", "help page" },
     ["<leader>fo"] = { "<cmd> Telescope oldfiles <CR>", "find oldfiles" },
-    ["<leader>fk"] = { "<cmd> Telescope keymaps <CR>", "show keys" },
-    -- ["<leader>fp"] = { "<cmd> Telescope project <CR>", "show projects" },
-    -- ["<leader>fr"] = { "<cmd> lua require'telescope'.extensions.repo.cached_list{locate_opts={'-d', vim.env.HOME .. '/locatedb'}} <CR>", "show repos" },
-    -- ["<leader>fb"] = { "<cmd> lua require'telescope'.extensions.file_browser.file_browser{} <CR>", "show file browser" },
+    ["<leader>tk"] = { "<cmd> Telescope keymaps <CR>", "show keys" },
 
     -- git
-    ["<leader>gc"] = { "<cmd> Telescope git_commits <CR>", "git commits" },
-    ["<leader>gs"] = { "<cmd> Telescope git_status <CR>", "git status" },
-    ["<leader>gfc"] = { "<cmd> Telescope git_bcommits <CR>", "git commits for current file" },
-    ["<leader>gb"] = { "<cmd> Telescope git_branches <CR>", "git branches" },
+    ["<leader>cm"] = { "<cmd> Telescope git_commits <CR>", "git commits" },
+    ["<leader>gt"] = { "<cmd> Telescope git_status <CR>", "git status" },
 
     -- pick a hidden term
     ["<leader>pt"] = { "<cmd> Telescope terms <CR>", "pick hidden term" },
 
     -- theme switcher
     ["<leader>th"] = { "<cmd> Telescope themes <CR>", "nvchad themes" },
-
-    -- command palette
-    -- ["<leader>cp"] = { "<cmd> Telescope command_palette <CR>", "show command palette" },
   },
 }
 

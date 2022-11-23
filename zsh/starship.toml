@@ -46,7 +46,7 @@ format = "on [$hostname](bold yellow) "
 disabled = false
 
 [directory]
-truncation_length = 100
+truncation_length = 2
 truncation_symbol = "…/"
 truncate_to_repo = false
 home_symbol = " ~"

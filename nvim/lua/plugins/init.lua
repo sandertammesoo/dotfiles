@@ -1,11 +1,3 @@
--- -- autocommand that reloads neovim and installs/updates/removes plugins
--- -- when file is saved
-vim.cmd([[ 
-  augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost init.lua source <afile> | PackerSync
-  augroup end
-]])
 
 local plugins = {
   ["nvim-lua/plenary.nvim"] = { module = "plenary" },
@@ -18,22 +10,6 @@ local plugins = {
 			require("plugins")
 		end,
 	},
-
-  -- ["bluz71/vim-nightfly-guicolors"] = {}
-	-- use("szw/vim-maximizer") -- maximizes and restores current window
-	-- use("tpope/vim-surround") -- add, delete, change surroundings (it's awesome)
-	-- use("inkarkat/vim-ReplaceWithRegister") -- replace with register contents using motion (gr + motion)
-	-- use("nvim-lualine/lualine.nvim")
-
-	-- ["Nsindrets/diffview"] = {
-	-- 	config = function()
-	-- 		local present, diffview = pcall(require, "diffview")
-	--
-	-- 		if present then
-	-- 			diffview.setup()
-	-- 		end
-	-- 	end,
-	-- },
 
 	["NvChad/extensions"] = { module = { "telescope", "nvchad" } },
 
@@ -123,7 +99,6 @@ local plugins = {
 	},
 
 	-- lsp stuff
-	-- use("williamboman/mason-lspconfig.nvim") -- bridges gap b/w mason & lspconfig
 	["williamboman/mason.nvim"] = {
 		cmd = require("core.lazy_load").mason_cmds,
 		config = function()
@@ -168,13 +143,6 @@ local plugins = {
 	["hrsh7th/cmp-nvim-lsp"] = { after = "cmp-nvim-lua" },
 	["hrsh7th/cmp-buffer"] = { after = "cmp-nvim-lsp" },
 	["hrsh7th/cmp-path"] = { after = "cmp-buffer" },
-	-- use({ "glepnir/lspsaga.nvim", branch = "main" }) -- enhanced lsp uis
-	-- use("jose-elias-alvarez/typescript.nvim") -- additional functionality for typescript server (e.g. rename file & update imports)
-	-- use("onsails/lspkind.nvim") -- vs-code like icons for autocompletion
-
-	-- -- formatting & linting
-	-- use("jose-elias-alvarez/null-ls.nvim") -- configure formatters & linters
-	-- use("jayp0521/mason-null-ls.nvim") -- bridges gap b/w mason & null-ls
 
 	-- misc plugins
 	["windwp/nvim-autopairs"] = {
@@ -183,7 +151,6 @@ local plugins = {
 			require("plugins.configs.others").autopairs()
 		end,
 	},
-	-- use({ "windwp/nvim-ts-autotag", after = "nvim-treesitter" }) -- autoclose tags
 
 	["goolord/alpha-nvim"] = {
 		after = "base46",
@@ -216,13 +183,6 @@ local plugins = {
 		end,
 	},
 
-	-- use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" }) -- dependency for better sorting performance
-	-- use({ "nvim-telescope/telescope-project.nvim" }) --
-	-- use({ "nvim-telescope/telescope-file-browser.nvim" }) --
-	-- use({ "cljoly/telescope-repo.nvim" }) --
-	-- use({ "LinArcX/telescope-command-palette.nvim" }) --
-	-- use({ "NvChad/base46" }) --
-	-- use({ "nvim-telescope/telescope.nvim", branch = "0.1.x" }) -- fuzzy finder
 	["nvim-telescope/telescope.nvim"] = {
 		cmd = "Telescope",
 		config = function()

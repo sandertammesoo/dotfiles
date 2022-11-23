@@ -43,48 +43,6 @@ M.capabilities.textDocument.completion.completionItem = {
   },
 }
 
--- -- Change the Diagnostic symbols in the sign column (gutter)
--- -- (not in youtube nvim video)
--- local signs = { Error = " ", Warn = " ", Hint = "ﴞ ", Info = " " }
--- for type, icon in pairs(signs) do
---   local hl = "DiagnosticSign" .. type
---   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
--- end
-
--- configure html server
-lspconfig.html.setup({
-  capabilities = M.capabilities,
-  on_attach = M.on_attach,
-})
-
--- configure typescript server with plugin
--- require("jose-elias-alvarez/typescript.nvim").setup({
---   server = {
---     capabilities = M.capabilities,
---     on_attach = M.on_attach,
---   },
---   filetypes = {
---     'javascript',
---     'javascriptreact',
---     'javascript.jsx',
---     'typescript',
---     'typescriptreact',
---     'typescript.tsx',
---   },
--- })
-
--- configure css server
-lspconfig.cssls.setup({
-  capabilities = M.capabilities,
-  on_attach = M.on_attach,
-})
-
--- configure tailwindcss server
-lspconfig.tailwindcss.setup({
-  capabilities = M.capabilities,
-  on_attach = M.on_attach,
-})
-
 lspconfig.sumneko_lua.setup {
   on_attach = M.on_attach,
   capabilities = M.capabilities,

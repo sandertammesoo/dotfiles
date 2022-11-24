@@ -154,4 +154,19 @@ M.mason = {
   },
 }
 
+M.nvterm = {
+  terminals = {
+    type_opts = {
+      float = {
+        relative = "editor",
+        row = 0.1, -- 2*row + height = 1 for center align
+        height = 0.8,
+        col = 0.15, -- 2*col + width = 1 for center align
+        width = 0.7,
+        border = "single",
+      },
+    },
+  },
+}
+
 return M

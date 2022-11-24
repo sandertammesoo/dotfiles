@@ -190,4 +190,37 @@ M.telescope = {
   },
 }
 
+M.nvterm = {
+  plugin = true,
+
+  n = {
+    -- toggle maximization
+    ["<leader>sm"] = { "<cmd> MaximizerToggle <CR>", "toggle split window maximization" },
+
+    ["<leader>lgf"] = {
+      function()
+        -- require("nvterm.terminal").new "horizontal"
+        require("nvterm.terminal").send(" lazygit ", "float") -- the 2nd argument i.e direction is optional
+      end,
+      "Open Lazygit in float terminal",
+    },
+
+    ["<leader>lgh"] = {
+      function()
+        -- require("nvterm.terminal").new "horizontal"
+        require("nvterm.terminal").send(" lazygit ", "horizontal") -- the 2nd argument i.e direction is optional
+      end,
+      "Open Lazygit in horisontal terminal",
+    },
+
+    ["<leader>lgv"] = {
+      function()
+        -- require("nvterm.terminal").new "horizontal"
+        require("nvterm.terminal").send(" lazygit ", "vertical") -- the 2nd argument i.e direction is optional
+      end,
+      "Open Lazygit in vertical terminal",
+    },
+  },
+}
+
 return M

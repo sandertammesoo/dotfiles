@@ -45,6 +45,11 @@ return {
       require "custom.plugins.configs.null-ls"
     end,
   },
+
+  ["NvChad/nvterm"] = {
+    override_options = overrides.nvterm,
+  },
+
   --
   -- ["Nsindrets/diffview"] = {
   --   config = function()

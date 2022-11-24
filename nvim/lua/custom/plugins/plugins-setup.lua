@@ -3,7 +3,7 @@ local overrides = require "custom.plugins.configs.overrides"
 
 return {
   -- overrde plugin configs
-  ["nvim-treesitter/nvim-treesitter"] = {
+  ["nvim-treesitter/nvim-treesitter"] = { -- For syntax highlighting
     override_options = overrides.treesitter,
   },
 
@@ -11,27 +11,27 @@ return {
     override_options = overrides.mason,
   },
 
-  ["kyazdani42/nvim-tree.lua"] = {
+  ["kyazdani42/nvim-tree.lua"] = { -- Left-side file explorer
     override_options = overrides.nvimtree,
   },
 
-  ["nvim-telescope/telescope.nvim"] = {
+  ["nvim-telescope/telescope.nvim"] = { -- Fuzzy finder
     override_options = overrides.telescope,
   },
 
-  ["folke/which-key.nvim"] = {
+  ["folke/which-key.nvim"] = { -- Keymappings cheatsheet helper
     disable = false,
     cmd = "WhichKey",
     override_options = overrides.whichkey,
   },
 
   -- Override plugin definition options
-  ["goolord/alpha-nvim"] = {
+  ["goolord/alpha-nvim"] = { -- Neovim start dashboard view
     disable = false,
   },
 
   -- install a plugin
-  ["neovim/nvim-lspconfig"] = {
+  ["neovim/nvim-lspconfig"] = { -- Language Server Protocol / for syntax errors
     config = function()
       require "plugins.configs.lspconfig"
       require "custom.plugins.configs.lspconfig"
@@ -39,14 +39,34 @@ return {
   },
 
   -- code formatting, linting etc
-  ["jose-elias-alvarez/null-ls.nvim"] = {
+  ["jose-elias-alvarez/null-ls.nvim"] = { --
     after = "nvim-lspconfig",
     config = function()
       require "custom.plugins.configs.null-ls"
     end,
   },
 
-  ["NvChad/nvterm"] = {
+  ["hrsh7th/nvim-cmp"] = {
+    override_options = overrides.nvimcmp,
+  },
+
+  ["hrsh7th/cmp-nvim-lsp"] = {
+    override_options = overrides.cmpnvimlsp,
+  },
+
+  ["hrsh7th/cmp-buffer"] = {
+    override_options = overrides.cmpbuffer,
+  },
+
+  ["hrsh7th/cmp-path"] = {
+    override_options = overrides.cmppath,
+  },
+
+  ["L3MON4D3/LuaSnip"] = {
+    override_options = overrides.luasnip,
+  },
+
+  ["NvChad/nvterm"] = { -- For more native terminal buffer experience
     override_options = overrides.nvterm,
   },
 

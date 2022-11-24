@@ -6,6 +6,12 @@ local M = {}
 --
 -- }
 
+M.nvimcmp = {}
+M.cmpnvimlsp = {}
+M.cmpbuffer = {}
+M.cmppath = {}
+M.luasnip = {}
+
 -- git support in nvimtree
 M.nvimtree = {
   git = {

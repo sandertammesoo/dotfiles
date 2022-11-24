@@ -32,7 +32,7 @@ M.general = {
     ["<C-q><C-a>"] = { "<cmd> qa <CR>", "quit" },
 
     -- delete single character without copying into register
-    ["x"] = { "_x" },
+    ["x"] = { '"_x' },
 
     -- increment/decrement numbers
     ["<leader>+"] = { "<C-a>", "increment number" },

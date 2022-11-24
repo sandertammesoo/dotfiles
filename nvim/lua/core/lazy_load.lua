@@ -69,7 +69,7 @@ M.gitsigns = function()
   --     if vim.v.shell_error == 0 then
   --       vim.api.nvim_del_augroup_by_name "GitSignsLazyLoad"
   --       vim.schedule(function()
-          require("packer").loader "gitsigns.nvim"
+  require("packer").loader "gitsigns.nvim"
   --       end)
   --     end
   --   end,

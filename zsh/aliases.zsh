@@ -37,7 +37,7 @@ alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && k
 
 # Reload the shell (i.e. invoke as a login shell)
 # alias reload="exec $SHELL -l"
-alias reload!='. ~/.zshrc'
+alias reload!='. $XDG_CONFIG_HOME/.zshrc'
 alias reload="reload!"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages

@@ -9,63 +9,60 @@
     - [git submodule update --init --recursive, Installing submodules]
 
 - link:
-    ~/.dotfiles:
+    ~/.config/.dotfiles:
       relink: true
       path: ""
-    # ~/.bashrc:
-    #     relink: true
-    #     path: 'bash/bashrc'
-    ~/.zshrc:
+    ~/.config/.zsh:
       relink: true
-      path: "zsh/zshrc"
-    ~/.localrc:
+      path: "zsh"
+    ~/.config/.zshrc:
       relink: true
-      path: "zsh/.localrc"
-    # ~/.bash_profile:
-    #     relink: true
-    #     path: 'bash/bash_profile'
-    ~/.hushlogin:
+      path: "zsh/.zshrc"
+    ~/.config/.localrc:
       relink: true
-      path: "system/hushlogin"
-    ~/.editorconfig:
+      path: ".localrc"
+    ~/.config/starship.toml:
       relink: true
-      path: "system/editorconfig"
-    ~/.inputrc:
+      path: "zsh/starship.toml"
+    ~/.config/.hushlogin:
       relink: true
-      path: "system/inputrc"
-    ~/.gitconfig:
+      path: "system/.hushlogin"
+    ~/.config/.editorconfig:
       relink: true
-      path: "git/gitconfig"
-    ~/.gitattributes:
+      path: "system/.editorconfig"
+    ~/.config/.inputrc:
       relink: true
-      path: "git/gitattributes"
-    ~/.gitignore:
+      path: "system/.inputrc"
+    ~/.config/.gitconfig:
       relink: true
-      path: "git/gitignore_global"
-    ~/.vim:
+      path: "git/.gitconfig"
+    ~/.config/.gitattributes:
+      relink: true
+      path: "git/.gitattributes"
+    ~/.config/.gitignore:
+      relink: true
+      path: "git/.gitignore_global"
+    ~/.config/vim:
       relink: true
       path: "vim"
     ~/.config/nvim:
       relink: true
       path: "nvim"
-    ~/.nvm:
+    ~/.config/nvm:
       relink: true
       path: "nvm"
-    ~/.vimrc:
+    ~/.config/.vimrc:
       relink: true
-      path: "vim/vimrc"
-    ~/.warp:
+      path: "vim/.vimrc"
+    ~/.config/.warp:
       relink: true
       path: "warp"
-    ~/.cheatsheet:
+    ~/.config/.cheatsheet:
       relink: true
       path: "cheatsheet"
-    ~/.config/lazygit:
+    ~/.config/.lazygit:
       relink: true
       path: "lazygit"
-    ~/.config/starship.toml:
-      relink: true
-      path: "zsh/starship.toml"
     ~/projects:
       relink: true
       path: "$PROJECTS"

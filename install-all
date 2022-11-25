@@ -144,14 +144,14 @@ then
   # ##     ##       ##   ## ##      ##     ## ##       ##       ######### ##     ## ##          ##          ##
   # ##     ## ##    ##  ##   ##     ##     ## ##       ##       ##     ## ##     ## ##          ##    ##    ##
   #  #######   ######  ##     ##    ########  ######## ##       ##     ##  #######  ########    ##     ######
-  info "Set OS X defaults"
-  if $DOTS/osx/set-defaults.sh 2>&1
-  then
-    success "OS X defaults set"
-  else
-    fail "Error setting OS X defaults"
-  fi
-  user "Note that some of these changes require a logout/restart to take effect."
+  # info "Set OS X defaults"
+  # if $DOTS/osx/set-defaults.sh 2>&1
+  # then
+  #   success "OS X defaults set"
+  # else
+  #   fail "Error setting OS X defaults"
+  # fi
+  # user "Note that some of these changes require a logout/restart to take effect."
 
   # #### ##    ##  ######  ########    ###    ##       ##           ######   #######  ######## ######## ##      ##    ###    ########  ########
   #  ##  ###   ## ##    ##    ##      ## ##   ##       ##          ##    ## ##     ## ##          ##    ##  ##  ##   ## ##   ##     ## ##

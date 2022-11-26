@@ -18,4 +18,9 @@ if test ! $(which brew); then
 
 fi
 
+brew update
+brew update
+brew bundle
+brew cleanup
+
 exit 0

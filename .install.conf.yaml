@@ -14,55 +14,49 @@
       path: ""
     ~/.config/.zsh:
       relink: true
-      path: "zsh"
-    ~/.config/.zshrc:
-      relink: true
-      path: "zsh/.zshrc"
+      path: "xdg_config/zsh"
     ~/.config/.localrc:
       relink: true
-      path: ".localrc"
-    ~/.config/starship.toml:
-      relink: true
-      path: "zsh/starship.toml"
+      path: "xdg_config/.localrc"
     ~/.config/.hushlogin:
       relink: true
-      path: "system/.hushlogin"
+      path: "xdg_config/.hushlogin"
     ~/.config/.editorconfig:
       relink: true
-      path: "system/.editorconfig"
+      path: "xdg_config/.editorconfig"
     ~/.config/.inputrc:
       relink: true
-      path: "system/.inputrc"
-    ~/.config/.gitconfig:
-      relink: true
-      path: "git/.gitconfig"
-    ~/.config/.gitattributes:
-      relink: true
-      path: "git/.gitattributes"
-    ~/.config/.gitignore:
-      relink: true
-      path: "git/.gitignore_global"
-    ~/.config/vim:
-      relink: true
-      path: "vim"
-    ~/.config/nvim:
-      relink: true
-      path: "nvim"
+      path: "xdg_config/.inputrc"
     ~/.config/nvm:
       relink: true
-      path: "nvm"
-    ~/.config/.vimrc:
-      relink: true
-      path: "vim/.vimrc"
+      path: "xdg_config/nvm"
     ~/.config/.warp:
       relink: true
-      path: "warp"
-    ~/.config/.cheatsheet:
-      relink: true
-      path: "cheatsheet"
+      path: "xdg_config/warp"
     ~/.config/.lazygit:
       relink: true
-      path: "lazygit"
+      path: "xdg_config/lazygit"
+    ~/.config/nvim:
+      relink: true
+      path: "xdg_config/nvim"
+    ~/.config/vim:
+      relink: true
+      path: "xdg_config/vim"
+    ~/.config/git:
+      relink: true
+      path: "xdg_config/git"
+    # ~/.config/.gitconfig:
+    #   relink: true
+    #   path: "xdg_config/git/.gitconfig"
+    # ~/.config/.gitattributes:
+    #   relink: true
+    #   path: "xdg_config/git/.gitattributes"
+    # ~/.config/.gitignore:
+    #   relink: true
+    #   path: "xdg_config/git/.gitignore_global"
+    ~/.config/.cheatsheet:
+      relink: true
+      path: "misc/cheatsheet"
     ~/projects:
       relink: true
       path: "$PROJECTS"

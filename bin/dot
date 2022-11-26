@@ -38,7 +38,7 @@ while test $# -gt 0; do
 	shift
 done
 
-export ZSH=$HOME/.dotfiles
+export ZSH=$XDG_CONFIG_HOME/.dotfiles/zsh-setup-scripts
 
 # Set macOS defaults
 # $ZSH/osx/set-defaults.sh

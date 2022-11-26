@@ -1,3 +1,12 @@
+;
+; $XDG_CONFIG_HOME/git/config, ~/.gitconfig
+;   User-specific configuration files. When the XDG_CONFIG_HOME 
+;   environment variable is not set or empty, $HOME/.config/ is 
+;   used as $XDG_CONFIG_HOME.
+;   
+;   These are also called "global" configuration files. If both files exist, both files are read in the order given above.
+;
+
 [alias]
 
     promote = !$ZSH/bin/git-promote
@@ -106,7 +115,7 @@
     trustctime = false
 
     editor = nvim
-	excludesfile = ~/.gitignore
+	  ; excludesfile = ~/.gitignore
 
 [color]
 

@@ -37,5 +37,6 @@ esac
 
 export STARSHIP_DISTRO="$ICON"
 
+export STARSHIP_CONFIG=$ZDOTDIR/starship.toml
 # Load Starship
 eval "$(starship init zsh)"

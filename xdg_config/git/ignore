@@ -16,6 +16,7 @@
 ##########################
 *.swp
 *~
+*.code-workspace
 
 # Logs and databases #
 ######################
@@ -74,3 +75,8 @@ Session.vim
 
 # VIM: netrw.vim: Network oriented reading, writing, browsing (eg: ftp scp) 
 .netrwhist
+
+# ZSH files
+.zcompdump
+.zsh_history
+.zsh_sessions

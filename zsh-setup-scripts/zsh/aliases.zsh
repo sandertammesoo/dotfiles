@@ -24,7 +24,7 @@ alias -- -="cd -"
 alias dr="cd ~/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias cdf="cd ~/.dotfiles"
+alias cdf="cd $XDG_CONFIG_HOME/.dotfiles"
 alias p="cd $PROJECTS_CD"
 
 # Show/hide hidden files in Finder
@@ -37,7 +37,7 @@ alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && k
 
 # Reload the shell (i.e. invoke as a login shell)
 # alias reload="exec $SHELL -l"
-alias reload!='. $XDG_CONFIG_HOME/.zshrc'
+alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
 alias reload="reload!"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages

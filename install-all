@@ -1,63 +1,9 @@
 #!/usr/bin/env zsh
 
-# set -e
+set -e
 
-# ##     ## ######## ##       ########  ######## ########   ######
-# ##     ## ##       ##       ##     ## ##       ##     ## ##    ##
-# ##     ## ##       ##       ##     ## ##       ##     ## ##
-# ######### ######   ##       ########  ######   ########   ######
-# ##     ## ##       ##       ##        ##       ##   ##         ##
-# ##     ## ##       ##       ##        ##       ##    ##  ##    ##
-# ##     ## ######## ######## ##        ######## ##     ##  ######
-
-info () {
-  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
-}
-
-user () {
-  printf "\r  [ \033[0;33m??\033[0m ] $1\n"
-  #echo ''
-}
-
-success () {
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
-  #echo ''
-}
-
-info_stream () {
-  while read data; do
-      printf "\r  [ \033[00;34m..\033[0m ] $data\n"
-  done
-  # echo ''
-}
-
-fail () {
-  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
-  # echo ''
-  exit
-}
-
-setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]
-  then
-    info 'setup gitconfig'
-
-    git_credential='cache'
-    if [ "$(uname -s)" == "Darwin" ]
-    then
-      git_credential='osxkeychain'
-    fi
-
-    user ' - What is your github author name?'
-    read -e git_authorname
-    user ' - What is your github author email?'
-    read -e git_authoremail
-
-    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
-
-    success 'gitconfig'
-  fi
-}
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source helpers.zsh
 
 #  ######  ########    ###    ########  ########
 # ##    ##    ##      ## ##   ##     ##    ##
@@ -96,34 +42,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # ##     ## ##     ##    ##    ##     ## ##     ##    ##
 # ##     ## ##     ##    ##    ##     ## ##     ##    ##
 # ########   #######     ##    ########   #######     ##
-
-CONFIG=".install.conf.yaml"
-DOTBOT_DIR="dotbot"
-
-DOTBOT_BIN="bin/dotbot"
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-info "Update Dotbot git submodule dependencies"
-cd "${BASEDIR}"
-
-if git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive 2>&1
-then
-  success "Submodule sync successfull"
-else
-  fail "Error while: Submodule sync"
-fi
-
-if git submodule update --init --recursive "${DOTBOT_DIR}" 2>&1
-then
-  success "Submodule update successfull"
-else
-  fail "Error while: Submodule update"
-fi
-
-info "Start Dotbot"
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}" | info_stream
-success "Dotbot finished"
-
+source ./install
 
 # ##     ##    ###     ######      ######  ######## ##     ## ######## ########
 # ###   ###   ## ##   ##    ##    ##    ##    ##    ##     ## ##       ##
@@ -135,7 +54,7 @@ success "Dotbot finished"
 # If we're on a Mac, let's install and setup other stuff.
 if [ "$(uname -s)" = "Darwin" ]
 then
-  export DOTS=$HOME/.dotfiles
+  export DOTS=$XDG_CONFIG_HOME/.dotfiles
 
   #  #######   ######  ##     ##    ########  ######## ########    ###    ##     ## ##       ########  ######
   # ##     ## ##    ##  ##   ##     ##     ## ##       ##         ## ##   ##     ## ##          ##    ##    ##
@@ -161,7 +80,7 @@ then
   #  ##  ##   ### ##    ##    ##    ##     ## ##       ##          ##    ## ##     ## ##          ##    ##  ##  ## ##     ## ##    ##  ##
   # #### ##    ##  ######     ##    ##     ## ######## ########     ######   #######  ##          ##     ###  ###  ##     ## ##     ## ########
   info "Installing dependencies and software using $DOTS/script/install"
-  if source $DOTS/script/install  | info_stream #2>&1
+  if source $DOTS/zsh-setup-scripts/script/install  | info_stream #2>&1
   then
     success "Dependencies installed"
   else

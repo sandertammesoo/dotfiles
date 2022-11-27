@@ -12,6 +12,9 @@
     ~/.config/.dotfiles:
       relink: true
       path: ""
+    ~/.zshenv:
+      relink: true
+      path: "xdg_config/zsh/.zshenv"
     ~/.config/.zsh:
       relink: true
       path: "xdg_config/zsh"

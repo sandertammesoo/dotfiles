@@ -49,7 +49,7 @@ alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && 
 alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
-alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup;'
+alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; brew doctor;'
 
 alias cls='clear' # Good 'ol Clear Screen command
 alias grep='grep --color'

@@ -1,0 +1,4 @@
+#!/bin/zsh
+#
+
+security find-generic-password -wa "$1"

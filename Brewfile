@@ -12,6 +12,12 @@ tap 'homebrew/bundle'
 # Version Control
 brew 'git'
 brew 'git-flow'
+
+# https://github.com/jesseduffield/lazygit
+# https://www.youtube.com/watch?v=CPLdltN7wgE
+# https://github.com/akinsho/toggleterm.nvim#custom-terminal-usage
+brew 'lazygit'
+brew 'go' # needed for lazygit
 # brew 'uncrustify'
 
 # CLI Utils
@@ -44,6 +50,7 @@ brew 'starship'
 cask 'visual-studio-code'
 brew 'gh'
 brew 'nvim'
+brew 'stylua'
 brew 'node'
 # cask 'atom'
 # cask 'cocoapods'

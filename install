@@ -1,40 +1,8 @@
 #!/usr/bin/env zsh
 set -e
 
-# ##     ## ######## ##       ########  ######## ########   ######
-# ##     ## ##       ##       ##     ## ##       ##     ## ##    ##
-# ##     ## ##       ##       ##     ## ##       ##     ## ##
-# ######### ######   ##       ########  ######   ########   ######
-# ##     ## ##       ##       ##        ##       ##   ##         ##
-# ##     ## ##       ##       ##        ##       ##    ##  ##    ##
-# ##     ## ######## ######## ##        ######## ##     ##  ######
-
-info () {
-  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
-}
-
-user () {
-  printf "\r  [ \033[0;33m??\033[0m ] $1\n"
-  echo ''
-}
-
-success () {
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
-  echo ''
-}
-
-info_stream () {
-  while read data; do
-      printf "\r  [ \033[00;34m..\033[0m ] $data\n"
-  done
-  # echo ''
-}
-
-fail () {
-  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
-  # echo ''
-  exit
-}
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source helpers.zsh
 
 # ########   #######  ######## ########   #######  ########
 # ##     ## ##     ##    ##    ##     ## ##     ##    ##
@@ -45,15 +13,14 @@ fail () {
 # ########   #######     ##    ########   #######     ##
 
 CONFIG=".install.conf.yaml"
-DOTBOT_DIR="dotbot"
-
+DOTBOT_DIR="git-submodules/dotbot"
 DOTBOT_BIN="bin/dotbot"
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-echo "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}"
 
 info "Update Dotbot git submodule dependencies"
+info "cd ${BASEDIR}"
 cd "${BASEDIR}"
 
+info "git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive 2>&1"
 if git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive 2>&1
 then
   success "Submodule sync successfull"

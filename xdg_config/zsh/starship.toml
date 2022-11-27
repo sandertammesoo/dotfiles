@@ -89,6 +89,9 @@ disabled = false
 format = '[\[$time\]](green) '
 time_format = "%a %b %d %Y %T:%3f"
 
+[cmd_duration]
+disabled = false 
+
 # (deactivated because of no space left)
 # 
 [terraform]

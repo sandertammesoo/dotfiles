@@ -40,7 +40,26 @@ M.general = {
     ["<leader><leader>x"] = { "<cmd> PackerSync <CR>", "PackerSync" },
     ["<leader><leader>z"] = { "<cmd> PackerCompile <CR>", "PackerCompile" },
 
+    -- " Change the current word in insertmode.
+    -- "   Auto places you into the spot where you can start typing to change it.
+    -- nnoremap <c-w><c-r> :%s/<c-r><c-w>//g<left><left>
+    -- " Move line(s) up and down
+    -- inoremap <M-j> <Esc>:m .+1<CR>==gi
+    -- inoremap <M-k> <Esc>:m .-2<CR>==gi
+    -- vnoremap <M-j> :m '>+1<CR>gv=gv
+    -- vnoremap <M-k> :m '<-2<CR>gv=gv
+
     -- tabs
+    -- -- Switch between tabs
+    -- vim.keymap.set("n", "<Right>", function()
+    --   vim.cmd [[checktime]]
+    --   vim.api.nvim_feedkeys("gt", "n", true)
+    -- end)
+    --
+    -- vim.keymap.set("n", "<Left>", function()
+    --   vim.cmd [[checktime]]
+    --   vim.api.nvim_feedkeys("gT", "n", true)
+    -- end)
     -- ["<leader>to"] = { "<cmd> tabnew <CR>", "new tab" },
     -- ["<leader>tx"] = { "<cmd> tabclose <CR>", "close tab" },
     -- ["<leader>tn"] = { "<cmd> tabn <CR>", "next tab" },
@@ -50,6 +69,39 @@ M.general = {
     ["<leader>ed"] = { "<cmd> lua require'custom.edit-dotfiles'.edit_neovim() <CR>", "edit dotfiles" },
   },
 }
+
+-- -- Copied from xdg_config/nvim/lua/core/mappings.lua
+-- M.tabufline = {
+--   plugin = true,
+--
+--   n = {
+--     -- cycle through buffers
+--     ["<TAB>"] = {
+--       function()
+--         require("nvchad_ui.tabufline").tabuflineNext()
+--       end,
+--       "goto next buffer",
+--     },
+--
+--     ["<S-Tab>"] = {
+--       function()
+--         require("nvchad_ui.tabufline").tabuflinePrev()
+--       end,
+--       "goto prev buffer",
+--     },
+--
+--     -- pick buffers via numbers
+--     ["<Bslash>"] = { "<cmd> TbufPick <CR>", "Pick buffer" },
+--
+--     -- close buffer + hide terminal buffer
+--     ["<leader>x"] = {
+--       function()
+--         require("nvchad_ui.tabufline").close_buffer()
+--       end,
+--       "close buffer",
+--     },
+--   },
+-- }
 
 M.lspconfig = {
   n = {

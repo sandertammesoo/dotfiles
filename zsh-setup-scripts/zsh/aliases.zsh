@@ -1,3 +1,16 @@
+#!/bin/zsh
+
+# Reload the shell (i.e. invoke as a login shell)
+alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
+alias reload="reload!"
+alias s=reload
+
+# {{{1 Edit Aliases
+alias ez="$EDITOR $ZDOTDIR/.zshrc"
+alias gn="cd $XDG_CONFIG_HOME/nvim/"
+# alias en='$EDITOR ~/Git/config_manager/vim/.nvimrc'
+# }}}
+
 # grc overides for ls
 #   Made possible through contributions from generous benefactors like
 #   `brew install coreutils`
@@ -34,11 +47,6 @@ alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && kil
 # Hide/show all desktop icons (useful when presenting)
 alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-
-# Reload the shell (i.e. invoke as a login shell)
-# alias reload="exec $SHELL -l"
-alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
-alias reload="reload!"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup;'

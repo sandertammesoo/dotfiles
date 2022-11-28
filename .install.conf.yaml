@@ -36,7 +36,7 @@
     ~/.config/.warp:
       relink: true
       path: "xdg_config/warp"
-    ~/.config/.lazygit:
+    ~/.config/lazygit:
       relink: true
       path: "xdg_config/lazygit"
     ~/.config/nvim:

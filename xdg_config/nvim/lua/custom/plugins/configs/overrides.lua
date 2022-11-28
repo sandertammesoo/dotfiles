@@ -6,8 +6,33 @@ local M = {}
 --
 -- }
 
-M.nvimcmp = {}
+-- M.nvimcmp = {
+--   snippet = {
+--     expand = function(args)
+--       require("luasnip").lsp_expand(args.body)
+--     end,
+--   },
+--   formatting = {
+--     format = function(_, vim_item) -- For showing form which source the completion comes from on the right of the completion suggestion box
+--       local icons = require("nvchad_ui.icons").lspkind
+--       vim_item.kind = string.format("%s %s %s", icons[vim_item.kind], vim_item.kind)
+--       return vim_item
+--     end,
+--   },
+--   sources = {
+--     { name = "nvim_lua" },
+--     { name = "nvim_lsp" },
+--     { name = "path" },
+--     { name = "luasnip" },
+--     { name = "buffer", keyword_length = 5 }, -- max_item_count = 3 },
+--   },
+--   experimental = {
+--     native_menu = false,
+--     ghost_text = true,
+--   },
+-- }
 M.cmpnvimlsp = {}
+M.cmpnvimlua = {}
 M.cmpbuffer = {}
 M.cmppath = {}
 M.luasnip = {}

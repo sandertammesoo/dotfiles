@@ -26,6 +26,7 @@ return {
   },
 
   -- Override plugin definition options
+  -- TODO: Use vim-startify instead? https://github.com/mhinz/vim-startify
   ["goolord/alpha-nvim"] = { -- Neovim start dashboard view
     disable = false,
   },
@@ -38,8 +39,7 @@ return {
     end,
   },
 
-  -- code formatting, linting etc
-  ["jose-elias-alvarez/null-ls.nvim"] = { --
+  ["jose-elias-alvarez/null-ls.nvim"] = { -- code formatting, linting etc
     after = "nvim-lspconfig",
     config = function()
       require "custom.plugins.configs.null-ls"
@@ -47,18 +47,26 @@ return {
   },
 
   ["hrsh7th/nvim-cmp"] = {
-    override_options = overrides.nvimcmp,
+    -- override_options = overrides.nvimcmp,
+    config = function()
+      require "plugins.configs.cmp"
+      require "custom.plugins.configs.cmp"
+    end,
   },
 
-  ["hrsh7th/cmp-nvim-lsp"] = {
+  ["hrsh7th/cmp-nvim-lua"] = { -- When writing lua, it has special nvim knowlede and does good completions
+    override_options = overrides.cmpnvimlua,
+  },
+
+  ["hrsh7th/cmp-nvim-lsp"] = { -- To get super easy auto imports on completes
     override_options = overrides.cmpnvimlsp,
   },
 
-  ["hrsh7th/cmp-buffer"] = {
+  ["hrsh7th/cmp-buffer"] = { -- Completes words from the current buffer that your in
     override_options = overrides.cmpbuffer,
   },
 
-  ["hrsh7th/cmp-path"] = {
+  ["hrsh7th/cmp-path"] = { -- Completes files
     override_options = overrides.cmppath,
   },
 

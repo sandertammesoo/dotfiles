@@ -41,9 +41,11 @@ M.general = {
     ["<leader><leader>c"] = { "<cmd> PackerCompile <CR>", "PackerCompile" },
     -- ["<leader><leader>x"] = { ":call tj#save_and_exec()<CR>", "Reload all saved nvim conf" }, -- Currently not workig properly with NvChad loading logic :/
 
-    -- " Change the current word in insertmode.
-    -- "   Auto places you into the spot where you can start typing to change it.
+    -- Change the current word in insertmode.
+    --   Auto places you into the spot where you can start typing to change it.
     -- nnoremap <c-w><c-r> :%s/<c-r><c-w>//g<left><left>
+    ["<C-w><C-r>"] = { "dei", "replace word" },
+
     -- " Move line(s) up and down
     -- inoremap <M-j> <Esc>:m .+1<CR>==gi
     -- inoremap <M-k> <Esc>:m .-2<CR>==gi

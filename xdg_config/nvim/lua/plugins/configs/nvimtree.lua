@@ -13,7 +13,8 @@ local options = {
   },
   disable_netrw = true,
   hijack_netrw = true,
-  open_on_setup = false,
+  open_on_setup = true,
+  open_on_setup_file = true,
   ignore_ft_on_setup = { "alpha" },
   hijack_cursor = true,
   hijack_unnamed_buffer_when_opening = false,
@@ -23,13 +24,18 @@ local options = {
     update_cwd = false,
   },
   view = {
+    relativenumber = true,
+    --   -- preserve_window_proportions = true,
+    --   mappings = {
+    --     { key = ".", action = "cd_dot", action_cb = cd_dot_cb }, -- run_file_command
+    --   },
     adaptive_size = true,
     side = "left",
     width = 25,
     hide_root_folder = true,
   },
   git = {
-    enable = false,
+    enable = true,
     ignore = true,
   },
   filesystem_watchers = {
@@ -41,7 +47,7 @@ local options = {
     },
   },
   renderer = {
-    highlight_git = false,
+    highlight_git = true,
     highlight_opened_files = "none",
 
     indent_markers = {
@@ -53,7 +59,7 @@ local options = {
         file = true,
         folder = true,
         folder_arrow = true,
-        git = false,
+        git = true,
       },
 
       glyphs = {

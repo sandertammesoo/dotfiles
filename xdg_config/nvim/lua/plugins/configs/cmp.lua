@@ -60,7 +60,8 @@ local options = {
     ["<C-g>"] = cmp.mapping.complete(),
     ["<C-e>"] = cmp.mapping.close(),
     ["<CR>"] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
+      -- behavior = cmp.ConfirmBehavior.Replace,
+      behavior = cmp.ConfirmBehavior.Insert,
       select = false,
     },
     ["<Tab>"] = cmp.mapping(function(fallback)
@@ -89,11 +90,19 @@ local options = {
     }),
   },
   sources = {
-    { name = "luasnip" },
-    { name = "nvim_lsp" },
-    { name = "buffer" },
     { name = "nvim_lua" },
+    { name = "nvim_lsp" },
     { name = "path" },
+    { name = "luasnip" },
+    {
+      name = "buffer",
+      keyword_length = 5,
+      -- max_item_count  = 3
+    },
+  },
+  experimental = {
+    native_menu = false,
+    ghost_text = true,
   },
 }
 
@@ -101,3 +110,12 @@ local options = {
 options = require("core.utils").load_override(options, "hrsh7th/nvim-cmp")
 
 cmp.setup(options)
+
+-- nvim-cmp highlighting groups
+-- local _, _, Group, g, s = require("tjdevries/colorbuddy").setup()
+--
+-- Group.new("CmpItemAbbr", g.Comment)
+-- Group.new("CmpItemAbbrDeprecated", g.Error)
+-- Group.new("CmpItemAbbrMatchFuzzy", g.CmpItemAbbr.fg:dark(), nil, s.italic)
+-- Group.new("CmpItemKind", g.Special)
+-- Group.new("CmpItemMenu", g.NonText)

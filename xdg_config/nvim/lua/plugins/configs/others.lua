@@ -107,9 +107,26 @@ M.luasnip = function()
     return
   end
 
+  local types_present, types = pcall(require, "luasnip.util.types")
+
+  if not types_present then
+    return
+  end
+
   local options = {
-    history = true,
-    updateevents = "TextChanged,TextChangedI",
+    history = true, -- This tells LuaSnip to remmember to keep around the last snippet. You can jump back into it even if you move olutside of the selection.
+    updateevents = "TextChanged,TextChangedI", -- This one is cool cause if you have dynamic snippets, it updates as you type.
+    enable_autosnippets = true, -- Autosnippets
+
+    -- Crazy highlights
+    -- ext_opts = nil,
+    ext_opts = {
+      [types.choiceNode] = {
+        active = {
+          virt_text = { { "<-", "Error" } },
+        },
+      },
+    },
   }
 
   options = load_override(options, "L3MON4D3/LuaSnip")

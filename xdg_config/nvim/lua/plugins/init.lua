@@ -161,6 +161,9 @@ local plugins = {
   ["numToStr/Comment.nvim"] = {
     module = "Comment",
     keys = { "gc", "gb" },
+    basic = true, -- includes 'gcc', 'gcb', 'gc[count]{motion}', 'gc[count]{motion}'
+    extra = true, -- includes 'gco', 'gcO', 'gcA'
+    extended = true, -- includes 'g>', 'g<', 'g>[count]{motion}' and 'gc<[count]{motion}'
     config = function()
       require("plugins.configs.others").comment()
     end,

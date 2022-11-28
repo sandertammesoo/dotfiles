@@ -54,9 +54,9 @@ opt.cindent = true
 opt.wrap = true
 -- opt.wrap = false
 
-opt.tabstop = 4
-opt.shiftwidth = 4
-opt.softtabstop = 4
+opt.tabstop = 2
+opt.shiftwidth = 2
+opt.softtabstop = 2
 opt.expandtab = true
 
 opt.breakindent = true
@@ -80,8 +80,6 @@ opt.mouse = "a"
 -- Helpful related items:
 --   1. :center, :left, :right
 --   2. gw{motion} - Put cursor back after formatting motion.
---
--- TODO: w, {v, b, l}
 opt.formatoptions = opt.formatoptions
   - "a" -- Auto formatting is BAD.
   - "t" -- Don't auto format my code. I got linters for that.

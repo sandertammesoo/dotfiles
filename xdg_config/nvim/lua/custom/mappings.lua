@@ -37,8 +37,9 @@ M.general = {
     -- increment/decrement numbers
     ["<leader>+"] = { "<C-a>", "increment number" },
     ["<leader>-"] = { "<C-x>", "decrement number" },
-    ["<leader><leader>x"] = { "<cmd> PackerSync <CR>", "PackerSync" },
-    ["<leader><leader>z"] = { "<cmd> PackerCompile <CR>", "PackerCompile" },
+    ["<leader><leader>s"] = { "<cmd> PackerSync <CR>", "PackerSync" },
+    ["<leader><leader>c"] = { "<cmd> PackerCompile <CR>", "PackerCompile" },
+    -- ["<leader><leader>x"] = { ":call tj#save_and_exec()<CR>", "Reload all saved nvim conf" }, -- Currently not workig properly with NvChad loading logic :/
 
     -- " Change the current word in insertmode.
     -- "   Auto places you into the spot where you can start typing to change it.

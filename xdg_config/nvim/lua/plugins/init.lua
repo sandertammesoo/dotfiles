@@ -6,6 +6,12 @@ local plugins = {
 
   ["lewis6991/impatient.nvim"] = {},
 
+  ["jakelogemann/nvim-ide-plugin"] = {
+    config = function()
+      require "plugins.configs.nvimide"
+    end,
+  },
+
   ["wbthomason/packer.nvim"] = {
     cmd = require("core.lazy_load").packer_cmds, -- {{{
     config = function()

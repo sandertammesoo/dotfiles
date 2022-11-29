@@ -25,7 +25,7 @@ local options = {
   },
   view = {
     relativenumber = true,
-    --   -- preserve_window_proportions = true,
+    preserve_window_proportions = true,
     --   mappings = {
     --     { key = ".", action = "cd_dot", action_cb = cd_dot_cb }, -- run_file_command
     --   },

@@ -124,6 +124,13 @@ local plugins = {
     end,
   }, -- }}}
 
+  ["glepnir/lspsaga.nvim"] = { -- enhanced lsp uis
+    -- after = "nvim-lspconfig", -- {{{
+    config = function()
+      require "plugins.configs.lspsaga"
+    end,
+  }, -- }}}
+
   ["jose-elias-alvarez/null-ls.nvim"] = { -- code formatting, linting etc
     after = "nvim-lspconfig", -- {{{
     config = function()

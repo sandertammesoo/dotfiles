@@ -177,32 +177,43 @@ M.lspconfig = {
   -- See `<cmd> :help vim.lsp.*` for documentation on any of the below functions
 
   n = {
+
+    ["gf"] = {
+      -- function()
+      --   vim.lsp.buf.definition()
+      -- end,
+      "<cmd>Lspsaga lsp_finder<CR>",
+      "show definition, references (lspsaga)",
+    },
+
     ["gD"] = {
       function()
         vim.lsp.buf.declaration()
       end,
-      "lsp declaration",
+      "go to declaration (lsp)",
     },
 
     ["gd"] = {
-      function()
-        vim.lsp.buf.definition()
-      end,
-      "lsp definition",
+      -- function()
+      --   vim.lsp.buf.definition()
+      -- end,
+      "<cmd>Lspsaga peek_definition<CR>",
+      "see definition and edit (lspsaga)",
     },
 
     ["K"] = {
-      function()
-        vim.lsp.buf.hover()
-      end,
-      "lsp hover",
+      -- function()
+      --   vim.lsp.buf.hover()
+      -- end,
+      "<cmd>Lspsaga hover_doc<CR>",
+      "show documentation (lspsaga)",
     },
 
     ["gi"] = {
       function()
         vim.lsp.buf.implementation()
       end,
-      "lsp implementation",
+      "go to implementation (lsp)",
     },
 
     ["<leader>ls"] = {
@@ -223,26 +234,32 @@ M.lspconfig = {
       function()
         vim.lsp.buf.rename()
       end,
-      "rename",
+      "rename (lsp)",
+    },
+
+    ["<leader>rn"] = {
+      "<cmd>Lspsaga rename<CR>",
+      "rename (lspsaga)",
     },
 
     ["<leader>ra"] = {
       function()
         require("nvchad_ui.renamer").open()
       end,
-      "lsp rename",
+      "rename (nvchad)",
     },
 
     ["<leader>ca"] = {
-      function()
-        vim.lsp.buf.code_action()
-      end,
-      "lsp code_action",
+      -- function()
+      --   vim.lsp.buf.code_action()
+      -- end,
+      "<cmd>Lspsaga code_action<CR>",
+      "see code actions (lspsaga)",
     },
 
     ["gr"] = {
       "<cmd> Telescope lsp_references<CR>",
-      "lsp references",
+      "show references (tele)",
     },
     -- ["gr"] = {
     --   function()
@@ -325,29 +342,26 @@ M.lspconfig = {
       end,
       "goto_next",
     },
+
+    ["<leader>o"] = {
+      "<cmd>LSoutlineToggle<CR>",
+      "see outline",
+    },
+
     --   Ideas for more keybinds{{{
-    --   -- See `<cmd> :help vim.lsp.*` for documentation on any of the below functions
-    --
-    --   -- -- set keybinds
-    --   -- keymap.set("n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts) -- show definition, references
-    --   -- keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", opts) -- got to declaration
-    --   -- keymap.set("n", "gd", "<cmd>Lspsaga peek_definition<CR>", opts) -- see definition and make edits in window
-    --   -- keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) -- go to implementation
-    --   -- keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts) -- see available code actions
-    --   -- keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts) -- smart rename
-    --   -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_line_diagnostics<CR>", opts) -- show  diagnostics for line
-    --   -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts) -- show diagnostics for cursor
-    --   -- keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts) -- jump to previous diagnostic in buffer
-    --   -- keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts) -- jump to next diagnostic in buffer
-    --   -- keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts) -- show documentation for what is under cursor
-    --   -- keymap.set("n", "<leader>o", "<cmd>LSoutlineToggle<CR>", opts) -- see outline on right hand side
-    --   --
-    --   -- -- typescript specific keymaps (e.g. rename file and update imports)
-    --   -- if client.name == "tsserver" then
-    --   --   keymap.set("n", "<leader>rf", ":TypescriptRenameFile<CR>") -- rename file and update imports
-    --   --   keymap.set("n", "<leader>oi", ":TypescriptOrganizeImports<CR>") -- organize imports (not in youtube nvim video)
-    --   --   keymap.set("n", "<leader>ru", ":TypescriptRemoveUnused<CR>") -- remove unused variables (not in youtube nvim video)
-    --   -- end}}}
+    -- set keybinds
+    -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_line_diagnostics<CR>", opts) -- show  diagnostics for line
+    -- keymap.set("n", "<leader>d", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts) -- show diagnostics for cursor
+    -- keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts) -- jump to previous diagnostic in buffer
+    -- keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts) -- jump to next diagnostic in buffer
+
+    -- typescript specific keymaps (e.g. rename file and update imports)
+    -- if client.name == "tsserver" then
+    --   keymap.set("n", "<leader>rf", ":TypescriptRenameFile<CR>") -- rename file and update imports
+    --   keymap.set("n", "<leader>oi", ":TypescriptOrganizeImports<CR>") -- organize imports (not in youtube nvim video)
+    --   keymap.set("n", "<leader>ru", ":TypescriptRemoveUnused<CR>") -- remove unused variables (not in youtube nvim video)
+    -- end
+    -- }}}
   },
 } -- }}}
 

@@ -114,6 +114,12 @@ local plugins = {
     end,
   }, -- }}}
 
+  -- use("jose-elias-alvarez/typescript.nvim")
+  ["jose-elias-alvarez/typescript.nvim"] = { --[[ after = "LuaSnip" ]]
+  }, -- additional functionality for typescript server (e.g. rename file & update imports)
+  ["jose-elias-alvarez/nvim-lsp-ts-utils"] = {},
+  ["williamboman/nvim-lsp-installer"] = {},
+
   ["neovim/nvim-lspconfig"] = { -- Language Server Protocol / for syntax errors
     opt = true, -- {{{
     setup = function()
@@ -251,7 +257,6 @@ local plugins = {
 -- use("nvim-lualine/lualine.nvim")
 
 -- use({ "glepnir/lspsaga.nvim", branch = "main" }) -- enhanced lsp uis
--- use("jose-elias-alvarez/typescript.nvim") -- additional functionality for typescript server (e.g. rename file & update imports)
 -- use("onsails/lspkind.nvim") -- vs-code like icons for autocompletion
 
 -- -- formatting & linting

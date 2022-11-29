@@ -31,6 +31,7 @@ local sources = {
       return utils.root_has_file ".eslintrc.js" -- change file extension if you use something else
     end,
   },
+  require "typescript.extensions.null-ls.code-actions",
 }
 
 -- configure null_ls

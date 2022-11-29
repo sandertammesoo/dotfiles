@@ -52,8 +52,6 @@ brew 'luarocks' # Needed for Nvim Mason
 brew 'composer' # Needed for Nvim Mason
 brew 'php' # Needed for Nvim Mason
 brew 'lua-language-server'
-brew 'yaml-language-server'
-brew 'bash-language-server'
 brew 'node'
 # cask 'atom'
 # cask 'cocoapods'

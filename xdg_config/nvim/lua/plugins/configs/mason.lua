@@ -28,8 +28,8 @@ local options = {
     "json-lsp",
 
     -- -- shell
-    -- "shfmt",
-    -- "shellcheck",
+    "shfmt",
+    "shellcheck",
   }, -- not an option from mason.nvim
 
   PATH = "skip",

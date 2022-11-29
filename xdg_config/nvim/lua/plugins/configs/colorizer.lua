@@ -1,4 +1,4 @@
-local load_override = R("core.utils").load_override
+-- local load_override = R("core.utils").load_override
 
 local present, colorizer = pcall(require, "colorizer")
 
@@ -23,7 +23,7 @@ local options = {
   },
 }
 
-options = load_override(options, "NvChad/nvim-colorizer.lua")
+-- options = load_override(options, "NvChad/nvim-colorizer.lua")
 colorizer.setup(options)
 -- execute colorizer as soon as possible
 vim.defer_fn(function()

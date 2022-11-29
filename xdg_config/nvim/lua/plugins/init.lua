@@ -19,7 +19,7 @@ local plugins = {
     end,
   }, -- }}}
 
-  ["NvChad/extensions"] = { module = { "telescope", "nvchad" } },
+  -- ["NvChad/extensions"] = { module = { "telescope", "nvchad" } },
 
   ["NvChad/base46"] = {
     config = function() -- {{{
@@ -31,24 +31,24 @@ local plugins = {
     end,
   }, -- }}}
 
-  ["NvChad/ui"] = {
-    after = "base46", -- {{{
-    config = function()
-      local present, nvchad_ui = pcall(require, "nvchad_ui")
-
-      if present then
-        nvchad_ui.setup()
-      end
-    end,
-    --  override_options = {
-    --    tabufline = {
-    --      lazyload = false, -- to show tabufline by default
-    --      overriden_modules = function()
-    --        return require "custom.configs.xyz"
-    --      end,
-    --    },
-    --  },
-  }, -- }}}
+  -- ["NvChad/ui"] = {
+  --   after = "base46", -- {{{
+  --   config = function()
+  --     local present, nvchad_ui = pcall(require, "nvchad_ui")
+  --
+  --     if present then
+  --       nvchad_ui.setup()
+  --     end
+  --   end,
+  --   --  override_options = {
+  --   --    tabufline = {
+  --   --      lazyload = false, -- to show tabufline by default
+  --   --      overriden_modules = function()
+  --   --        return require "custom.configs.xyz"
+  --   --      end,
+  --   --    },
+  --   --  },
+  -- }, -- }}}
 
   ["NvChad/nvterm"] = { -- For more native terminal buffer experience
     module = "nvterm", -- {{{
@@ -61,7 +61,7 @@ local plugins = {
   }, -- }}}
 
   ["kyazdani42/nvim-web-devicons"] = {
-    after = "ui", -- {{{
+    -- after = "ui", -- {{{
     module = "nvim-web-devicons",
     config = function()
       require "plugins.configs.devicons"
@@ -79,15 +79,15 @@ local plugins = {
     end,
   }, -- }}}
 
-  ["NvChad/nvim-colorizer.lua"] = {
-    opt = true, -- {{{
-    setup = function()
-      require("core.lazy_load").on_file_open "nvim-colorizer.lua"
-    end,
-    config = function()
-      require "plugins.configs.colorizer"
-    end,
-  }, -- }}}
+  -- ["NvChad/nvim-colorizer.lua"] = {
+  --   opt = true, -- {{{
+  --   setup = function()
+  --     require("core.lazy_load").on_file_open "nvim-colorizer.lua"
+  --   end,
+  --   config = function()
+  --     require "plugins.configs.colorizer"
+  --   end,
+  -- }, -- }}}
 
   ["nvim-treesitter/nvim-treesitter"] = { -- For syntax highlighting
     module = "nvim-treesitter", -- {{{

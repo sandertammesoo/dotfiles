@@ -79,8 +79,8 @@ local config = {
                         signcolumn = "auto", -- sets vim.opt.signcolumn to auto
 
                         -- My additions
-                        incsearch = true,
-                        inccommand = "split",
+                        -- incsearch = true,
+                        -- inccommand = "split",
                         shada = { "!", "'1000", "<50", "s10", "h" },
                         showmatch = true, -- Show matching brackets when text indicator is over them
                         autoindent = true,
@@ -100,7 +100,7 @@ local config = {
                         -- backspace = vim.opt.backspace + { "indent", "eol", "start", "nostop" },
                         mousescroll = "ver:1,hor:1",
                         pumblend = 17,
-                        wildmode = "longest:full",
+                        -- wildmode = "longest:full",
                         diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal" },
                 },
                 g = {

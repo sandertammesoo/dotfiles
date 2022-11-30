@@ -15,7 +15,8 @@ local config = {
         updater = {
                 remote = "origin", -- remote to use
                 channel = "nightly", -- "stable" or "nightly"
-                version = "latest", -- "latest", tag name, or regex search like "v1.*" to only do updates before v2 (STABLE ONLY)
+                -- "latest", tag name, or regex search like "v1.*" to only do updates before v2 (STABLE ONLY
+                version = "latest",
                 branch = "main", -- branch name (NIGHTLY ONLY)
                 commit = nil, -- commit hash (NIGHTLY ONLY)
                 pin_plugins = nil, -- nil, true, false (nil will pin plugins on stable only)
@@ -105,12 +106,14 @@ local config = {
                 },
                 g = {
                         mapleader = " ", -- sets vim.g.mapleader
-                        autoformat_enabled = true, -- enable or disable auto formatting at start (lsp.formatting.format_on_save must be enabled)
+                        -- enable or disable auto formatting at start (lsp.formatting.format_on_save must be enabled)
+                        autoformat_enabled = true,
                         cmp_enabled = true, -- enable completion at start
                         autopairs_enabled = true, -- enable autopairs at start
                         diagnostics_enabled = true, -- enable diagnostics at start
                         status_diagnostics_enabled = true, -- enable diagnostics in statusline
-                        icons_enabled = true, -- disable icons in the UI (disable if no nerd font is available, requires :PackerSync after changing)
+                        -- disable icons (disable if no nerd font is available, requires :PackerSync after changing)
+                        icons_enabled = true,
                         ui_notifications_enabled = true, -- disable notifications when toggling UI elements
                         snippets = "luasnip",
                 },

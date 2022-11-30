@@ -1,3 +1,4 @@
+#!/bin/zsh
 
 
 # Always list directory contents upon 'cd'

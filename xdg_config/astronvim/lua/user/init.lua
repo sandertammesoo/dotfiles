@@ -4,6 +4,11 @@
 -- You can think of a Lua "table" as a dictionary like data structure the
 -- normal format is "key = value". These also handle array like data structures
 -- where a value with no key simply has an implicit numeric key
+
+-- Setup globals that I expect to be always available.
+--  See `./lua/custom/globals.lua` for more information.
+require("user.globals")
+
 local config = {
 
         -- Configure AstroNvim updates

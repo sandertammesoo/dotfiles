@@ -1,3 +1,4 @@
+#!/bin/zsh
 
 # I dont know which works. (Source: https://www.youtube.com/watch?v=CF1tMjvHDRA)
 #source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh

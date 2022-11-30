@@ -1,3 +1,4 @@
+#!/bin/zsh
 alias h="history"
 
 # Get week number

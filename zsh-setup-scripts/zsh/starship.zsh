@@ -1,3 +1,4 @@
+#!/bin/zsh
 # find out which distribution we are running on
 LFILE="/etc/*-release"
 MFILE="/System/Library/CoreServices/SystemVersion.plist"

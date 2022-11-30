@@ -1,162 +1,69 @@
-local opt = vim.opt
-local g = vim.g
-
--- if vim.g.neovide then
---   vim.g.neovide_cursor_trail_legnth = 0
---   vim.g.neovide_cursor_animation_length = 0
---   vim.o.guifont = "Jetbrains Mono"
--- end
-
--- Theme selection options
-g.nvchad_theme = "onedark"
-g.toggle_theme_icon = "   "
-g.transparency = false
-g.theme_switcher_loaded = false
-
-opt.laststatus = 3 -- Enable global statusline
-opt.showmode = false -- ??
-opt.showcmd = true
-opt.cmdheight = 1 -- Height of the command bar
-opt.incsearch = true -- Makes search act like search in modern browsers
-opt.inccommand = "split"
--- opt.swapfile = false -- Living on the edge
-opt.shada = { "!", "'1000", "<50", "s10", "h" }
-opt.showmatch = true -- show matching brackets when text indicator is over them
-
-opt.clipboard = "unnamedplus" -- Enable system clipboard
-opt.cursorline = true -- Highlight cursorline
-
--- Indenting
-opt.autoindent = true
-opt.cindent = true
-opt.wrap = true
--- opt.wrap = false
-opt.expandtab = true
-opt.shiftwidth = 2
-opt.smartindent = true
-opt.tabstop = 2
-opt.softtabstop = 2
-opt.breakindent = true
-opt.showbreak = string.rep(" ", 3) -- Make it so that long lines wrap smartly
-opt.linebreak = true
-opt.foldmethod = "marker"
-opt.foldlevel = 0
-opt.modelines = 1
-
-opt.fillchars = { eob = " " }
-opt.ignorecase = true -- Ignore case when searching...
-opt.smartcase = true -- ... unless there is a capital letter in the query
-opt.mouse = "a"
-
--- Numbers
-opt.relativenumber = true -- Show line numbers
-opt.number = true -- But show the actual number for the line we're on
-opt.numberwidth = 2
-opt.ruler = false
-
--- disable nvim intro
-opt.shortmess:append "sI"
-
-opt.signcolumn = "yes"
-opt.hidden = true -- I like having buffers stay around
-opt.equalalways = false -- I don't like my windows changing all the time
-opt.splitright = true -- Prefer windows splitting to the right
-opt.splitbelow = true -- Prefer windows splitting to the bottom
-opt.termguicolors = true
-opt.timeoutlen = 400
-opt.undofile = true
--- opt.hlsearch = true -- I wouldn't use this without my DoNoHL function
-opt.scrolloff = 10 -- Make it so there are always ten lines below my cursor
-
--- interval for writing swap file to disk, also used by gitsigns
-opt.updatetime = 250
-
--- go to previous/next line with h,l,left arrow and right arrow
--- when cursor reaches end/beginning of line
-opt.whichwrap:append "<>[]hl"
-
--- In general, it's a good idea to set this early in your config, because otherwise if you have any mappings you set BEFORE doing this, they will be set to the OLD leader.
-g.mapleader = " "
-g.maplocalleader = " "
-g.mapleader = " "
-
--- I set some global variables to use as configuration throughout my config.
--- These don't have any special meaning.
-g.snippets = "luasnip"
-
--- backspace
-opt.backspace = "indent,eol,start"
-opt.iskeyword:append "-"
-opt.mousescroll = "ver:1,hor:1"
-
--- Cool floating window popup menu for completion on command line
-opt.pumblend = 17
-opt.wildmode = "longest:full"
--- opt.wildoptions = "pum"
-
--- Helpful related items:
---   1. :center, :left, :right
---   2. gw{motion} - Put cursor back after formatting motion.
-opt.formatoptions = opt.formatoptions
-  - "a" -- Auto formatting is BAD.
-  - "t" -- Don't auto format my code. I got linters for that.
-  + "c" -- In general, I like it when comments respect textwidth
-  + "q" -- Allow formatting comments w/ gq
-  - "o" -- O and o, don't continue comments
-  + "r" -- But do continue when pressing enter.
-  + "n" -- Indent past the formatlistpat, not underneath it.
-  + "j" -- Auto-remove comments if possible.
-  - "2" -- I'm not in gradeschool anymore
-
--- set joinspaces
--- opt.joinspaces = false -- Two spaces and grade school, we're done
-
--- set fillchars=eob:~
--- opt.fillchars = { eob = "~" }
-
-opt.diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal" }
-
--- disable some builtin vim plugins
-local default_plugins = {
-  "2html_plugin",
-  "getscript",
-  "getscriptPlugin",
-  "gzip",
-  "logipat",
-  "netrw",
-  "netrwPlugin",
-  "netrwSettings",
-  "netrwFileHandlers",
-  "matchit",
-  "tar",
-  "tarPlugin",
-  "rrhelper",
-  "spellfile_plugin",
-  "vimball",
-  "vimballPlugin",
-  "zip",
-  "zipPlugin",
-  "tutor",
-  "rplugin",
-  "syntax",
-  "synmenu",
-  "optwin",
-  "compiler",
-  "bugreport",
-  "ftplugin",
-}
-
-for _, plugin in pairs(default_plugins) do
-  g["loaded_" .. plugin] = 1
-end
-
-local default_providers = {
-  "node",
-  "perl",
-  "python3",
-  "ruby",
-}
-
-for _, provider in ipairs(default_providers) do
-  vim.g["loaded_" .. provider .. "_provider"] = 0
-end
+vim.opt.shortmess:append { s = true, I = true } -- disable startup message
+astronvim.vim_opts(astronvim.user_plugin_opts("options", {
+  opt = {
+    backspace = vim.opt.backspace + { "nostop" }, -- Don't stop backspace at insert
+    clipboard = "unnamedplus", -- Connection to the system clipboard
+    cmdheight = 0, -- hide command line unless needed
+    completeopt = { "menuone", "noselect" }, -- Options for insert mode completion
+    copyindent = true, -- Copy the previous indentation on autoindenting
+    cursorline = true, -- Highlight the text line of the cursor
+    expandtab = true, -- Enable the use of space in tab
+    fileencoding = "utf-8", -- File content encoding for the buffer
+    fillchars = { eob = " " }, -- Disable `~` on nonexistent lines
+    history = 100, -- Number of commands to remember in a history table
+    ignorecase = true, -- Case insensitive searching
+    laststatus = 3, -- globalstatus
+    lazyredraw = true, -- lazily redraw screen
+    mouse = "a", -- Enable mouse support
+    number = true, -- Show numberline
+    preserveindent = true, -- Preserve indent structure as much as possible
+    pumheight = 10, -- Height of the pop up menu
+    relativenumber = true, -- Show relative numberline
+    scrolloff = 8, -- Number of lines to keep above and below the cursor
+    shiftwidth = 2, -- Number of space inserted for indentation
+    showmode = false, -- Disable showing modes in command line
+    showtabline = 2, -- always display tabline
+    sidescrolloff = 8, -- Number of columns to keep at the sides of the cursor
+    signcolumn = "yes", -- Always show the sign column
+    smartcase = true, -- Case sensitivie searching
+    splitbelow = true, -- Splitting a new window below the current one
+    splitright = true, -- Splitting a new window at the right of the current one
+    swapfile = false, -- Disable use of swapfile for the buffer
+    tabstop = 2, -- Number of space in a tab
+    termguicolors = true, -- Enable 24-bit RGB color in the TUI
+    timeoutlen = 300, -- Length of time to wait for a mapped sequence
+    undofile = true, -- Enable persistent undo
+    updatetime = 300, -- Length of time to wait before triggering the plugin
+    wrap = false, -- Disable wrapping of lines longer than the width of window
+    writebackup = false, -- Disable making a backup before overwriting a file
+  },
+  g = {
+    highlighturl_enabled = true, -- highlight URLs by default
+    mapleader = " ", -- set leader key
+    zipPlugin = false, -- disable zip
+    load_black = false, -- disable black
+    loaded_2html_plugin = true, -- disable 2html
+    loaded_getscript = true, -- disable getscript
+    loaded_getscriptPlugin = true, -- disable getscript
+    loaded_gzip = true, -- disable gzip
+    loaded_logipat = true, -- disable logipat
+    loaded_matchit = true, -- disable matchit
+    loaded_netrwFileHandlers = true, -- disable netrw
+    loaded_netrwPlugin = true, -- disable netrw
+    loaded_netrwSettngs = true, -- disable netrw
+    loaded_remote_plugins = true, -- disable remote plugins
+    loaded_tar = true, -- disable tar
+    loaded_tarPlugin = true, -- disable tar
+    loaded_zip = true, -- disable zip
+    loaded_zipPlugin = true, -- disable zip
+    loaded_vimball = true, -- disable vimball
+    loaded_vimballPlugin = true, -- disable vimball
+    autoformat_enabled = true, -- enable or disable auto formatting at start (lsp.formatting.format_on_save must be enabled)
+    cmp_enabled = true, -- enable completion at start
+    autopairs_enabled = true, -- enable autopairs at start
+    diagnostics_enabled = true, -- enable diagnostics at start
+    status_diagnostics_enabled = true, -- enable diagnostics in statusline
+    icons_enabled = true, -- disable icons in the UI (disable if no nerd font is available)
+    ui_notifications_enabled = true, -- disable notifications when toggling UI elements
+  },
+}))

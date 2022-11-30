@@ -7,3 +7,4 @@ xdg_config/lazygit/state.yml
 nvm
 *.code-workspace
 dotfiles.code-workspace
+*.ignore

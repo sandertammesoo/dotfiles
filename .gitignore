@@ -2,8 +2,9 @@
 *.lock**.json
 xdg_config/nvim/plugin
 packer_compiled.lua
-lazygit/state.yml
+xdg_config/lazygit/state.yml
 ./dotbot/
 nvm
 *.code-workspace
 dotfiles.code-workspace
+*.ignore

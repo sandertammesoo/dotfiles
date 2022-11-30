@@ -28,15 +28,6 @@ brew 'findutils'
 # CLI Applications
 # brew 'cliclick' # Control mouse vie CLI
 brew 'grep'
-brew 'ripgrep' # Needed for Nvim Telescope
-brew 'fd' # Needed for Nvim Telescope
-brew 'glow' # Needed for Nvim Telescope-repo
-brew 'bat' # Needed for Nvim Telescope-repo
-brew 'wget' # Needed for Nvim Mason
-brew 'rust' # Needed for Nvim Mason
-brew 'luarocks' # Needed for Nvim Mason
-brew 'composer' # Needed for Nvim Mason
-brew 'php' # Needed for Nvim Mason
 brew 'screen'
 brew 'brew-cask-completion'
 brew 'tree'
@@ -51,6 +42,16 @@ cask 'visual-studio-code'
 brew 'gh'
 brew 'nvim'
 brew 'stylua'
+brew 'ripgrep' # Needed for Nvim Telescope
+brew 'fd' # Needed for Nvim Telescope
+brew 'glow' # Needed for Nvim Telescope-repo
+brew 'bat' # Needed for Nvim Telescope-repo
+brew 'wget' # Needed for Nvim Mason
+brew 'rust' # Needed for Nvim Mason
+brew 'luarocks' # Needed for Nvim Mason
+brew 'composer' # Needed for Nvim Mason
+brew 'php' # Needed for Nvim Mason
+brew 'lua-language-server'
 brew 'node'
 # cask 'atom'
 # cask 'cocoapods'

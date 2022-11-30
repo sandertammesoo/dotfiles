@@ -3,11 +3,9 @@
 #      relink: true
 
 - clean: ["~"]
-
 - shell:
     # - git update-submodules # after linking ~/.gitconfig
     - [git submodule update --init --recursive, Installing submodules]
-
 - link:
     ~/.config/.dotfiles:
       relink: true
@@ -36,12 +34,15 @@
     ~/.config/.warp:
       relink: true
       path: "xdg_config/warp"
-    ~/.config/.lazygit:
+    ~/.config/lazygit:
       relink: true
       path: "xdg_config/lazygit"
     ~/.config/nvim:
       relink: true
       path: "xdg_config/nvim"
+    ~/.config/astronvim:
+      relink: true
+      path: "xdg_config/astronvim"
     ~/.config/vim:
       relink: true
       path: "xdg_config/vim"
@@ -63,7 +64,6 @@
     ~/projects:
       relink: true
       path: "$PROJECTS"
-
 - shell:
     # - git update-submodules # after linking ~/.gitconfig
     - [git submodule update --init --recursive, Installing submodules]

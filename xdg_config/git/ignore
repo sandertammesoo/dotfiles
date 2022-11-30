@@ -1,0 +1,82 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.pyc
+
+# Config files #
+##########################
+*.localrc
+
+# Editing tools and IDEs #
+##########################
+*.swp
+*~
+*.code-workspace
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+# Compiled Python files
+*.pyc
+
+# General
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+Desktop.ini
+.tags
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# VIM: Temperory files
+*~
+
+# VIM: Swap-files
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
+# VIM: Commands :cs, :ctags
+tags
+cscope.*
+
+# VIM session
+Session.vim
+
+# VIM: netrw.vim: Network oriented reading, writing, browsing (eg: ftp scp) 
+.netrwhist
+
+# ZSH files
+.zcompdump
+.zsh_history
+.zsh_sessions

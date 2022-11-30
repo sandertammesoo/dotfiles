@@ -2,72 +2,68 @@
 #    link:
 #      relink: true
 
-- clean: ['~']
-
+- clean: ["~"]
 - shell:
-  # - git update-submodules # after linking ~/.gitconfig
-  - [git submodule update --init --recursive, Installing submodules]
-
+    # - git update-submodules # after linking ~/.gitconfig
+    - [git submodule update --init --recursive, Installing submodules]
 - link:
-    ~/.dotfiles:
-        relink: true
-        path: ''
-    # ~/.bashrc:
-    #     relink: true
-    #     path: 'bash/bashrc'
-    ~/.zshrc:
-        relink: true
-        path: 'zsh/zshrc'
-    ~/.localrc:
-        relink: true
-        path: 'zsh/.localrc'
-    # ~/.bash_profile:
-    #     relink: true
-    #     path: 'bash/bash_profile'
-    ~/.hushlogin:
-        relink: true
-        path: 'system/hushlogin'
-    ~/.editorconfig:
-        relink: true
-        path: 'system/editorconfig'
-    ~/.inputrc:
-        relink: true
-        path: 'system/inputrc'
-    ~/.gitconfig:
-        relink: true
-        path: 'git/gitconfig'
-    ~/.gitattributes:
-        relink: true
-        path: 'git/gitattributes'
-    ~/.gitignore:
-        relink: true
-        path: 'git/gitignore_global'
-    ~/.vim:
-        relink: true
-        path: 'vim'
+    ~/.config/.dotfiles:
+      relink: true
+      path: ""
+    ~/.zshenv:
+      relink: true
+      path: "xdg_config/zsh/.zshenv"
+    ~/.config/.zsh:
+      relink: true
+      path: "xdg_config/zsh"
+    ~/.config/.localrc:
+      relink: true
+      path: "xdg_config/.localrc"
+    ~/.config/.hushlogin:
+      relink: true
+      path: "xdg_config/.hushlogin"
+    ~/.config/.editorconfig:
+      relink: true
+      path: "xdg_config/.editorconfig"
+    ~/.config/.inputrc:
+      relink: true
+      path: "xdg_config/.inputrc"
+    ~/.config/nvm:
+      relink: true
+      path: "xdg_config/nvm"
+    ~/.config/.warp:
+      relink: true
+      path: "xdg_config/warp"
+    ~/.config/lazygit:
+      relink: true
+      path: "xdg_config/lazygit"
     ~/.config/nvim:
-        relink: true
-        path: 'nvim'
-    ~/.nvm:
-        relink: true
-        path: 'nvm'
-    ~/.vimrc:
-        relink: true
-        path: 'vim/vimrc'
-    ~/.warp:
-        relink: true
-        path: 'warp'
-    ~/.cheatsheet:
-        relink: true
-        path: 'cheatsheet'
-    ~/.config/starship.toml:
-        relink: true
-        path: 'zsh/starship.toml'
+      relink: true
+      path: "xdg_config/nvim"
+    ~/.config/astronvim:
+      relink: true
+      path: "xdg_config/astronvim"
+    ~/.config/vim:
+      relink: true
+      path: "xdg_config/vim"
+    ~/.config/git:
+      relink: true
+      path: "xdg_config/git"
+    # ~/.config/.gitconfig:
+    #   relink: true
+    #   path: "xdg_config/git/.gitconfig"
+    # ~/.config/.gitattributes:
+    #   relink: true
+    #   path: "xdg_config/git/.gitattributes"
+    # ~/.config/.gitignore:
+    #   relink: true
+    #   path: "xdg_config/git/.gitignore_global"
+    ~/.config/.cheatsheet:
+      relink: true
+      path: "misc/cheatsheet"
     ~/projects:
-         relink: true
-         path: '$PROJECTS'
-
-
+      relink: true
+      path: "$PROJECTS"
 - shell:
-  # - git update-submodules # after linking ~/.gitconfig
-  - [git submodule update --init --recursive, Installing submodules]
+    # - git update-submodules # after linking ~/.gitconfig
+    - [git submodule update --init --recursive, Installing submodules]

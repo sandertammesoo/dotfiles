@@ -1,17 +1,17 @@
 [submodule "vim/bundle/vim-pathogen"]
-	path = vim/bundle/vim-pathogen
+	path = xdg_config/vim/bundle/vim-pathogen
 	url = https://github.com/tpope/vim-pathogen.git
 	ignore = untracked
 [submodule "vim/bundle/vim-colors-solarized"]
-	path = vim/bundle/vim-colors-solarized
+	path = xdg_config/vim/bundle/vim-colors-solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
 [submodule "vim/bundle/vim-neatstatus"]
-	path = vim/bundle/vim-neatstatus
+	path = xdg_config/vim/bundle/vim-neatstatus
 	url = https://github.com/maciakl/vim-neatstatus.git
 [submodule "uncrustify-config"]
-	path = uncrustify-config
+	path = git-submodules/uncrustify-config
 	url = https://sandertammesoo@bitbucket.org/snippets/sandertammesoo/p6eBq/uncrustify-config.git
-[submodule "dotbot"]
-	path = dotbot
+[submodule "git-submodules/dotbot"]
+	path = git-submodules/dotbot
 	url = https://github.com/anishathalye/dotbot
 	ignore = dirty

@@ -72,7 +72,31 @@ local config = {
                         number = true, -- sets vim.opt.number
                         spell = false, -- sets vim.opt.spell
                         signcolumn = "auto", -- sets vim.opt.signcolumn to auto
-                        wrap = false, -- sets vim.opt.wrap
+
+                        -- My additions
+                        incsearch = true,
+                        inccommand = "split",
+                        shada = { "!", "'1000", "<50", "s10", "h" },
+                        showmatch = true, -- Show matching brackets when text indicator is over them
+                        autoindent = true,
+                        cindent = true,
+                        smartindent = true,
+                        softtabstop = 2,
+                        breakindent = true,
+                        showbreak = string.rep(" ", 3), -- Make it so that long lines wrap smartly
+                        linebreak = true,
+                        foldmethod = "marker",
+                        foldlevel = 0,
+                        modelines = 1,
+                        numberwidth = 2,
+                        ruler = false,
+                        hidden = true,
+                        equalalways = false,
+                        -- backspace = vim.opt.backspace + { "indent", "eol", "start", "nostop" },
+                        mousescroll = "ver:1,hor:1",
+                        pumblend = 17,
+                        wildmode = "longest:full",
+                        diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal" },
                 },
                 g = {
                         mapleader = " ", -- sets vim.g.mapleader
@@ -83,6 +107,7 @@ local config = {
                         status_diagnostics_enabled = true, -- enable diagnostics in statusline
                         icons_enabled = true, -- disable icons in the UI (disable if no nerd font is available, requires :PackerSync after changing)
                         ui_notifications_enabled = true, -- disable notifications when toggling UI elements
+                        snippets = "luasnip",
                 },
         },
         -- If you need more control, you can use the function()...end notation

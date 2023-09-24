@@ -1,14 +1,14 @@
 # ~/.config/.zsh/.zprofile
 #
 
-export EDITOR=nvim
-# export EDITOR='code'
+# export EDITOR=nvim
+export EDITOR='code'
 # export EDITOR=vim
 
 # Use nvim as manpager `:h Man`
-export MANPAGER='nvim +Man!'
+# export MANPAGER='nvim +Man!'
 # Don’t clear the screen after quitting a manual page
-# export MANPAGER="less -X";
+export MANPAGER="less -X";
 
 # Highlight section titles in manual pages
 export LESS_TERMCAP_md="${yellow}";

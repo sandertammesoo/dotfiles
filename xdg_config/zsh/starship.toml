@@ -46,7 +46,7 @@ format = "on [$hostname](bold yellow) "
 disabled = false
 
 [directory]
-truncation_length = 2
+truncation_length = 1000
 truncation_symbol = "…/"
 truncate_to_repo = false
 home_symbol = " ~"
@@ -89,7 +89,7 @@ disabled = true
 [time]
 disabled = false
 format = '[\[$time\]](green) '
-time_format = "%a %b %d %Y %T:%3f"
+time_format = "%a %b %d %Y %T"
 
 [cmd_duration]
 disabled = false 

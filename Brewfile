@@ -39,6 +39,7 @@ brew 'starship'
 
 # Software Development & Environment control
 cask 'visual-studio-code'
+cask 'dbeaver-community'
 brew 'gh'
 brew 'nvim'
 brew 'stylua'
@@ -72,6 +73,8 @@ cask 'brave-browser'
 cask 'microsoft-edge'
 cask 'firefox'
 cask 'google-chrome'
+cask 'vivaldi'
+cask 'opera'
 
 # Messangers & other communication
 cask 'slack'
@@ -80,6 +83,7 @@ cask 'signal'
 cask 'skype'
 cask 'discord'
 cask 'zoom'
+cask 'webex'
 # cask 'adium'
 
 # Video players & music
@@ -91,6 +95,7 @@ cask 'spotify'
 # cask '1password' # Password manager
 cask 'spectacle' # Window manager
 cask 'alfred' # Better Spotlight replacement
+# cask 'copyclip' # Ei olnud päris see copyclip, 2022-11-24 ei olnud sed aõiget asja veel brew-s
 # cask 'freedom' # Block apps and webcontet to focus on deep work
 # cask 'loom' # Screen recorder
 # cask 'bartender'
@@ -102,6 +107,8 @@ cask 'alfred' # Better Spotlight replacement
 # cask 'tunnelbear'
 
 # Other Applications
+cask 'freemind'
+cask 'xmind'
 # cask 'notion'
 # cask 'airtable'
 # cask 'parallels'

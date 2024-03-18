@@ -16,9 +16,9 @@
     ~/.config/.zsh:
       relink: true
       path: "xdg_config/zsh"
-    ~/.config/.localrc:
-      relink: true
-      path: "xdg_config/.localrc"
+    #~/.config/.localrc:
+    #  relink: true
+    #  path: "xdg_config/.localrc"
     ~/.config/.hushlogin:
       relink: true
       path: "xdg_config/.hushlogin"
@@ -28,9 +28,9 @@
     ~/.config/.inputrc:
       relink: true
       path: "xdg_config/.inputrc"
-    ~/.config/nvm:
-      relink: true
-      path: "xdg_config/nvm"
+    #~/.config/nvm:
+    #  relink: true
+    #  path: "xdg_config/nvm"
     ~/.config/.warp:
       relink: true
       path: "xdg_config/warp"
@@ -49,6 +49,15 @@
     ~/.config/git:
       relink: true
       path: "xdg_config/git"
+    ~/.config/yabai:
+      relink: true
+      path: "xdg_config/yabai"
+    ~/.config/skhd:
+      relink: true
+      path: "xdg_config/skhd"
+    ~/.config/sketchybar:
+      relink: true
+      path: "xdg_config/sketchybar"
     # ~/.config/.gitconfig:
     #   relink: true
     #   path: "xdg_config/git/.gitconfig"
@@ -61,9 +70,9 @@
     ~/.config/.cheatsheet:
       relink: true
       path: "misc/cheatsheet"
-    ~/projects:
-      relink: true
-      path: "$PROJECTS"
+    #~/projects:
+    #  relink: true
+    #  path: "$PROJECTS"
 - shell:
     # - git update-submodules # after linking ~/.gitconfig
     - [git submodule update --init --recursive, Installing submodules]

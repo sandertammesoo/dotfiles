@@ -1,0 +1,96 @@
+#!/usr/bin/env sh
+
+# for this to work you must configure sudo such that
+# it will be able to run the command without password
+#
+# see this wiki page for information:
+#  - https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition
+#
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
+
+# S K E T C H Y B A R  E V E N T S
+yabai -m signal --add event=window_focused action="sketchybar -m --trigger window_focus &> /dev/null"
+yabai -m signal --add event=window_title_changed action="sketchybar -m --trigger title_change &> /dev/null"
+
+# float system preferences. Most of these just diable Yabai form resizing them.
+# Do not manage these apps
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^Calculator$" manage=off
+yabai -m rule --add app="^Timer RH$" manage=off
+yabai -m rule --add app="^Wave Link$" manage=off
+yabai -m rule --add app="^Spotify$" manage=off
+yabai -m rule --add app="^Immersed$" manage=off
+yabai -m rule --add app="^NordVPN$" manage=off
+yabai -m rule --add app="^1Password$" manage=off
+yabai -m rule --add app="^Docker Desktop$" manage=off
+yabai -m rule --add app="^Shotter$" manage=off
+yabai -m rule --add app="^Hidden Bar$" manage=off
+yabai -m rule --add app="^Postman$" manage=off
+yabai -m rule --add app="^zoom.us$" manage=off
+yabai -m rule --add app="^Finder$" manage=off
+yabai -m rule --add app="^Disk Utility$" manage=off
+yabai -m rule --add app="^Activity Monitor$" manage=off
+yabai -m rule --add app="^Calendar$" manage=off
+yabai -m rule --add app="^Podcasts$" manage=off
+yabai -m rule --add app="^Music$" manage=off
+yabai -m rule --add app="^Home Assistant$" manage=off
+yabai -m rule --add app="^Home$" manage=off
+yabai -m rule --add app="^TV$" manage=off
+yabai -m rule --add app="^Facetime$" manage=off
+yabai -m rule --add app="^Stream Deck$" manage=off
+yabai -m rule --add app="^DigiDoc4 Client$" manage=off
+yabai -m rule --add app="^Preview$" manage=off
+
+# float system preferences
+yabai -m rule --add app="^System Information$" manage=off
+yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add title='Preferences$' manage=off
+yabai -m rule --add title='^Archive Utility$' manage=off
+
+# float settings windows
+yabai -m rule --add title='Settings$' manage=off
+
+# global settings
+yabai -m config                                 \
+    mouse_follows_focus          off            \
+    focus_follows_mouse          off            \
+    window_origin_display        default        \
+    window_placement             second_child   \
+    window_zoom_persist          on             \
+    window_shadow                on             \
+    window_animation_duration    0.0            \
+    window_animation_frame_rate  120            \
+    window_opacity_duration      0.0            \
+    active_window_opacity        1.0            \
+    normal_window_opacity        0.80           \
+    window_opacity               on             \
+    insert_feedback_color        0xffd75f5f     \
+    split_ratio                  0.64           \
+    split_type                   auto           \
+    auto_balance                 off            \
+    layout                       bsp            \
+    mouse_modifier               fn             \
+    mouse_action1                move           \
+    mouse_action2                resize         \
+    mouse_drop_action            swap           \
+    external_bar                 all:0:37       \
+    top_padding                  2              \
+    bottom_padding               2              \
+    left_padding                 2              \
+    right_padding                2              \
+    window_gap                   2                       
+
+
+
+#yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[0]') left_padding 0
+#yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[0]') right_padding 0
+#yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') left_padding 0
+#yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') right_padding 0
+
+#yabai -m signal --add event=application_activated action="zsh ~/.config/yabai/application-activated.zsh"
+#yabai -m signal --add event=window_created action="zsh ~/.config/yabai/window-created.zsh"
+
+
+echo "yabai configuration loaded.."
+

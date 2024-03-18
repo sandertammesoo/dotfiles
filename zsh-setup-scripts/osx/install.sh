@@ -1,6 +1,11 @@
 #!/bin/sh
+set -e
+source helpers.zsh
+
 if test ! "$(uname)" = "Darwin"; then
-	exit 0
+	error "      MacOS not detected!"
+	return
+	#exit 0
 fi
 
 # The Brewfile handles Homebrew-based app and library installs, but there may
@@ -8,5 +13,5 @@ fi
 # command line interface to it that we can use to just install everything, so
 # yeah, let's do that.
 
-echo "››› sudo softwareupdate -i -a"
+debug "      › sudo softwareupdate -i -a"
 sudo softwareupdate -i -a

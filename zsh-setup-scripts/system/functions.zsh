@@ -3,7 +3,8 @@
 
 # Always list directory contents upon 'cd'
 function cd() {
-	builtin cd "$@"; la; #autoenv_init;
+	z "$@"; la; #autoenv_init;
+	#builtin cd "$@"; la; #autoenv_init;
 }
 
 # Create a new directory and enter it

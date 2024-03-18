@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 #
 # Run all dotfiles installers.
-
 set -e
 
 # cd "$(dirname $0)"/..
 
-# find the installers and run them iteratively
-find . -name install.sh | while read installer ; do echo 'Found installer '${installer}; done
-echo "Starting installers"
-find . -name install.sh | while read installer ; do echo 'Running '${installer}; sh -c "${installer}"; echo ${installer}; done
+debug "  find the installers and run them iteratively..."
+find . -name install.sh | while read installer ; do debug '    Found installer '${installer}; done
+log_info "  Starting installers..."
+find . -name install.sh | while read installer ; do log_info '    › '${installer}; sh -c "${installer}"; done

@@ -1,0 +1,343 @@
+# ############################################################### #
+#                                                                 #
+#                           FOCUS STUFF                           #
+#                                                                 #
+# ############################################################### #
+
+# ##################################### #
+#                WINDOWS                #
+# ##################################### #
+
+# focus window
+meh - s : yabai -m window --focus south # for when using moonlander
+meh - w : yabai -m window --focus north # for when using moonlander
+meh - a : yabai -m window --focus west # for when using moonlander
+meh - d : yabai -m window --focus east # for when using moonlander
+alt - j : yabai -m window --focus south
+alt - k : yabai -m window --focus north
+alt - h : yabai -m window --focus west
+alt - l : yabai -m window --focus east
+
+# Cycle windows forwards and backwards
+meh - q : yabai -m window --focus prev || yabai -m window --focus last # for when using moonlander
+meh - e : yabai -m window --focus next || yabai -m window --focus first # for when using moonlander
+
+# Cycle windows forwards and backwards in focused stack only
+meh - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first # for when using moonlander
+
+# Cycle windows forwards and backwards but stops at ends
+# meh - tab : yabai -m window --focus stack.prev || yabai -m window --focus prev || yabai -m window --focus last
+# meh - tab : yabai -m window --focus stack.next || yabai -m window --focus next || yabai -m window --focus first
+
+
+# ##################################### #
+#                MONITORS               #
+# ##################################### #
+
+# focus monitor
+meh - l : yabai -m display --focus south # for when using moonlander
+meh - o : yabai -m display --focus north # for when using moonlander
+meh - k : yabai -m display --focus west # for when using moonlander
+meh - ö : yabai -m display --focus east # for when using moonlander
+alt - d : yabai -m display --focus south
+alt - f : yabai -m display --focus north
+alt - s : yabai -m display --focus west
+alt - g : yabai -m display --focus east
+
+# Cycle monitors forwards and backwards
+meh - i : yabai -m display --focus prev || yabai -m display --focus last # for when using moonlander
+meh - p : yabai -m display --focus next || yabai -m display --focus first # for when using moonlander
+
+
+# ##################################### #
+#                SPACES                 #
+# ##################################### #
+
+# focus to space #
+meh - 1 : yabai -m space --focus 1; # for when using moonlander
+meh - 2 : yabai -m space --focus 2; # for when using moonlander
+meh - 3 : yabai -m space --focus 3; # for when using moonlander
+meh - 4 : yabai -m space --focus 4; # for when using moonlander
+meh - 5 : yabai -m space --focus 5; # for when using moonlander
+meh - 6 : yabai -m space --focus 6; # for when using moonlander
+meh - 7 : yabai -m space --focus 7; # for when using moonlander
+meh - 8 : yabai -m space --focus 8; # for when using moonlander
+meh - 9 : yabai -m space --focus 9; # for when using moonlander
+ctrl - 1 : yabai -m space --focus 1;
+ctrl - 2 : yabai -m space --focus 2;
+ctrl - 3 : yabai -m space --focus 3;
+ctrl - 4 : yabai -m space --focus 4;
+ctrl - 5 : yabai -m space --focus 5;
+ctrl - 6 : yabai -m space --focus 6;
+ctrl - 7 : yabai -m space --focus 7;
+ctrl - 8 : yabai -m space --focus 8;
+ctrl - 9 : yabai -m space --focus 9;
+
+# Focus space of current display. Wrap to the other side space of the current display if the current space is the last space of its display.
+meh - , : ~/.config/yabai/space_cycle_prev.sh; # for when using moonlander
+meh - . : ~/.config/yabai/space_cycle_next.sh; # for when using moonlander
+alt - p : ~/.config/yabai/space_cycle_prev.sh;
+alt - n : ~/.config/yabai/space_cycle_next.sh;
+ctrl - left : ~/.config/yabai/space_cycle_prev.sh;
+ctrl - right : ~/.config/yabai/space_cycle_next.sh;
+
+
+# ############################################################### #
+#                                                                 #
+#                            MOVE STUFF                           #
+#                                                                 #
+# ############################################################### #
+
+# toggle window split type
+alt - e : yabai -m window --toggle split
+
+# rotate layout clockwise
+shift + alt - r : yabai -m space --rotate 270
+# Rotate windows
+hyper - r : yabai -m space --rotate 270
+
+# flip along y-axis
+shift + alt - y : yabai -m space --mirror y-axis
+# Mirror tree y-axis
+hyper - y : yabai -m space --mirror y-axis
+
+# flip along x-axis
+shift + alt - x : yabai -m space --mirror x-axis
+
+# toggle window float
+#shift + alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
+cmd + alt - c : yabai -m window --toggle float --grid 8:8:1:1:6:6
+# float / unfloat window and center on screen
+hyper - h : yabai -m window --toggle float;\
+          yabai -m window --grid 4:4:1:1:2:2
+
+# Enable / Disable gaps in current workspace
+hyper - 0 : yabai -m space --toggle padding; yabai -m space --toggle gap
+
+# Modifying Window Size
+# maximize a window
+shift + alt - m : yabai -m window --toggle zoom-fullscreen
+cmd + alt - f : yabai -m window --toggle zoom-fullscreen
+
+# balance out tree of windows (resize to occupy same area)
+shift + alt - e : yabai -m space --balance
+# Balance size of windows
+hyper - b : yabai -m space --balance
+
+# toggle window zoom
+hyper - t : yabai -m window --toggle zoom-parent
+hyper - f : yabai -m window --toggle zoom-fullscreen
+
+# Shortcuts For Moving Windows Around
+# swap windows
+shift + alt - j : yabai -m window --swap south
+shift + alt - k : yabai -m window --swap north
+shift + alt - h : yabai -m window --swap west
+shift + alt - l : yabai -m window --swap east
+
+# move window and split
+ctrl + alt - j : yabai -m window --warp south
+ctrl + alt - k : yabai -m window --warp north
+ctrl + alt - h : yabai -m window --warp west
+ctrl + alt - l : yabai -m window --warp east
+
+# Moving windows
+hyper - w : yabai -m window --warp north || $(yabai -m window --display north; yabai -m display --focus north)
+hyper - a : yabai -m window --warp west || $(yabai -m window --display west; yabai -m display --focus west)
+hyper - s : yabai -m window --warp south || $(yabai -m window --display south; yabai -m display --focus south)
+hyper - d : yabai -m window --warp east || $(yabai -m window --display east; yabai -m display --focus east)
+
+hyper - up : yabai -m window --stack north
+hyper - right : yabai -m window --stack east
+hyper - down : yabai -m window --stack south
+hyper - left : yabai -m window --stack west
+
+# Resize windowsa
+hyper - i : \
+    yabai -m window --resize top:0:-20 ; \
+    yabai -m window --resize bottom:0:-20
+
+hyper - j : \
+    yabai -m window --resize left:-20:0 ; \
+    yabai -m window --resize right:-20:0
+
+hyper - k : \
+    yabai -m window --resize bottom:0:20 ; \
+    yabai -m window --resize top:0:20
+
+hyper - l : \
+    yabai -m window --resize right:20:0 ; \
+    yabai -m window --resize left:20:0
+
+# move window to display left and right
+shift + alt - s : yabai -m window --display west; yabai -m display --focus west;
+shift + alt - g : yabai -m window --display east; yabai -m display --focus east;
+
+ctrl + alt + cmd - right : yabai -m window --display east; yabai -m display --focus east;
+ctrl + alt + cmd - left : yabai -m window --display west; yabai -m display --focus west;
+ctrl + alt + cmd - up : yabai -m window --display north; yabai -m display --focus north;
+ctrl + alt + cmd - down : yabai -m window --display south; yabai -m display --focus south;
+
+ctrl + alt + cmd - l : yabai -m window --display east; yabai -m display --focus east;
+ctrl + alt + cmd - h : yabai -m window --display west; yabai -m display --focus west;
+ctrl + alt + cmd - k : yabai -m window --display north; yabai -m display --focus north;
+ctrl + alt + cmd - j : yabai -m window --display south; yabai -m display --focus south;
+
+#move window to prev and next space
+shift + alt - p : yabai -m window --space prev;
+shift + alt - n : yabai -m window --space next;
+
+# move window to space #
+shift + alt - 1 : yabai -m window --space 1;
+shift + alt - 2 : yabai -m window --space 2;
+shift + alt - 3 : yabai -m window --space 3;
+shift + alt - 4 : yabai -m window --space 4;
+shift + alt - 5 : yabai -m window --space 5;
+shift + alt - 6 : yabai -m window --space 6;
+shift + alt - 7 : yabai -m window --space 7;
+shift + alt - 8 : yabai -m window --space 8;
+shift + alt - 9 : yabai -m window --space 9;
+
+# send window to desktop and follow focus
+# shift + cmd - z : yabai -m window --space next; yabai -m space --focus next
+
+# Make focused window stack starter
+# hyper - tab : yabai -m query --spaces --space \
+#   | jq -re ".index" \
+#   | xargs -I{} yabai -m query --windows --space {} \
+#   | jq -sre "add | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(.focused == 1)))).id" \
+#   | xargs -I{} yabai -m window {} --insert stack
+
+# increase window size
+shift + alt + ctrl - right : yabai -m window --resize top_left:-40:-40; yabai -m window --resize bottom_right:40:40
+
+# decrease window size
+shift + alt + ctrl - left : yabai -m window --resize top_left:40:40; yabai -m window --resize bottom_right:-40:-40
+
+
+# ############################################################### #
+#                                                                 #
+#                      CONFIG & OTHER STUFF                       #
+#                                                                 #
+# ############################################################### #
+
+# Toggle mouse focus mode
+hyper - m : [[ $(yabai -m config focus_follows_mouse) = "disabled" ]] && \
+    yabai -m config focus_follows_mouse autoraise || \
+    yabai -m config focus_follows_mouse off
+
+# Services
+# hyper - q : yabai --stop-service
+# hyper - s : yabai --start-service
+hyper - z : yabai --restart-service
+hyper - x : skhd --restart-service
+meh - r : sketchybar --reload;
+hyper - c : brew services restart sketchybar
+
+ctrl + alt - e : ~/.config/yabai/space_setup.sh;
+
+
+# view the last lines of the error log 
+#tail -f /tmp/yabai_$USER.err.log
+
+# view the last lines of the debug log
+#tail -f /tmp/yabai_$USER.out.log
+
+
+
+
+
+
+
+
+# ############################################################### #
+# THE FOLLOWING SECTION CONTAIN SIMPLE MAPPINGS DEMONSTRATING HOW #
+# TO INTERACT WITH THE YABAI WM. THESE ARE SUPPOSED TO BE USED AS #
+# A REFERENCE ONLY, WHEN MAKING YOUR OWN CONFIGURATION..          #
+# ############################################################### #
+
+# focus window
+# alt - h : yabai -m window --focus west
+
+# swap managed window
+# shift + alt - h : yabai -m window --swap north
+
+# move managed window
+# shift + cmd - h : yabai -m window --warp east
+
+# balance size of windows
+# shift + alt - 0 : yabai -m space --balance
+
+# make floating window fill screen
+# shift + alt - up     : yabai -m window --grid 1:1:0:0:1:1
+
+# make floating window fill left-half of screen
+# shift + alt - left   : yabai -m window --grid 1:2:0:0:1:1
+
+# create desktop, move window and follow focus - uses jq for parsing json (brew install jq)
+# shift + cmd - n : yabai -m space --create && \
+#                   index="$(yabai -m query --spaces --display | jq 'map(select(."is-native-fullscreen" == false))[-1].index')" && \
+#                   yabai -m window --space "${index}" && \
+#                   yabai -m space --focus "${index}"
+
+# fast focus desktop
+# cmd + alt - x : yabai -m space --focus recent
+# cmd + alt - 1 : yabai -m space --focus 1
+
+# send window to desktop and follow focus
+# shift + cmd - z : yabai -m window --space next; yabai -m space --focus next
+# shift + cmd - 2 : yabai -m window --space  2; yabai -m space --focus 2
+
+# focus monitor
+# ctrl + alt - z  : yabai -m display --focus prev
+# ctrl + alt - 3  : yabai -m display --focus 3
+
+# send window to monitor and follow focus
+# ctrl + cmd - c  : yabai -m window --display next; yabai -m display --focus next
+# ctrl + cmd - 1  : yabai -m window --display 1; yabai -m display --focus 1
+
+# move floating window
+# shift + ctrl - a : yabai -m window --move rel:-20:0
+# shift + ctrl - s : yabai -m window --move rel:0:20
+
+# increase window size
+# shift + alt - a : yabai -m window --resize left:-20:0
+# shift + alt - w : yabai -m window --resize top:0:-20
+
+# decrease window size
+# shift + cmd - s : yabai -m window --resize bottom:0:-20
+# shift + cmd - w : yabai -m window --resize top:0:20
+
+# set insertion point in focused container
+# ctrl + alt - h : yabai -m window --insert west
+
+# toggle window zoom
+# alt - d : yabai -m window --toggle zoom-parent
+# alt - f : yabai -m window --toggle zoom-fullscreen
+
+# float / unfloat window and center on screen
+# alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
+
+# toggle sticky(+float), picture-in-picture
+#alt - p : yabai -m window --toggle sticky --toggle pip
+
+
+
+# Cycle windows forwards
+# hyper - e : yabai -m query --spaces --space \
+#   | jq -re ".index" \
+#   | xargs -I{} yabai -m query --windows --space {} \
+#   | jq "map(select(.minimized == 0))" \
+#   | jq -sre "add | sort_by(.display, .frame.x, .frame.y, .id) | reverse | nth(index(map(select(.focused == 1))) - 1).id" \
+#   | xargs -I{} yabai -m window --focus {}
+
+# Cycle windows backwards
+# hyper - q  : yabai -m query --spaces --space \
+#   | jq -re ".index" \
+#   | xargs -I{} yabai -m query --windows --space {} \
+#   | jq "map(select(.minimized == 0))" \
+#   | jq -sre "add | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(.focused == 1))) - 1).id" \
+#   | xargs -I{} yabai -m window --focus {}
+
+
+

@@ -38,6 +38,7 @@ alias dr="cd ~/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias cdf="cd $XDG_CONFIG_HOME/.dotfiles"
+alias cdi="zi"
 alias p="cd $PROJECTS_CD"
 
 # Show/hide hidden files in Finder
@@ -66,3 +67,13 @@ fi
 
 
 alias loaddb="gupdatedb --localpaths=$HOME --prunepaths=/Volumes --output=$HOME/locatedb"
+
+# useful only for Mac OS Silicon M1, 
+# still working but useless for the other platforms
+docker() {
+  if [[ `uname -m` == "arm64" ]] && [[ "$1" == "run" || "$1" == "build" ]]; then
+     /usr/local/bin/docker "$1" --platform linux/amd64 "${@:2}"
+  else
+     /usr/local/bin/docker "$@"
+  fi
+}

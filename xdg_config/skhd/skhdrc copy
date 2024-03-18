@@ -1,0 +1,224 @@
+:: default
+:: moonlander
+
+# from 'default' mode, activate mode 'test'
+ctrl + alt - x ; moonlander
+
+# from 'test' mode, activate mode 'default'
+moonlander < ctrl + alt - x ; default
+
+
+# ############################################################### #
+#                                                                 #
+#                           FOCUS STUFF                           #
+#                                                                 #
+# ############################################################### #
+
+# ##################################### #
+#                WINDOWS                #
+# ##################################### #
+
+# focus window
+
+# Cycle windows forwards and backwards
+
+# Cycle windows forwards and backwards in focused stack only
+
+# Cycle windows forwards and backwards but stops at ends
+
+# ##################################### #
+#                DISPLAYS               #
+# ##################################### #
+
+# focus monitor
+
+# Cycle monitors forwards and backwards
+
+# ##################################### #
+#                SPACES                 #
+# ##################################### #
+
+# focus to space #
+
+# Focus space of current display. Wrap to the other side space of the current display if the current space is the last space of its display.
+
+
+
+# ############################################################### #
+#                                                                 #
+#                           MOVE WINDOWS                          #
+#                                                                 #
+# ############################################################### #
+
+# ##################################### #
+#               ON SCREEN               #
+# ##################################### #
+
+# Shortcuts For Moving Windows Around
+# Moving windows
+
+# swap windows
+#ctrl + alt - w : yabai -m window --swap north
+#ctrl + alt - a : yabai -m window --swap west
+#ctrl + alt - s : yabai -m window --swap south
+#ctrl + alt - d : yabai -m window --swap east
+
+# Mirror tree axis
+
+# toggle window split type
+# Rotate windows clockwise
+
+
+# ##################################### #
+#            BETWEEN DISPLAYS           #
+# ##################################### #
+
+# move to monitor
+
+# move window to display in a cycle
+
+# ##################################### #
+#             BETWEEN SPACES            #
+# ##################################### #
+
+# move window to space #
+
+#move window to prev and next space
+
+# Make focused window stack starter
+
+
+# ############################################################### #
+#                                                                 #
+#                          RESIZE WINDOWS                         #
+#                                                                 #
+# ############################################################### #
+
+# Modifying Window Size
+# Balance size of windows
+
+# toggle window zoom
+
+# float / unfloat window and center on screen
+
+# Resize windowsa
+ctrl + alt - i : \
+    yabai -m window --resize top:0:-20 ; \
+    yabai -m window --resize bottom:0:-20
+
+ctrl + alt - j : \
+    yabai -m window --resize left:-20:0 ; \
+    yabai -m window --resize right:-20:0
+
+ctrl + alt - k : \
+    yabai -m window --resize bottom:0:20 ; \
+    yabai -m window --resize top:0:20
+
+ctrl + alt - l : \
+    yabai -m window --resize right:20:0 ; \
+    yabai -m window --resize left:20:0
+
+# increase window size
+ctrl + alt - up : yabai -m window --resize top_left:-40:-40; yabai -m window --resize bottom_right:40:40
+
+# decrease window size
+ctrl + alt - down : yabai -m window --resize top_left:40:40; yabai -m window --resize bottom_right:-40:-40
+
+
+# ############################################################### #
+#                                                                 #
+#                      CONFIG & OTHER STUFF                       #
+#                                                                 #
+# ############################################################### #
+
+# Enable / Disable gaps in current workspace
+
+# Toggle mouse focus mode
+
+# Services
+
+#ctrl + alt - e : ~/.config/yabai/space_setup.sh;
+
+
+# view the last lines of the error log 
+#tail -f /tmp/yabai_$USER.err.log
+
+# view the last lines of the debug log
+#tail -f /tmp/yabai_$USER.out.log
+
+
+# ############################################################### #
+# THE FOLLOWING SECTION CONTAIN SIMPLE MAPPINGS DEMONSTRATING HOW #
+# TO INTERACT WITH THE YABAI WM. THESE ARE SUPPOSED TO BE USED AS #
+# A REFERENCE ONLY, WHEN MAKING YOUR OWN CONFIGURATION..          #
+# ############################################################### #
+
+# focus window
+# alt - h : yabai -m window --focus west
+
+# swap managed window
+# shift + alt - h : yabai -m window --swap north
+
+# move managed window
+# shift + cmd - h : yabai -m window --warp east
+
+# balance size of windows
+# shift + alt - 0 : yabai -m space --balance
+
+# make floating window fill screen
+# shift + alt - up     : yabai -m window --grid 1:1:0:0:1:1
+
+# make floating window fill left-half of screen
+# shift + alt - left   : yabai -m window --grid 1:2:0:0:1:1
+
+# create desktop, move window and follow focus - uses jq for parsing json (brew install jq)
+# shift + cmd - n : yabai -m space --create && \
+#                   index="$(yabai -m query --spaces --display | jq 'map(select(."is-native-fullscreen" == false))[-1].index')" && \
+#                   yabai -m window --space "${index}" && \
+#                   yabai -m space --focus "${index}"
+
+# fast focus desktop
+# cmd + alt - x : yabai -m space --focus recent
+# cmd + alt - 1 : yabai -m space --focus 1
+
+# send window to desktop and follow focus
+# shift + cmd - z : yabai -m window --space next; yabai -m space --focus next
+# shift + cmd - 2 : yabai -m window --space  2; yabai -m space --focus 2
+
+# focus monitor
+# ctrl + alt - z  : yabai -m display --focus prev
+# ctrl + alt - 3  : yabai -m display --focus 3
+
+# send window to monitor and follow focus
+# ctrl + cmd - c  : yabai -m window --display next; yabai -m display --focus next
+# ctrl + cmd - 1  : yabai -m window --display 1; yabai -m display --focus 1
+
+# move floating window
+# shift + ctrl - a : yabai -m window --move rel:-20:0
+# shift + ctrl - s : yabai -m window --move rel:0:20
+
+# increase window size
+# shift + alt - a : yabai -m window --resize left:-20:0
+# shift + alt - w : yabai -m window --resize top:0:-20
+
+# decrease window size
+# shift + cmd - s : yabai -m window --resize bottom:0:-20
+# shift + cmd - w : yabai -m window --resize top:0:20
+
+# set insertion point in focused container
+# ctrl + alt - h : yabai -m window --insert west
+
+# toggle window zoom
+# alt - d : yabai -m window --toggle zoom-parent
+# alt - f : yabai -m window --toggle zoom-fullscreen
+
+# float / unfloat window and center on screen
+# alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
+
+# toggle sticky(+float), picture-in-picture
+#alt - p : yabai -m window --toggle sticky --toggle pip
+
+
+
+
+

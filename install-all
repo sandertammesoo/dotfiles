@@ -1,91 +1,62 @@
 #!/usr/bin/env zsh
-
 set -e
-
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source helpers.zsh
 
-#  ######  ########    ###    ########  ########
-# ##    ##    ##      ## ##   ##     ##    ##
-# ##          ##     ##   ##  ##     ##    ##
-#  ######     ##    ##     ## ########     ##
-#       ##    ##    ######### ##   ##      ##
-# ##    ##    ##    ##     ## ##    ##     ##
-#  ######     ##    ##     ## ##     ##    ##
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+debug "Detected BASEDIR=$BASEDIR"
 
-# Ask for the administrator password upfront
-# info "Get sudo"
+debug "Ask for the administrator password upfront"
+info "Get sudo privileges..."
 if sudo -v 2>&1
 then
-  success "Got sudo"
+  success "  Got sudo"
+  debug "  Keep-alive: update existing 'sudo' time stamp until '.osx' has finished"
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 else
-  fail "Error getting sudo"
+  fail "  Error getting sudo"
 fi
 
-# setup_gitconfig
+#info "Checking local git setup..."
+#if setup_gitconfig 2>&1
+#then
+#  success "  Git config setup done"
+#else
+#  fail "  Error setting up git config"
+#fi
 
-# if setup_gitconfig 2>&1
-# then
-#   success "Git config setup done"
-# else
-#   fail "Error setting up git config"
-# fi
+info "Run DotBot instal script..."
+if source ./install
+then
+  success "    Dotbot finished!"
+else
+  fail "    Dotbot failed..."
+fi
 
-
-# Keep-alive: update existing `sudo` time stamp until `.osx` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
-# ########   #######  ######## ########   #######  ########
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ##     ## ##     ##    ##    ########  ##     ##    ##
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ########   #######     ##    ########   #######     ##
-source ./install
-
-# ##     ##    ###     ######      ######  ######## ##     ## ######## ########
-# ###   ###   ## ##   ##    ##    ##    ##    ##    ##     ## ##       ##
-# #### ####  ##   ##  ##          ##          ##    ##     ## ##       ##
-# ## ### ## ##     ## ##           ######     ##    ##     ## ######   ######
-# ##     ## ######### ##                ##    ##    ##     ## ##       ##
-# ##     ## ##     ## ##    ##    ##    ##    ##    ##     ## ##       ##
-# ##     ## ##     ##  ######      ######     ##     #######  ##       ##
-# If we're on a Mac, let's install and setup other stuff.
 if [ "$(uname -s)" = "Darwin" ]
 then
+  debug "Detected MacOS, let's install and setup other stuff."
   export DOTS=$XDG_CONFIG_HOME/.dotfiles
 
-  #  #######   ######  ##     ##    ########  ######## ########    ###    ##     ## ##       ########  ######
-  # ##     ## ##    ##  ##   ##     ##     ## ##       ##         ## ##   ##     ## ##          ##    ##    ##
-  # ##     ## ##         ## ##      ##     ## ##       ##        ##   ##  ##     ## ##          ##    ##
-  # ##     ##  ######     ###       ##     ## ######   ######   ##     ## ##     ## ##          ##     ######
-  # ##     ##       ##   ## ##      ##     ## ##       ##       ######### ##     ## ##          ##          ##
-  # ##     ## ##    ##  ##   ##     ##     ## ##       ##       ##     ## ##     ## ##          ##    ##    ##
-  #  #######   ######  ##     ##    ########  ######## ##       ##     ##  #######  ########    ##     ######
-  # info "Set OS X defaults"
-  # if $DOTS/osx/set-defaults.sh 2>&1
-  # then
-  #   success "OS X defaults set"
-  # else
-  #   fail "Error setting OS X defaults"
-  # fi
-  # user "Note that some of these changes require a logout/restart to take effect."
-
-  # #### ##    ##  ######  ########    ###    ##       ##           ######   #######  ######## ######## ##      ##    ###    ########  ########
-  #  ##  ###   ## ##    ##    ##      ## ##   ##       ##          ##    ## ##     ## ##          ##    ##  ##  ##   ## ##   ##     ## ##
-  #  ##  ####  ## ##          ##     ##   ##  ##       ##          ##       ##     ## ##          ##    ##  ##  ##  ##   ##  ##     ## ##
-  #  ##  ## ## ##  ######     ##    ##     ## ##       ##           ######  ##     ## ######      ##    ##  ##  ## ##     ## ########  ######
-  #  ##  ##  ####       ##    ##    ######### ##       ##                ## ##     ## ##          ##    ##  ##  ## ######### ##   ##   ##
-  #  ##  ##   ### ##    ##    ##    ##     ## ##       ##          ##    ## ##     ## ##          ##    ##  ##  ## ##     ## ##    ##  ##
-  # #### ##    ##  ######     ##    ##     ## ######## ########     ######   #######  ##          ##     ###  ###  ##     ## ##     ## ########
-  info "Installing dependencies and software using $DOTS/script/install"
+  # TODO: Go over the defaults config
+  #info "Setting OS X defaults..."
+  #debug "  running: $DOTS/zsh-setup-scripts/osx/set-defaults.sh"
+  #if $DOTS/zsh-setup-scripts/osx/set-defaults.sh 2>&1
+  #then
+  #  success "  OS X defaults set"
+  #  user "    NOTE that some of these changes require a logout/restart to take effect."
+  #else
+  #  fail "  Error setting OS X defaults"
+  #fi
+  
+  info "Installing dependencies and software using: $DOTS/script/install"
   if source $DOTS/zsh-setup-scripts/script/install  | info_stream #2>&1
   then
-    success "Dependencies installed"
+    success "  Dependencies installed"
   else
-    fail "Error installing dependencies"
+    fail "  Error installing dependencies"
   fi
+else
+  debug "Did not detect MacOS."
 fi
 
 echo ''

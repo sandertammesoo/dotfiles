@@ -3,6 +3,7 @@
 xdg_config/nvim/plugin
 packer_compiled.lua
 xdg_config/lazygit/state.yml
+xdg_config/lazygit/config.yml
 ./dotbot/
 nvm
 *.code-workspace

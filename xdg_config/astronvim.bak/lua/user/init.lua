@@ -14,7 +14,7 @@ local config = {
         -- Configure AstroNvim updates
         updater = {
                 remote = "origin", -- remote to use
-                channel = "nightly", -- "stable" or "nightly"
+                channel = "stable", -- "stable" or "nightly"
                 -- "latest", tag name, or regex search like "v1.*" to only do updates before v2 (STABLE ONLY
                 version = "latest",
                 branch = "main", -- branch name (NIGHTLY ONLY)

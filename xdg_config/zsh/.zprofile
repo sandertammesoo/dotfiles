@@ -1,8 +1,8 @@
 # ~/.config/.zsh/.zprofile
 log_info "Loading $ZDOTDIR/.zprofile"
 
-# export EDITOR=nvim
-export EDITOR='code'
+export EDITOR=nvim
+# export EDITOR='code'
 # export EDITOR=vim
 debug "Set EDITOR=$EDITOR"
 

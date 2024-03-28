@@ -15,3 +15,6 @@
 	path = git-submodules/dotbot
 	url = https://github.com/anishathalye/dotbot
 	ignore = dirty
+[submodule "git-submodules/AstroNvim"]
+	path = git-submodules/AstroNvim
+	url = https://github.com/AstroNvim/AstroNvim.git

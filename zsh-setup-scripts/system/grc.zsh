@@ -15,6 +15,11 @@ fi
 
 if (( $+commands[grc] )) && (( $+commands[brew] ))
 then
-  source `brew --prefix`/etc/grc.bashrc
-  info "test"
+    if [ -f `brew --prefix`/etc/grc.zsh ]
+    then
+        source `brew --prefix`/etc/grc.zsh
+        log_info '  Loaded GRC conf'
+    else
+        fail '  Could not find grc.zsh from '`brew --prefix`'/etc/...'
+    fi
 fi

@@ -1,4 +1,5 @@
 # Helper functions for printing loging info in to the terminal
+export XDG_CONFIG_HOME=$HOME/.config
 source $XDG_CONFIG_HOME/.dotfiles/helpers.zsh
 
 # ~/.config/.zsh/.zshenv
@@ -18,8 +19,6 @@ log_info "Loading $ZDOTDIR/.zshenv"
 # /etc/zshlogin
 # ZDOTDIR/.zshlogin
 
-
-export XDG_CONFIG_HOME=$HOME/.config
 debug "Set XDG_CONFIG_HOME=$XDG_CONFIG_HOME"
 
 export ZDOTDIR=$XDG_CONFIG_HOME/.zsh

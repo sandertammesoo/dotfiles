@@ -22,7 +22,7 @@ L_USER="USER "
 L_USER2=" ... "
 
 export DEBUG_DOTFILES_SETUP=true
-export DEBUG_DOTFILES_SETUP_LEVEL="INFO"
+export DEBUG_DOTFILES_SETUP_LEVEL="WARN"
 
 log_message () {
     local level="$1"

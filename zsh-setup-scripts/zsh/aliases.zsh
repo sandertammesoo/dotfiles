@@ -54,6 +54,7 @@ alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup
 
 alias cls='clear' # Good 'ol Clear Screen command
 alias grep='grep --color'
+alias cat='bat'
 
 # For https://github.com/cljoly/telescope-repo.nvim
 # https://egeek.me/2020/04/18/enabling-locate-on-osx/

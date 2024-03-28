@@ -22,6 +22,7 @@ tap "buo/cask-upgrade"
 # Version Control
 brew 'git'
 brew 'git-flow'
+brew 'grc'
 
 # CLI Utils
 brew 'coreutils'    # GNU File, Shell, and Text utilities https://www.gnu.org/software/coreutils

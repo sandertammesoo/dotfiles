@@ -17,4 +17,4 @@
 	ignore = dirty
 [submodule "git-submodules/AstroNvim"]
 	path = git-submodules/AstroNvim
-	url = https://github.com/AstroNvim/AstroNvim.git
+	url = https://github.com/sandertammesoo/AstroNvim.git

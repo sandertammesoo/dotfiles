@@ -25,6 +25,17 @@ then
   alias lsd="gls -lF --color | grep --color=never '^d'"
 fi
 
+if $(eza &>/dev/null)
+then
+  alias ls="eza --color=always --git --icons=always --group-directories-first"
+  alias l="eza --color=always --long --git --icons=always --no-time --no-user --group-directories-first --all --header"
+  alias ll="eza --color=always --long --git --icons=always --no-time --no-user --group-directories-first --header"
+  alias la='eza --color=always --git --icons=always --group-directories-first --all'
+
+  # List only directories
+  alias lsd="gls -lF --color | grep --color=never '^d'"
+fi
+
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
 alias ...="cd ../.."

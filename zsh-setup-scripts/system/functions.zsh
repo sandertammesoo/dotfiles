@@ -1,12 +1,5 @@
 #!/bin/zsh
 
-
-# Always list directory contents upon 'cd'
-function cd() {
-	z "$@"; la; #autoenv_init;
-	#builtin cd "$@"; la; #autoenv_init;
-}
-
 # Create a new directory and enter it
 function mkd() {
 	mkdir -p "$@" && cd "$_";

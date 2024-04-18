@@ -2,7 +2,7 @@
 #    link:
 #      relink: true
 
-- clean: ["~"]
+- clean: ["~/.config"]
 - shell:
     # - git update-submodules # after linking ~/.gitconfig
     - [git submodule update --init --recursive, Installing submodules]
@@ -16,9 +16,6 @@
     ~/.config/.zsh:
       relink: true
       path: "xdg_config/zsh"
-    #~/.config/.localrc:
-    #  relink: true
-    #  path: "xdg_config/.localrc"
     ~/.config/.hushlogin:
       relink: true
       path: "xdg_config/.hushlogin"
@@ -28,21 +25,12 @@
     ~/.config/.inputrc:
       relink: true
       path: "xdg_config/.inputrc"
-    #~/.config/nvm:
-    #  relink: true
-    #  path: "xdg_config/nvm"
     ~/.config/.warp:
       relink: true
       path: "xdg_config/warp"
     ~/.config/lazygit:
       relink: true
       path: "xdg_config/lazygit"
-    ~/.config/nvim:
-      relink: true
-      path: "xdg_config/nvim"
-    # ~/.config/astronvim:
-    #   relink: true
-    #   path: "xdg_config/astronvim"
     ~/.config/vim:
       relink: true
       path: "xdg_config/vim"

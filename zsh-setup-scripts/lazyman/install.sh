@@ -18,4 +18,8 @@ else
   fi
 fi
 
-
+if [ -d $XDG_CONFIG_HOME/nvim-myAstroNvim ]; then
+  debug "nvim-myAstroNvim exists. Skipping..."
+else
+  lazyman -C https://github.com/sandertammesoo/AstroNvim.git -N nvim-myAstroNvim -z -Q
+fi

@@ -40,9 +40,9 @@
     ~/.config/nvim:
       relink: true
       path: "xdg_config/nvim"
-    ~/.config/astronvim:
-      relink: true
-      path: "xdg_config/astronvim"
+    # ~/.config/astronvim:
+    #   relink: true
+    #   path: "xdg_config/astronvim"
     ~/.config/vim:
       relink: true
       path: "xdg_config/vim"

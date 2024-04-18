@@ -14,7 +14,7 @@ if command -v lazyman >/dev/null; then
 else
   # Check for lazyman submodule
   if [[ -e $XDG_CONFIG_HOME/.dotfiles/git-submodules/nvim-lazyman/lazyman.sh ]]; then
-    source $XDG_CONFIG_HOME/.dotfiles/git-submodules/nvim-lazyman/lazyman.sh -h
+    $XDG_CONFIG_HOME/.dotfiles/git-submodules/nvim-lazyman/lazyman.sh -h -z -Q
   fi
 fi
 

@@ -1,3 +1,5 @@
+# TODO: Maybe these are not needed when using lazyman as the nvim configuration manager?
+
 brew 'nvim'         # Ambitious Vim-fork focused on extensibility and agility https://neovim.io/
 brew 'stylua'       # Opinionated Lua code formatter https://github.com/JohnnyMorganz/StyLua
 brew 'ripgrep'      # Needed for Nvim Telescope

@@ -244,14 +244,16 @@ normal < shift + lalt - b : yabai -m space --balance
 moonlander < hyper - b : yabai -m space --balance
 
 # toggle window zoom
-normal < shift + lalt - t : yabai -m window --toggle zoom-parent
+#normal < shift + lalt - t : yabai -m window --toggle zoom-parent
 normal < shift + lalt - f : yabai -m window --toggle zoom-fullscreen
-moonlander < hyper - t : yabai -m window --toggle zoom-parent
+#moonlander < hyper - t : yabai -m window --toggle zoom-parent
 moonlander < hyper - f : yabai -m window --toggle zoom-fullscreen
 
 # float / unfloat window and center on screen
-normal < shift + lalt - c : yabai -m window --toggle float --grid 8:8:1:1:6:6
-moonlander < hyper - c : yabai -m window --toggle float --grid 8:8:1:1:6:6
+normal < shift + lalt - c : yabai -m window --toggle float --grid 40:40:1:1:38:38
+moonlander < hyper - c : yabai -m window --toggle float --grid 40:40:1:1:38:38
+normal < shift + lalt - v : yabai -m window --toggle float --grid 10:10:1:1:8:8
+moonlander < hyper - v : yabai -m window --toggle float --grid 10:10:1:1:8:8
 
 # Resize windowsa
 normal, moonlander < ctrl + lalt - i : \
@@ -271,11 +273,22 @@ normal, moonlander < ctrl + lalt - l : \
     yabai -m window --resize left:20:0
 
 # increase window size
-normal, moonlander < ctrl + lalt - up : yabai -m window --resize top_left:-40:-40; yabai -m window --resize bottom_right:40:40
+normal, moonlander < ctrl + lalt - 0x1B : yabai -m window --resize top_left:-40:-40; yabai -m window --resize bottom_right:40:40
+normal, moonlander < shift + ctrl + lalt - 0x1B : yabai -m window --resize top_left:-10:-10; yabai -m window --resize bottom_right:10:10
 
 # decrease window size
-normal, moonlander < ctrl + lalt - down : yabai -m window --resize top_left:40:40; yabai -m window --resize bottom_right:-40:-40
+normal, moonlander < ctrl + lalt - 0x2C : yabai -m window --resize top_left:40:40; yabai -m window --resize bottom_right:-40:-40
+normal, moonlander < shift + ctrl + lalt - 0x2C : yabai -m window --resize top_left:10:10; yabai -m window --resize bottom_right:-10:-10
 
+normal, moonlander < ctrl + lalt - up : yabai -m window --resize top_left:0:-40;
+normal, moonlander < ctrl + lalt - down : yabai -m window --resize bottom_right:0:40;
+normal, moonlander < ctrl + lalt - left : yabai -m window --resize top_left:-40:0;
+normal, moonlander < ctrl + lalt - right : yabai -m window --resize bottom_right:40:0;
+
+normal, moonlander < shift + ctrl + lalt - down : yabai -m window --resize top_left:0:40;
+normal, moonlander < shift + ctrl + lalt - up : yabai -m window --resize bottom_right:0:-40;
+normal, moonlander < shift + ctrl + lalt - right : yabai -m window --resize top_left:40:0;
+normal, moonlander < shift + ctrl + lalt - left : yabai -m window --resize bottom_right:-40:0;
 
 # ############################################################### #
 #                                                                 #
@@ -286,6 +299,12 @@ normal, moonlander < ctrl + lalt - down : yabai -m window --resize top_left:40:4
 # Enable / Disable gaps in current workspace
 normal < shift + lalt - 0 : yabai -m space --toggle padding; yabai -m space --toggle gap
 moonlander < hyper - 0 : yabai -m space --toggle padding; yabai -m space --toggle gap
+
+# Enable / Disable Window Opacity
+normal < shift + lalt - t : yabai -m config window_opacity on
+normal < shift + lalt - g : yabai -m config window_opacity off
+moonlander < hyper - t : yabai -m config window_opacity on
+moonlander < hyper - g : yabai -m config window_opacity off
 
 # Toggle mouse focus mode
 normal < shift + lalt - m : [[ $(yabai -m config focus_follows_mouse) = "disabled" ]] && \
@@ -311,7 +330,7 @@ moonlander < meh - c : brew services restart sketchybar
 
 normal, moonlander < ctrl + lalt - e : ~/.config/yabai/space_setup.sh;
 
-# view the last lines of the error log 
+# view the last lines of the error log
 #tail -f /tmp/yabai_$USER.err.log
 
 # view the last lines of the debug log

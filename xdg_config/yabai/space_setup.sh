@@ -14,7 +14,7 @@ function setup_space {
   local name="$2"
   local space=
   local displays=$(yabai -m query --displays | jq 'length')
-  local display_LUT=("1 1 1 1 1 1 1 1 1" "1 1 1 1 2 2 2 2 2" "1 1 1 1 2 2 2 3 3" "1 1 1 1 2 2 2 3 4")
+  local display_LUT=("1 1 1 1 1 1 1 1 1" "1 1 1 1 2 2 2 2 2" "1 1 1 2 2 2 3 3 3" "1 1 1 2 2 2 3 3 4")
   local row_content=(${display_LUT[$displays - 1]})
   local display=${row_content[$idx - 1]}
   echo "setup space id:$idx display:$display name:$name"
@@ -23,7 +23,7 @@ function setup_space {
   if [ -z "$space" ]; then
     yabai -m space --create
   fi
-  
+
   if [ "${name}" != "" ]; then
     yabai -m space "$idx" --display "$display" --label "$name"
   else
@@ -123,3 +123,5 @@ yabai -m rule --add app="^Slack$" space=^5
 yabai -m rule --add app="^Figma$" space=^4
 
 yabai -m space --focus 1
+
+sketchybar --reload

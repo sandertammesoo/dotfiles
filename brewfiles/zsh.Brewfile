@@ -7,3 +7,4 @@ brew "fzf"      # Command-line fuzzy finder written in Go https://github.com/jun
 brew "bat"      # Clone of cat(1) with syntax highlighting and Git integration https://github.com/sharkdp/bat
 brew "eza"      # Modern, maintained replacement for ls https://github.com/eza-community/eza
 brew "tlrc"     # Official tldr client written in Rust https://github.com/tldr-pages/tlrc
+brew "superfile" # Modern and pretty fancy file manager for the terminal

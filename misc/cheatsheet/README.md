@@ -1,1 +1,0 @@
-https://github.com/wayneyaoo/alfred-cheat

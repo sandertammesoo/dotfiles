@@ -13,7 +13,7 @@ debug "  Detected BASEDIR=$BASEDIR"
 # ##     ## ##     ##    ##    ##     ## ##     ##    ##
 # ########   #######     ##    ########   #######     ##
 
-CONFIG=".install.conf.yaml"
+CONFIG="dotbot.conf.yaml"
 DOTBOT_DIR="git-submodules/dotbot"
 DOTBOT_BIN="bin/dotbot"
 

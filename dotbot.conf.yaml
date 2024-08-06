@@ -55,9 +55,9 @@
     # ~/.config/.gitignore:
     #   relink: true
     #   path: "xdg_config/git/.gitignore_global"
-    ~/.config/.cheatsheet:
+    ~/.config/.cheat:
       relink: true
-      path: "misc/cheatsheet"
+      path: "xdg_config/cheat"
     #~/projects:
     #  relink: true
     #  path: "$PROJECTS"

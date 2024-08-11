@@ -58,6 +58,9 @@
     ~/.config/.cheat:
       relink: true
       path: "xdg_config/cheat"
+    ~/.config/superfile:
+      relink: true
+      path: "xdg_config/superfile"
     #~/projects:
     #  relink: true
     #  path: "$PROJECTS"

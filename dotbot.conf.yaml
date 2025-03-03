@@ -40,6 +40,9 @@
     ~/.config/yabai:
       relink: true
       path: "xdg_config/yabai"
+    # ~/.config/borders:
+    #   relink: true
+    #   path: "xdg_config/borders"
     ~/.config/skhd:
       relink: true
       path: "xdg_config/skhd"

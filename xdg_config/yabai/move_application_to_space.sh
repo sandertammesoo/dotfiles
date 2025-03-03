@@ -4,13 +4,13 @@
 LOG_FILE="/tmp/yabai_${USER}.out.log"
 
 # Redirect stdout and stderr to log file
-exec > "$LOG_FILE" 2>&1
+exec >"$LOG_FILE" 2>&1
 
 # Check if a space argument is provided
 if [ -z "$1" ]; then
-    echo "Error: No space number provided."
-    echo "Usage: $0 <space-number>"
-    exit 1
+	echo "Error: No space number provided."
+	echo "Usage: $0 <space-number>"
+	exit 1
 fi
 
 # Assign the first argument to 'space'
@@ -33,17 +33,18 @@ echo "Windows for focused app: $app_windows"
 
 # Check if the focused app is not empty
 if [ -n "${focused_app}" ]; then
-    echo "Processing: $focused_app"
+	echo "Processing: $focused_app"
 
-    # Get the window IDs for the focused application
-    window_ids=$(echo $app_windows | jq -r "select(.app == \"$focused_app\") | .ids[]")
-    echo "Found window_ids for $focused_app: $window_ids"
+	# Get the window IDs for the focused application
+	window_ids=$(echo $app_windows | jq -r "select(.app == \"$focused_app\") | .ids[]")
+	echo "Found window_ids for $focused_app: $window_ids"
 
-    # Move each window to the designated space
-    for id in $window_ids; do
-        echo "Moving window '$id' of $focused_app to space $space"
-        yabai -m window $id --space $space
-    done
+	# Move each window to the designated space
+	for id in $window_ids; do
+		echo "Moving window '$id' of $focused_app to space $space"
+		yabai -m window $id --space $space
+	done
+	yabai -m space --focus $id
 else
-    echo "No focused application found."
+	echo "No focused application found."
 fi

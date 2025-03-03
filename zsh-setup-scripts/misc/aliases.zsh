@@ -25,7 +25,7 @@ alias map="xargs -n1"
 
 # One of @janmoesen’s ProTip™s
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
-	alias "$method"="lwp-request -m '$method'"
+  alias "$method"="lwp-request -m '$method'"
 done
 
 # IP addresses
@@ -46,3 +46,5 @@ alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
 
 # mac OS shortcuts
 alias code="open -a 'Visual Studio Code'"
+
+alias kjh="ssh -i ~/.ssh/ca24_sander sander@kali-jump-host"

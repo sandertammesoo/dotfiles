@@ -183,24 +183,24 @@ moonlander < hyper - o : $(yabai -m window --display next; yabai -m display --fo
 # ##################################### #
 
 # move window to space #
-normal < shift + lalt - 1 : yabai -m window --space 1;
-normal < shift + lalt - 2 : yabai -m window --space 2;
-normal < shift + lalt - 3 : yabai -m window --space 3;
-normal < shift + lalt - 4 : yabai -m window --space 4;
-normal < shift + lalt - 5 : yabai -m window --space 5;
-normal < shift + lalt - 6 : yabai -m window --space 6;
-normal < shift + lalt - 7 : yabai -m window --space 7;
-normal < shift + lalt - 8 : yabai -m window --space 8;
-normal < shift + lalt - 9 : yabai -m window --space 9;
-moonlander < hyper - 1 : yabai -m window --space 1;
-moonlander < hyper - 2 : yabai -m window --space 2;
-moonlander < hyper - 3 : yabai -m window --space 3;
-moonlander < hyper - 4 : yabai -m window --space 4;
-moonlander < hyper - 5 : yabai -m window --space 5;
-moonlander < hyper - 6 : yabai -m window --space 6;
-moonlander < hyper - 7 : yabai -m window --space 7;
-moonlander < hyper - 8 : yabai -m window --space 8;
-moonlander < hyper - 9 : yabai -m window --space 9;
+normal < shift + lalt - 1 : yabai -m window --space 1; yabai -m space --focus 1
+normal < shift + lalt - 2 : yabai -m window --space 2; yabai -m space --focus 2
+normal < shift + lalt - 3 : yabai -m window --space 3; yabai -m space --focus 3
+normal < shift + lalt - 4 : yabai -m window --space 4; yabai -m space --focus 4
+normal < shift + lalt - 5 : yabai -m window --space 5; yabai -m space --focus 5
+normal < shift + lalt - 6 : yabai -m window --space 6; yabai -m space --focus 6
+normal < shift + lalt - 7 : yabai -m window --space 7; yabai -m space --focus 7
+normal < shift + lalt - 8 : yabai -m window --space 8; yabai -m space --focus 8
+normal < shift + lalt - 9 : yabai -m window --space 9; yabai -m space --focus 9
+moonlander < hyper - 1 : yabai -m window --space 1; yabai -m space --focus 1
+moonlander < hyper - 2 : yabai -m window --space 2; yabai -m space --focus 2
+moonlander < hyper - 3 : yabai -m window --space 3; yabai -m space --focus 3
+moonlander < hyper - 4 : yabai -m window --space 4; yabai -m space --focus 4
+moonlander < hyper - 5 : yabai -m window --space 5; yabai -m space --focus 5
+moonlander < hyper - 6 : yabai -m window --space 6; yabai -m space --focus 6
+moonlander < hyper - 7 : yabai -m window --space 7; yabai -m space --focus 7
+moonlander < hyper - 8 : yabai -m window --space 8; yabai -m space --focus 8
+moonlander < hyper - 9 : yabai -m window --space 9; yabai -m space --focus 9
 
 # move application to space #
 normal < shift + ctrl + lalt - 1 : ~/.config/yabai/move_application_to_space.sh 1;
@@ -328,7 +328,8 @@ moonlander < meh - x : $(skhd --restart-service; sketchybar --reload;)
 moonlander < meh - r : sketchybar --reload;
 moonlander < meh - c : brew services restart sketchybar
 
-normal, moonlander < ctrl + lalt - e : ~/.config/yabai/space_setup.sh;
+normal, moonlander < ctrl + lalt - w : ~/.config/yabai/space_setup_work.sh;
+normal, moonlander < ctrl + lalt - d : ~/.config/yabai/space_setup.sh;
 
 # view the last lines of the error log
 #tail -f /tmp/yabai_$USER.err.log

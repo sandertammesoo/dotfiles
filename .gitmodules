@@ -21,3 +21,9 @@
 [submodule "git-submodules/nvim-lazyman"]
 	path = git-submodules/nvim-lazyman
 	url = https://github.com/doctorfree/nvim-lazyman
+[submodule "xdg_config/cheat/cheatsheets/community"]
+	path = xdg_config/cheat/cheatsheets/community
+	url = https://github.com/cheat/cheatsheets.git
+[submodule "git-submodules/zunit"]
+	path = git-submodules/zunit
+	url = https://github.com/zunit-zsh/zunit.git

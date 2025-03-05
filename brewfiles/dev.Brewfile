@@ -11,7 +11,7 @@ cask "insomnia"
 brew 'go'           # needed for lazygit
 brew 'lazygit'      # Simple terminal UI for git commands https://github.com/jesseduffield/lazygit/
 brew 'lazydocker'   # Lazier way to manage everything docker https://github.com/jesseduffield/lazydocker
-brew 'dbeaver-community'  # Universal database tool and SQL client
+# brew 'dbeaver-community'  # Universal database tool and SQL client
 
 brew 'ack'          # Search tool like grep, but optimized for programmers https://beyondgrep.com/
 brew 'pyenv'        # Python version management https://github.com/pyenv/pyenv

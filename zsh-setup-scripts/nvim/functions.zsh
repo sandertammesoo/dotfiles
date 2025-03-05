@@ -1,4 +1,5 @@
 #!/bin/zsh
+src "$(basename "${(%):-%x}")"
 
 # `v` with no arguments opens the current directory in Vim, otherwise opens the
 # given location

@@ -1,0 +1,190 @@
+#!/usr/bin/env zunit
+#
+# A simple ZUnit test suite for new_bak, restore_bak, and clean_bak.
+
+
+@setup{
+  export TMP_DIR="/tmp/test_backup_scenario"
+  export T_FILES="$(pwd)/tests/_support/test_backup_scenario"
+
+  # Load functions to be tested
+  load ../functions
+
+  # Clean previous test environment (if any)
+  rm -rf $TMP_DIR >/dev/null || true
+
+  # Create a new test environment and copy test files
+  mkdir -p $TMP_DIR >/dev/null
+  cp -r $T_FILES/ $TMP_DIR/ >/dev/null
+
+  # Change working directory to the test directory
+  builtin cd $TMP_DIR >/dev/null
+}
+
+@teardown{
+  # Clean up the test environment
+  rm -rf $TMP_DIR >/dev/null || true
+}
+
+################################
+#       BACKUP FUNCTION        #
+################################
+
+@test 'new_bak: creates a backup of a file in .backups' {
+  assert "$TMP_DIR/.backups/file1.txt.bak3" does_not_exist
+  run new_bak file1.txt
+  assert $state equals 0
+  assert "$output" same_as "Created new backup: './.backups/file1.txt.bak3'"
+  assert "$TMP_DIR/.backups/file1.txt.bak3" is_file
+  assert "$TMP_DIR/file1.txt" same_as_file "$TMP_DIR/.backups/file1.txt.bak3"
+}
+
+@test 'new_bak: creates a backup of a file inside a nested folder' {
+  assert "$TMP_DIR/folderA/.backups/file1.txt.bak1" does_not_exist
+  run new_bak folderA/file1.txt
+  assert $state equals 0
+  assert "$output" same_as "Created new backup: 'folderA/.backups/file1.txt.bak1'"
+  assert "$TMP_DIR/folderA/.backups/file1.txt.bak1" is_file
+  assert "$TMP_DIR/folderA/file1.txt" same_as_file "$TMP_DIR/folderA/.backups/file1.txt.bak1"
+}
+
+@test 'new_bak: creates a backup of a directory in .backups' {
+  assert "$TMP_DIR/.backups/folderA.bak2" does_not_exist
+  run new_bak folderA
+  assert $state equals 0
+  assert "$output" same_as "Created new backup: './.backups/folderA.bak2'"
+  assert "$TMP_DIR/.backups/folderA.bak2" is_dir
+  assert "$TMP_DIR/folderA" same_as_file "$TMP_DIR/.backups/folderA.bak2"
+}
+
+################################
+#      RESTORE FUNCTION        #
+################################
+
+@test 'restore_bak: creates a new backup before restoring' {
+  assert "$TMP_DIR/.backups/file1.txt.bak3" does_not_exist
+  run restore_bak file1.txt
+  assert $state equals 0
+  assert "${lines[2]}" same_as "Created new backup from 'file1.txt': '.backups/file1.txt.bak3'"
+  assert "$TMP_DIR/.backups/file1.txt.bak3" is_file
+  assert "$TMP_DIR/.backups/folderA.bak2" does_not_exist
+  run restore_bak folderA
+  assert $state equals 0
+  assert "${lines[2]}" same_as "Created new backup from 'folderA': '.backups/folderA.bak2'"
+  assert "$TMP_DIR/.backups/folderA.bak2" is_dir
+}
+
+@test 'restore_bak: restores a file from the latest backup' {
+  assert "$TMP_DIR/file1.txt" different_to_file "$TMP_DIR/.backups/file1.txt.bak2"
+  run restore_bak file1.txt
+  assert $state equals 0
+  assert "${lines[1]}" same_as "Using latest backup './.backups/file1.txt.bak2' to restore 'file1.txt'."
+  assert "${lines[4]}" same_as "Restored 'file1.txt' from './.backups/file1.txt.bak2'"
+  assert "$TMP_DIR/file1.txt" same_as_file "$TMP_DIR/.backups/file1.txt.bak2"
+}
+
+@test 'restore_bak: restores a file from a specified backup' {
+  assert "$TMP_DIR/file1.txt" different_to_file "$TMP_DIR/.backups/file1.txt.bak1"
+  run restore_bak .backups/file1.txt.bak1
+  assert $state equals 0
+  assert "${lines[4]}" same_as "Restored 'file1.txt' from '.backups/file1.txt.bak1'"
+  assert "$TMP_DIR/file1.txt" same_as_file "$TMP_DIR/.backups/file1.txt.bak1"
+}
+
+@test 'restore_bak: restores a file from a specified backup while inside .backups' {
+  assert "$TMP_DIR/file1.txt" different_to_file "$TMP_DIR/.backups/file1.txt.bak1"
+  builtin cd .backups >/dev/null
+  run restore_bak file1.txt.bak1
+  assert $state equals 0
+  assert "${lines[4]}" same_as "Restored '../file1.txt' from './file1.txt.bak1'"
+  assert "$TMP_DIR/file1.txt" same_as_file "$TMP_DIR/.backups/file1.txt.bak1"
+}
+
+@test 'restore_bak: restores a file using a backup filename' {
+  assert "$TMP_DIR/file1.txt" different_to_file "$TMP_DIR/.backups/file1.txt.bak1"
+  run restore_bak file1.txt.bak1
+  assert $state equals 0
+  assert "${lines[4]}" same_as "Restored 'file1.txt' from './.backups/file1.txt.bak1'"
+  assert "$TMP_DIR/file1.txt" same_as_file "$TMP_DIR/.backups/file1.txt.bak1"
+}
+
+@test 'restore_bak: restores a directory from the latest backup' {
+  assert "$TMP_DIR/folderA" different_to_file "$TMP_DIR/.backups/folderA.bak1"
+  run restore_bak folderA
+  assert $state equals 0
+  assert "${lines[1]}" same_as "Using latest backup './.backups/folderA.bak1' to restore 'folderA'."
+  assert "${lines[4]}" same_as "Restored 'folderA' from './.backups/folderA.bak1'"
+  assert "$TMP_DIR/folderA" same_as_file "$TMP_DIR/.backups/folderA.bak1"
+}
+
+@test 'restore_bak: restores a directory from a specified backup' {
+  assert "$TMP_DIR/folderA" different_to_file "$TMP_DIR/.backups/folderA.bak0"
+  run restore_bak .backups/folderA.bak0
+  assert $state equals 0
+  assert "${lines[4]}" same_as "Restored 'folderA' from '.backups/folderA.bak0'"
+  assert "$TMP_DIR/folderA" same_as_file "$TMP_DIR/.backups/folderA.bak0"
+  assert "$TMP_DIR/folderA" same_as_file "$TMP_DIR/.backups/folderA.bak0"
+}
+
+@test 'restore_bak: restores a directory from a specified backup while inside .backups' {
+  assert "$TMP_DIR/folderA" different_to_file "$TMP_DIR/.backups/folderA.bak0"
+  builtin cd .backups >/dev/null
+  run restore_bak folderA.bak0
+  assert $state equals 0
+  assert "${lines[4]}" same_as "Restored '../folderA' from './folderA.bak0'"
+  assert "$TMP_DIR/folderA" same_as_file "$TMP_DIR/.backups/folderA.bak0"
+}
+
+@test 'restore_bak: restores a directory using a backup filename' {
+  assert "$TMP_DIR/folderA" different_to_file "$TMP_DIR/.backups/folderA.bak0"
+  run restore_bak folderA.bak0
+  assert $state equals 0
+  assert "${lines[4]}" same_as "Restored 'folderA' from './.backups/folderA.bak0'"
+  assert "$TMP_DIR/folderA" same_as_file "$TMP_DIR/.backups/folderA.bak0"
+}
+
+
+################################
+#      CLEANUP FUNCTION        #
+################################
+
+@test 'clean_bak: deletes the .backups folder in the current directory' {
+  assert "$TMP_DIR/.backups" is_dir
+  run clean_bak
+  assert $state equals 0
+  assert "$output" same_as "Removing './.backups'..."
+  assert "$TMP_DIR/.backups" does_not_exist
+  assert "$TMP_DIR/folderA/.backups" is_dir
+}
+
+@test 'clean_bak: deletes the .backups folder inside a specified directory' {
+  assert "$TMP_DIR/folderA/.backups" is_dir
+  run clean_bak folderA
+  assert $state equals 0
+  assert "$output" same_as "Removing 'folderA/.backups'..."
+  assert "$TMP_DIR/.backups" is_dir
+  assert "$TMP_DIR/folderA/.backups" does_not_exist
+}
+
+@test 'clean_bak -r: recursively deletes all .backups folders in the current directory' {
+  assert "$TMP_DIR/.backups" is_dir
+  assert "$TMP_DIR/folderA/.backups" is_dir
+  run clean_bak -r
+  assert $state equals 0
+  assert "$output" same_as "Removing all .backups directories under '.'..."
+  assert "$TMP_DIR/.backups" does_not_exist
+  assert "$TMP_DIR/folderA/.backups" does_not_exist
+}
+
+@test 'clean_bak -r: recursively deletes all .backups folders inside a specified directory' {
+  assert "$TMP_DIR/.backups" is_dir
+  assert "$TMP_DIR/folderA/.backups" is_dir
+  assert "$TMP_DIR/folderA/sub/.backups" is_dir
+  run clean_bak -r folderA
+  assert $state equals 0
+  assert "$output" same_as "Removing all .backups directories under 'folderA'..."
+  assert "$TMP_DIR/.backups" is_dir
+  assert "$TMP_DIR/folderA/.backups" does_not_exist
+  assert "$TMP_DIR/folderA/sub/.backups" does_not_exist
+}
+

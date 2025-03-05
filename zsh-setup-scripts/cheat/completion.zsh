@@ -1,4 +1,5 @@
 #!/bin/zsh
+src "$(basename "${(%):-%x}")"
 
 #compdef cheat
 

@@ -1,43 +1,30 @@
 #!/usr/bin/env zsh
-set -e
 source helpers.zsh
-
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-debug "  Detected BASEDIR=$BASEDIR"
-
-# ########   #######  ######## ########   #######  ########
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ##     ## ##     ##    ##    ########  ##     ##    ##
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ##     ## ##     ##    ##    ##     ## ##     ##    ##
-# ########   #######     ##    ########   #######     ##
+src "$(basename "${(%):-%x}")"
 
 CONFIG="dotbot.conf.yaml"
 DOTBOT_DIR="git-submodules/dotbot"
 DOTBOT_BIN="bin/dotbot"
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-debug "  › cd ${BASEDIR}"
+debug "Changing directory to ${BASEDIR}"
 cd "${BASEDIR}"
 
-info "  Update Dotbot git submodule dependencies"
-debug "    › git -C '${DOTBOT_DIR}' submodule sync --quiet --recursive 2>&1"
-if git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive 2>&1
-then
-  success "    Submodule sync successfull"
+# Sync Dotbot submodule
+user "Updating Dotbot submodule..."
+if git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive; then
+  success "  ✓ Dotbot submodule sync successful"
 else
-  fail "    Error while: Submodule sync"
+  fail "  ✗ Dotbot submodule sync failed"
 fi
 
-debug "    › git submodule update --init --recursive '${DOTBOT_DIR}'"
-if git submodule update --init --recursive "${DOTBOT_DIR}" 2>&1
-then
-  success "    Submodule update successfull"
+# Update Dotbot submodule
+if git submodule update --init --recursive "${DOTBOT_DIR}"; then
+  success "  ✓ Dotbot submodule update successful"
 else
-  fail "    Error while: Submodule update"
+  fail "  ✗ Dotbot submodule update failed"
 fi
 
-info "  Start Dotbot..."
-debug "    › '${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}' -d '${BASEDIR}' -c '${CONFIG}' '${@}'"
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}" | info_stream
-
+# Run Dotbot
+user "Starting Dotbot..."
+"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "$@" | info_stream

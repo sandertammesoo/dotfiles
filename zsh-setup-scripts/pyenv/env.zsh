@@ -1,4 +1,5 @@
 #!/bin/zsh
+src "$(basename "${(%):-%x}")"
 
 # # https://github.com/pyenv/pyenv/issues/950
 # export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
@@ -6,11 +7,10 @@
 # export LDFLAGS="-L$(brew --prefix openssl)/lib -L$(brew --prefix readline)/lib -L$(brew --prefix zlib)/lib"
 # export CPPFLAGS="-I$(brew --prefix openssl)/include -I$(brew --prefix readline)/include -I$(brew --prefix zlib)/include -I$(xcrun --show-sdk-path)/usr/include" 
 
-if command -v pyenv >/dev/null; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/shims:$PATH"
-    eval "$(pyenv init --path)"
-    debug "Set PYENV_ROOT and added to PATH"
+if (( $+commands[pyenv] )); then
+    export_n_log PYENV_ROOT="$XDG_CONFIG_HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && add_to PATH "$PYENV_ROOT/bin"
+    eval "$(pyenv init - zsh)"
 else
-    warn "Could not find pyenv. pyenv is not installed?"
+    warn " ! Could not find pyenv. Is it installed?"
 fi

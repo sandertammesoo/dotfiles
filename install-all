@@ -1,19 +1,17 @@
 #!/usr/bin/env zsh
-set -e
-source helpers.zsh
+src "$(basename "${(%):-%x}")"
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 debug "Detected BASEDIR=$BASEDIR"
 
-debug "Ask for the administrator password upfront"
-info "Get sudo privileges..."
-if sudo -v 2>&1
-then
-  success "  Got sudo"
-  debug "  Keep-alive: update existing 'sudo' time stamp until '.osx' has finished"
+# Request sudo privileges
+info "Requesting sudo privileges..."
+if sudo -v 2>/dev/null; then
+  success "  ✓ Sudo access granted"
+  debug "  Keeping sudo alive..."
   while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 else
-  fail "  Error getting sudo"
+  fail "  ✗ Sudo access denied"
 fi
 
 #info "Checking local git setup..."
@@ -24,18 +22,18 @@ fi
 #  fail "  Error setting up git config"
 #fi
 
-info "Run DotBot instal script..."
-if source ./run-dotbot
-then
-  success "    Dotbot finished!"
+# Run DotBot install script
+user "Running DotBot installation..."
+if source ./run-dotbot; then
+  success "  ✓ Dotbot completed successfully!"
 else
-  fail "    Dotbot failed..."
+  fail "  ✗ Dotbot installation failed!"
 fi
 
-if [ "$(uname -s)" = "Darwin" ]
-then
-  debug "Detected MacOS, let's install and setup other stuff."
-  export DOTS=$XDG_CONFIG_HOME/.dotfiles
+# macOS-specific setup
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  debug "Detected macOS, proceeding with additional setup..."
+  export DOTS="$XDG_CONFIG_HOME/.dotfiles"
 
   # TODO: Go over the defaults config
   #info "Setting OS X defaults..."
@@ -47,18 +45,18 @@ then
   #else
   #  fail "  Error setting OS X defaults"
   #fi
-  
-  info "Installing dependencies and software using: $DOTS/script/install"
-  if source $DOTS/zsh-setup-scripts/script/install  | info_stream #2>&1
-  then
-    success "  Dependencies installed"
+
+  user "Installing dependencies..."
+  if source "$DOTS/zsh-setup-scripts/script/install-deps"; then
+    success "  ✓ Dependencies installed successfully"
   else
-    fail "  Error installing dependencies"
+    fail "  ✗ Dependency installation failed"
   fi
 else
-  debug "Did not detect MacOS."
+  debug "Non-macOS system detected, skipping macOS setup."
 fi
 
-echo ''
-success 'All installed!'
-echo ''
+# Completion message
+echo ""
+success " ✓ Installation complete!"
+echo ""

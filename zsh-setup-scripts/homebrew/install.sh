@@ -1,41 +1,52 @@
-#!/bin/sh
-#
-# Homebrew
-#
-# This installs some of the common dependencies needed (or at least desired)
-# using Homebrew.
-set -e
-source helpers.zsh
+#!/usr/bin/env zsh
+src "$(basename "${(%):-%x}")"
 
-# Check for Homebrew
-if test ! $(which brew); then
-	echo "Homebrew not installed..."
-	echo "  Installing Homebrew for you."
+# Homebrew Installation & Package Management
 
-	# Install the correct homebrew for each OS type
-	if test "$(uname)" = "Darwin"; then
-		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	elif test "$(expr substr $(uname -s) 1 5)" = "Linux"; then
-		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	else
-		error "  FAILED: unknown uname!"
-		return
-	fi
+# Ensure Homebrew is installed
+if ! command -v brew &>/dev/null; then
+  if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
+    warn " ! Homebrew not installed. Installing now..."
+    
+    # Install Homebrew based on OS
+    case "$(uname -s)" in
+      Darwin|Linux)  
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+          fail " ✗ Installation failed: Homebrew installation script returned an error."
+          exit 1
+        }
+        ;;
+      *)  
+        fail " ✗ Installation failed: Unsupported OS ($(uname -s))"
+        exit 1
+        ;;
+    esac
+  fi
+  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
 fi
 
-echo "Updateing brew formulae..."
-brew update
+# Update Homebrew
+user "Updating Homebrew..."
+brew update | info_stream && success " ✓ Homebrew updated."
 
-echo "Installing packages from Brewfile..."
-brew bundle --file=./brewfiles/Minimal.Brewfile
-brew bundle --file=./brewfiles/Base.Brewfile
-brew bundle --file=./brewfiles/zsh.Brewfile
-brew bundle --file=./brewfiles/dev.Brewfile
-brew bundle --file=./brewfiles/nvim.Brewfile
-brew bundle --file=./brewfiles/misc.Brewfile
-brew bundle --file=./brewfiles/CTF.Brewfile
+# Install packages from Brewfiles
+user "Installing Homebrew packages..."
+for brewfile in ./brewfiles/*.Brewfile; do
+  info "  › Installing from $(basename "$brewfile")..."
+  brew bundle --file="$brewfile" | info_stream && success "  ✓ $(basename "$brewfile") installed."
+done
 
-echo "Brew cleanup..."
-brew cleanup
+# Cleanup
+user "Running Homebrew upgrade..."
+brew upgrade | info_stream && success " ✓ Homebrew upgrade complete."
 
+# Cleanup
+user "Running Homebrew cleanup..."
+brew cleanup | info_stream && success " ✓ Homebrew cleanup complete."
+
+# Doctor
+user "Running Homebrew doctor..."
+brew doctor | info_stream && success " ✓ Homebrew doctor complete."
+
+success " ✓ Homebrew setup finished!"
 exit 0

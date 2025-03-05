@@ -11,10 +11,6 @@
 [submodule "uncrustify-config"]
 	path = git-submodules/uncrustify-config
 	url = https://sandertammesoo@bitbucket.org/snippets/sandertammesoo/p6eBq/uncrustify-config.git
-[submodule "git-submodules/dotbot"]
-	path = git-submodules/dotbot
-	url = https://github.com/anishathalye/dotbot
-	ignore = dirty
 [submodule "git-submodules/AstroNvim"]
 	path = git-submodules/AstroNvim
 	url = https://github.com/sandertammesoo/AstroNvim.git
@@ -24,6 +20,3 @@
 [submodule "xdg_config/cheat/cheatsheets/community"]
 	path = xdg_config/cheat/cheatsheets/community
 	url = https://github.com/cheat/cheatsheets.git
-[submodule "git-submodules/zunit"]
-	path = git-submodules/zunit
-	url = https://github.com/zunit-zsh/zunit.git

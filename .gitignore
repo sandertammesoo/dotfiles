@@ -9,3 +9,4 @@ nvm
 *.code-workspace
 dotfiles.code-workspace
 *.ignore
+xdg_config/zsh/.revolver

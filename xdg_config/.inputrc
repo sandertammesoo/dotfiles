@@ -1,3 +1,4 @@
+log_info "${(%):-%x}"
 # Make Tab autocomplete regardless of filename case
 set completion-ignore-case on
 

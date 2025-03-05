@@ -1,0 +1,26 @@
+# https://github.com/Jean-Tinland/warp-theme-night-shift
+---
+accent: "#1e2737"
+background: "#f5f5f5"
+details: lighter
+foreground: "#1e2737"
+
+terminal_colors:
+  bright:
+    black: "#141b27"
+    blue: "#6db3ce"
+    cyan: "#2fc2c3"
+    green: "#8fc8bb"
+    magenta: "#ad82cb"
+    red: "#e78482"
+    white: "#f5f5f5"
+    yellow: "#e0b972"
+  normal:
+    black: "#141b27"
+    blue: "#6db3ce"
+    cyan: "#2fc2c3"
+    green: "#8fc8bb"
+    magenta: "#ad82cb"
+    red: "#e78482"
+    white: "#f5f5f5"
+    yellow: "#e0b972"

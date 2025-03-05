@@ -1,17 +1,16 @@
-#!/bin/sh
-set -e
-source helpers.zsh
+#!/usr/bin/env zsh
+src "$(basename "${(%):-%x}")"
 
-if test ! "$(uname)" = "Darwin"; then
-	error "      MacOS not detected!"
-	return
-	#exit 0
+# Ensure script is only executed on macOS
+if [[ "$(uname)" != "Darwin" ]]; then
+  error " ✗ MacOS not detected!"
+  return  # Use 'return' if sourced, 'exit' if standalone
 fi
 
-# The Brewfile handles Homebrew-based app and library installs, but there may
-# still be updates and installables in the Mac App Store. There's a nifty
-# command line interface to it that we can use to just install everything, so
-# yeah, let's do that.
-
-debug "      › sudo softwareupdate -i -a"
-sudo softwareupdate -i -a
+# Update all available macOS software updates
+user "Checking for macOS software updates..."
+if sudo softwareupdate -i -a | info_stream; then
+  success " ✓ Software update completed."
+else
+  fail " ✗ Software update failed."
+fi

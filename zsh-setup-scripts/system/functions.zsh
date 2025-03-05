@@ -1,4 +1,5 @@
 #!/bin/zsh
+# src "$(basename "${(%):-%x}")"
 
 ##############################################################################
 # to_relative: Convert an absolute or relative path (TARGET) into a relative
@@ -117,54 +118,71 @@ function restore_bak() {
     # Function to strip ANSI codes/newlines just in case
     local sanitize='s/\x1B\[[0-9;]*m//g'
     input="$(echo "$input" | tr -d '\n' | sed "$sanitize")"
+    
+    # Break down input into directory and filename
+    local dir name backups_dir
+    dir="$(dirname "$input")"
+    name="$(basename "$input")"
+    backups_dir="$dir/.backups"
 
-    # Check if input ends with ".bak<number>"
-    if [[ "$input" =~ \.bak[0-9]+$ && -e "$input" ]]; then
-        # The user provided an actual backup path => use it directly
-        _restore_bak_file "$input"
-    else
-        # The user provided what looks like an original filename => find latest backup
-        local dir name backups_dir
-        dir="$(dirname "$input")"
-        name="$(basename "$input")"
-        backups_dir="$dir/.backups"
-
-        if [[ ! -d "$backups_dir" ]]; then
-            echo "Error: No .backups folder found for '$input'. Nothing to restore."
-            return 1
-        fi
-
-        # Find the highest-numbered .bakN for that file
-        # e.g. .backups/test.txt.bak0, .backups/test.txt.bak1, ...
-        local latest_bak=""
-        local latest_num=-1
+    # If input looks like "file.txt.bak1" or "folderA.bak0", try resolving it
+    if [[ "$name" =~ \.bak[0-9]+$ ]]; then
+        local original_name="${name%.bak*}"  # Strip ".bakN"
+        local backup_path=""
         
-        for f in "$backups_dir/${name}.bak"*; do
-            # If the glob had no matches, skip
-            [[ -e "$f" ]] || continue
+        # Check if the backup exists in the same directory
+        if [[ -e "$dir/$name" ]]; then
+            backup_path="$dir/$name"
+        elif [[ -e "$backups_dir/$name" ]]; then
+            backup_path="$backups_dir/$name"
+        fi
 
-            # Extract trailing digits. E.g. "folder1.bak0" => "0", "folder1.bak12" => "12"
-            local bn="$(basename "$f")"
-            local num="${bn##*.bak}"  # everything after ".bak"
-
-            # Must be pure digits
-            [[ "$num" =~ ^[0-9]+$ ]] || continue
-
-            # Compare
-            if (( num > latest_num )); then
-                latest_num=$num
-                latest_bak="$f"
-            fi
-        done
-
-        if (( latest_num < 0 )) || [[ -z "$latest_bak" ]]; then
-            echo "Error: No backups found for '$input' in '$backups_dir'."
+        if [[ -z "$backup_path" ]]; then
+            echo "Error: Backup '$name' not found in '$dir' or '$backups_dir'."
             return 1
         fi
 
-        echo "Using latest backup '$latest_bak' to restore '$input'."
-        _restore_bak_file "$latest_bak"
+        echo "Using backup '$backup_path' to restore '$original_name'."
+        _restore_bak_file "$backup_path"
+        return 0
     fi
+    
+    # Otherwise, treat input as an original file and find its latest backup
+    if [[ ! -d "$backups_dir" ]]; then
+        echo "Error: No .backups folder found for '$input'. Nothing to restore."
+        return 1
+    fi
+
+    # Find the highest-numbered .bakN for that file
+    # e.g. .backups/test.txt.bak0, .backups/test.txt.bak1, ...
+    local latest_bak=""
+    local latest_num=-1
+    
+    for f in "$backups_dir/${name}.bak"*; do
+        # If the glob had no matches, skip
+        [[ -e "$f" ]] || continue
+
+        # Extract trailing digits. E.g. "folder1.bak0" => "0", "folder1.bak12" => "12"
+        local bn="$(basename "$f")"
+        local num="${bn##*.bak}"  # everything after ".bak"
+
+        # Must be pure digits
+        [[ "$num" =~ ^[0-9]+$ ]] || continue
+
+        # Compare
+        if (( num > latest_num )); then
+            latest_num=$num
+            latest_bak="$f"
+        fi
+    done
+
+    if (( latest_num < 0 )) || [[ -z "$latest_bak" ]]; then
+        echo "Error: No backups found for '$input' in '$backups_dir'."
+        return 1
+    fi
+
+    echo "Using latest backup '$latest_bak' to restore '$input'."
+    _restore_bak_file "$latest_bak"
 }
 
 ##############################################################################
@@ -373,320 +391,3 @@ function o() {
 function colormap() {
   for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
 }
-
-
-
-
-#########
-# TEST  #
-# #######
-
-##############################################################################
-# test_backup_helper_functions
-# Demonstrates basic usage of new_bak, restore_bak, and clean_bak.
-##############################################################################
-function test_backup_helper_functions_1 () {
-
-    # Store original working directory so we can return later
-    local original_wd="$(pwd)"
-
-    # Exit immediately if any command fails (optional)
-    set -e
-
-    # 1) Create a test environment
-    echo "=== Setting up test environment ==="
-    rm -rf /tmp/test_backup_scenario 2>/dev/null || true
-    mkdir -p /tmp/test_backup_scenario
-    cd /tmp/test_backup_scenario
-
-    # Create a sample file
-    echo "Hello world" > file1.txt
-    echo "=== Created /tmp/test_backup_scenario/file1.txt ==="
-    cat file1.txt
-    echo
-
-    # 2) Demonstrate new_bak on a file
-    echo "=== Creating a backup of file1.txt ==="
-    new_bak file1.txt
-    echo
-    tree -a 2>/dev/null || ls -R
-
-    # Make a modification
-    echo "Appended content" >> file1.txt
-    echo "=== file1.txt after modification ==="
-    cat file1.txt
-    echo
-
-    # 3) Demonstrate restore_bak on the modified file
-    echo "=== Restoring file1.txt from latest backup ==="
-    restore_bak file1.txt
-    echo "=== file1.txt after restore ==="
-    cat file1.txt
-    echo
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    # 4) Demonstrate folder backup
-    echo "=== Creating folder and backing it up ==="
-    mkdir folderA
-    echo "File A1" > folderA/fileA1.txt
-    echo "File A2" > folderA/fileA2.txt
-    new_bak folderA
-    echo
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    # 5) Modify folder contents, then restore
-    echo "=== Modifying folderA, then restoring ==="
-    echo "Modified A1" >> folderA/fileA1.txt
-    rm folderA/fileA2.txt
-    echo "FolderA before restore:"
-    tree folderA 2>/dev/null || ls -R folderA
-    echo
-    restore_bak folderA
-    echo "FolderA after restore:"
-    tree folderA 2>/dev/null || ls -R folderA
-    echo
-
-    # 6) Show how to clean local .backups
-    echo "=== Running clean_bak (non-recursive) in current dir ==="
-    clean_bak
-    echo
-    echo "Contents after clean_bak (local only):"
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    # 7) Create multiple backups in deeper structure for recursive cleaning
-    echo "=== Creating deeper structure for recursive cleanup test ==="
-    mkdir -p subdir/inner
-    touch subdir/inner/secret.txt
-    echo "Secret stuff" > subdir/inner/secret.txt
-    new_bak subdir/inner
-    echo "=== Current structure before recursive clean ==="
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    # 8) Demonstrate clean_bak -r
-    echo "=== Running clean_bak -r in current dir to remove ALL .backups recursively ==="
-    clean_bak -r
-    echo
-    echo "Contents after recursive clean_bak:"
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    # 9) Return to original directory and clean up test environment
-    builtin cd "$original_wd"
-    rm -rf /tmp/test_backup_scenario
-    echo "Cleaned up /tmp/test_backup_scenario and returned to '$original_wd'."
-
-    echo "=== All done! ==="
-
-}
-
-##############################################################################
-# test_backup_helper_functions
-# Demonstrates basic usage of new_bak, restore_bak, and clean_bak
-# covering these use cases:
-#   1) new_bak file1.txt
-#   2) new_bak folderA
-#   3) new_bak folderA/file1.txt
-#   4) restore_bak file1.txt
-#   5) restore_bak .backups/file1.txt.bak1
-#   6) restore_bak file1.txt.bak1   (when we're inside .backups)
-#   7) restore_bak folderA
-#   8) restore_bak .backups/folderA.bak1
-#   9) restore_bak folderA.bak1     (when we're inside .backups)
-#  10) clean_bak
-#  11) clean_bak folderA
-#  12) clean_bak -r
-#  13) clean_bak folderA -r
-##############################################################################
-function test_backup_helper_functions() {
-
-    local original_wd="$(pwd)"
-    # set -e  # Exit on error
-    trap 'echo "Something failed in test_backup_helper_functions, but not exiting shell..."' ERR
-
-    # 1) Create a clean test environment
-    echo "=== Setting up test environment ==="
-    rm -rf /tmp/test_backup_scenario 2>/dev/null || true
-    mkdir -p /tmp/test_backup_scenario
-    cd /tmp/test_backup_scenario
-    echo "Hello world" > file1.txt
-    echo "A1" > file2.txt
-    mkdir folderA
-    echo "folderA-file1" > folderA/file1.txt
-    echo "folderA-file2" > folderA/file2.txt
-
-    echo "Initial layout:"
-    tree -a 2>/dev/null || ls -R
-    cat file1.txt file2.txt
-    echo
-
-    #------------------------------------------------------------------------
-    # 1) new_bak file1.txt (backup a file)
-    #------------------------------------------------------------------------
-    echo "=== [1] new_bak file1.txt ==="
-    new_bak file1.txt
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 2) new_bak folderA (backup a folder)
-    #------------------------------------------------------------------------
-    echo "=== [2] new_bak folderA ==="
-    new_bak folderA
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 3) new_bak folderA/file1.txt (backup a target file inside folderA)
-    #------------------------------------------------------------------------
-    echo "=== [3] new_bak folderA/file1.txt ==="
-    new_bak folderA/file1.txt
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 4) restore_bak file1.txt (restore a file from latest backup)
-    #------------------------------------------------------------------------
-    # Make modifications so we can see a difference when restoring
-    echo "Modified content in file1.txt" >> file1.txt
-    echo "Modified content in folderA/file1.txt" >> folderA/file1.txt
-
-    echo "=== file1.txt and folderA/file1.txt after modification ==="
-    cat file1.txt folderA/file1.txt
-    echo
-    
-    echo "=== [4] restore_bak file1.txt ==="
-    restore_bak file1.txt
-    echo "file1.txt after restore:"
-    cat file1.txt
-    echo
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 5) restore_bak .backups/file1.txt.bak1 (specific backup of file1.txt)
-    #------------------------------------------------------------------------
-    echo "=== [5] restore_bak .backups/file1.txt.bak1 ==="
-    # We first ensure there's a .backups/file1.txt.bak1
-    # Since we might have .bak0, .bak2, etc, let's just do one more backup:
-    new_bak file1.txt  # create a second or third backup
-    # Now pick .bak1 or .bak2 as needed. We'll guess .bak1:
-    restore_bak .backups/file1.txt.bak1
-    echo "file1.txt after restoring from .backups/file1.txt.bak1:"
-    cat file1.txt
-    echo
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 6) restore_bak file1.txt.bak1 while inside .backups
-    #------------------------------------------------------------------------
-    echo "=== [6] restore_bak file1.txt.bak0 (inside .backups) ==="
-    builtin cd .backups
-    # We assume there's a file1.txt.bak1 here
-    restore_bak file1.txt.bak0
-    builtin cd ..
-    echo "file1.txt after restoring from .backups/file1.txt.bak0:"
-    cat file1.txt
-    echo
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 7) restore_bak folderA (restore a folder from latest backup)
-    #------------------------------------------------------------------------
-    echo "=== [7] restore_bak folderA ==="
-    restore_bak folderA
-    echo "folderA after restore:"
-    tree folderA 2>/dev/null || ls -R folderA
-    echo
-
-    #------------------------------------------------------------------------
-    # 8) restore_bak .backups/folderA.bak1 (specific backup of folderA)
-    #------------------------------------------------------------------------
-    echo "=== [8] restore_bak .backups/folderA.bak1 ==="
-    # We'll create another backup to ensure we have a .bak1
-    new_bak folderA
-    restore_bak .backups/folderA.bak1
-    echo
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 9) restore_bak folderA.bak1 (while in .backups)
-    #------------------------------------------------------------------------
-    echo "=== [9] restore_bak folderA.bak1 (inside .backups) ==="
-    builtin cd .backups
-    restore_bak folderA.bak1
-    builtin cd ..
-    echo
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 10) clean_bak (remove the .backups in current dir)
-    #------------------------------------------------------------------------
-    echo "=== [10] clean_bak ==="
-    clean_bak
-    echo "After clean_bak:"
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # Re-create some .backups to demonstrate the next steps
-    new_bak file2.txt
-    mkdir folderB
-    touch folderB/b1.txt
-    new_bak folderB
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 11) clean_bak folderB (remove .backups in target directory)
-    #------------------------------------------------------------------------
-    echo "=== [11] clean_bak folderB ==="
-    clean_bak folderB
-    echo "After clean_bak folderB:"
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 12) clean_bak -r (remove .backups recursively in current directory)
-    #------------------------------------------------------------------------
-    echo "=== [12] clean_bak -r ==="
-    # Re-create some nested backups for demonstration
-    mkdir -p nested/sub
-    echo "nested file" > nested/sub/hello.txt
-    new_bak nested/sub
-    tree -a 2>/dev/null || ls -R
-    echo
-    echo "Now cleaning recursively..."
-    clean_bak -r
-    echo "After clean_bak -r:"
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    #------------------------------------------------------------------------
-    # 13) clean_bak folderA -r (remove .backups recursively in target directory)
-    #------------------------------------------------------------------------
-    echo "=== [13] clean_bak folderA -r ==="
-    # We need a .backups folder under folderA, so let's create something:
-    mkdir -p folderA/subdir
-    echo "some file" > folderA/subdir/test.txt
-    new_bak folderA/subdir
-    tree -a 2>/dev/null || ls -R
-    echo
-    echo "Now cleaning recursively inside folderA..."
-    clean_bak folderA -r
-    tree -a 2>/dev/null || ls -R
-    echo
-
-    # Return to original directory & clean up
-    builtin cd "$original_wd"
-    rm -rf /tmp/test_backup_scenario
-    echo "=== All done! Cleaned up /tmp/test_backup_scenario and returned to '$original_wd'. ==="
-}
-

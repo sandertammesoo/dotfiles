@@ -6,11 +6,13 @@
 
 cask_args appdir: '/Applications'
 
+tap 'homebrew/core'
 tap 'homebrew/bundle'
 tap 'homebrew/services'
 
 tap 'felixkratz/formulae'       # For Sketchybar
 tap 'koekeishiya/formulae'      # For Yabai
+tap 'sandertammesoo/formulae'      # For Yabai
 brew 'mas'                      # Apple's Mac App Store CLI
 brew 'brew-cask-completion'     # Fish completion for brew-cask
 
@@ -22,6 +24,7 @@ tap "buo/cask-upgrade"
 brew 'git'
 brew 'git-flow'
 brew 'grc'
+brew 'gnupg'
 
 # CLI Utils
 brew 'coreutils'    # GNU File, Shell, and Text utilities https://www.gnu.org/software/coreutils

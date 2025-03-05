@@ -1,4 +1,6 @@
 #!/bin/zsh
+src "$(basename "${(%):-%x}")"
+
 alias h="history"
 
 # Get week number

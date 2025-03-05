@@ -1,4 +1,5 @@
 #!/bin/zsh
+src "$(basename "${(%):-%x}")"
 
 # Reload the shell (i.e. invoke as a login shell)
 alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"

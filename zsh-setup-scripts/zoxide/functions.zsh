@@ -1,4 +1,5 @@
 #!/bin/zsh
+src "$(basename "${(%):-%x}")"
 
 # Always list directory contents upon 'cd'
 function cd() {

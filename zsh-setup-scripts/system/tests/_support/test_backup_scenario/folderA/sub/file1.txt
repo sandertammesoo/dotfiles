@@ -1,0 +1,2 @@
+sub-file1
+Lorem ipsum

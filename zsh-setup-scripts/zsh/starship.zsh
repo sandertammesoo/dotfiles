@@ -1,4 +1,6 @@
 #!/bin/zsh
+src "$(basename "${(%):-%x}")"
+
 # find out which distribution we are running on
 LFILE="/etc/*-release"
 MFILE="/System/Library/CoreServices/SystemVersion.plist"

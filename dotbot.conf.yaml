@@ -1,18 +1,37 @@
-#- defaults:
-#    link:
-#      relink: true
+---
+- defaults:
+    link:
+      create: true
+      relink: true
 
-- clean: ["~/.config"]
+- create: ["~/.config", "~/.config/gnupg"]
+
+- clean:
+    ~/:
+      force: true
+    ~/.config:
+      recursive: true
+      force: true
+
 - shell:
     # - git update-submodules # after linking ~/.gitconfig
-    - [git submodule update --init --recursive, Installing submodules]
+    - command: git submodule update --init --recursive
+      stdin: true
+      stdout: true
+      description: Installing submodules
+      quiet: true
+
 - link:
-    ~/.config/.dotfiles:
-      relink: true
-      path: ""
     ~/.zshenv:
       relink: true
       path: "xdg_config/zsh/.zshenv"
+    ~/.config/.dotfiles:
+      relink: true
+      path: ""
+    # ~/.config/:
+    #   glob: true
+    #   path: "xdg_config/*"
+    # prefix: "."
     ~/.config/.zsh:
       relink: true
       path: "xdg_config/zsh"
@@ -40,17 +59,23 @@
     ~/.config/yabai:
       relink: true
       path: "xdg_config/yabai"
-    # ~/.config/borders:
-    #   relink: true
-    #   path: "xdg_config/borders"
     ~/.config/skhd:
       relink: true
       path: "xdg_config/skhd"
     ~/.config/sketchybar:
       relink: true
       path: "xdg_config/sketchybar"
-    # ~/.config/.gitconfig:
-    #   relink: true
+    ~/.config/.cheat:
+      relink: true
+      path: "xdg_config/cheat"
+    ~/.config/superfile:
+      relink: true
+      path: "xdg_config/superfile"
+    ~/.config/borders:
+      relink: true
+      path: "xdg_config/borders"
+    ~/.config/.gitconfig:
+      relink: true
     #   path: "xdg_config/git/.gitconfig"
     # ~/.config/.gitattributes:
     #   relink: true
@@ -58,15 +83,9 @@
     # ~/.config/.gitignore:
     #   relink: true
     #   path: "xdg_config/git/.gitignore_global"
-    ~/.config/.cheat:
-      relink: true
-      path: "xdg_config/cheat"
-    ~/.config/superfile:
-      relink: true
-      path: "xdg_config/superfile"
-    #~/projects:
-    #  relink: true
-    #  path: "$PROJECTS"
-- shell:
-    # - git update-submodules # after linking ~/.gitconfig
-    - [git submodule update --init --recursive, Installing submodules]
+    # ~/projects:
+    #   relink: true
+    #   path: "$PROJECTS"
+# - shell:
+#     # - git update-submodules # after linking ~/.gitconfig
+#     - [git submodule update --init --recursive, Installing submodules]

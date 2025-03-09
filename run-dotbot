@@ -10,7 +10,8 @@ if ! command -v brew &>/dev/null; then
     # Install Homebrew based on OS
     case "$(uname -s)" in
       Darwin|Linux)  
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
+          success "  ✓ Homebrew install successful" || {
           fail " ✗ Installation failed: Homebrew installation script returned an error."
           exit 1
         }
@@ -27,7 +28,7 @@ fi
 # Ensure Homebrew is installed
 if ! command -v dotbot &>/dev/null; then
   warn " ! Dotbot not installed. Installing now..."
-  if brew install dotbot | info_stream 2>/dev/null; then
+  if brew install dotbot 2>&1 | info_stream; then
     success "  ✓ Dotbot installed successfully!"
   else
     fail "  ✗ Dotbot installation failed!"

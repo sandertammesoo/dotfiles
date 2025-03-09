@@ -11,7 +11,8 @@ if ! command -v brew &>/dev/null; then
     # Install Homebrew based on OS
     case "$(uname -s)" in
       Darwin|Linux)  
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
+          success "  ✓ Homebrew install successful" || {
           fail " ✗ Installation failed: Homebrew installation script returned an error."
           exit 1
         }
@@ -33,7 +34,7 @@ brew update | info_stream && success " ✓ Homebrew updated."
 user "Installing Homebrew packages..."
 for brewfile in ./brewfiles/*.Brewfile; do
   info "  › Installing from $(basename "$brewfile")..."
-  brew bundle --file="$brewfile" | info_stream && success "  ✓ $(basename "$brewfile") installed."
+  brew bundle --file="$brewfile" 2>&1 | info_stream && success "  ✓ $(basename "$brewfile") installed."
 done
 
 # Cleanup

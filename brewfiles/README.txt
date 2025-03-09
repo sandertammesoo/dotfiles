@@ -13,3 +13,13 @@ It is possible to view the list of all the installed packages as a nicely format
 To view it, execute the following command:
 'brew deps --tree --installed'
 
+
+
+### Homebrew installation:
+```bash
+# Leaving a machine
+brew leaves > leaves.txt
+
+# Fresh installation
+xargs brew install < leaves.txt
+```

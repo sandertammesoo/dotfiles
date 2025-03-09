@@ -2,29 +2,60 @@
 source helpers.zsh
 src "$(basename "${(%):-%x}")"
 
+# Ensure Homebrew is installed
+if ! command -v brew &>/dev/null; then
+  if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
+    warn " ! Homebrew not installed. Installing now..."
+    
+    # Install Homebrew based on OS
+    case "$(uname -s)" in
+      Darwin|Linux)  
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+          fail " ✗ Installation failed: Homebrew installation script returned an error."
+          exit 1
+        }
+        ;;
+      *)  
+        fail " ✗ Installation failed: Unsupported OS ($(uname -s))"
+        exit 1
+        ;;
+    esac
+  fi
+  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+fi
+
+# Ensure Homebrew is installed
+if ! command -v dotbot &>/dev/null; then
+  warn " ! Dotbot not installed. Installing now..."
+  if brew install dotbot | info_stream 2>/dev/null; then
+    success "  ✓ Dotbot installed successfully!"
+  else
+    fail "  ✗ Dotbot installation failed!"
+  fi
+else
+  success "  ✓ Dotbot already installed"
+
+  # Upgrade Dotbot submodule
+  user "Updating Dotbot..."
+  output=$(brew upgrade dotbot 2>&1)
+  exit_code=$?  # Capture exit status
+
+  # Filter output but maintain original exit code
+  echo "$output" | grep -v "already installed" | info_stream 2>/dev/null
+
+  if [ $exit_code -eq 0 ]; then
+    success "  ✓ Dotbot update successful"
+  else
+    fail "  ✗ Dotbot update failed"
+  fi
+fi
+
 CONFIG="dotbot.conf.yaml"
-DOTBOT_DIR="git-submodules/dotbot"
-DOTBOT_BIN="bin/dotbot"
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-debug "Changing directory to ${BASEDIR}"
-cd "${BASEDIR}"
-
-# Sync Dotbot submodule
-user "Updating Dotbot submodule..."
-if git -C "${DOTBOT_DIR}" submodule sync --quiet --recursive; then
-  success "  ✓ Dotbot submodule sync successful"
-else
-  fail "  ✗ Dotbot submodule sync failed"
-fi
-
-# Update Dotbot submodule
-if git submodule update --init --recursive "${DOTBOT_DIR}"; then
-  success "  ✓ Dotbot submodule update successful"
-else
-  fail "  ✗ Dotbot submodule update failed"
-fi
+# debug "Changing directory to ${BASEDIR}"
+# cd "${BASEDIR}"
 
 # Run Dotbot
 user "Starting Dotbot..."
-"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "$@" | info_stream
+dotbot -c "${CONFIG}" "$@" | info_stream
+# dotbot -d "${BASEDIR}" -c "${CONFIG}" "$@" | info_stream

@@ -12,28 +12,29 @@ typeset -gx DEBUG_DOTFILES_SETUP="true"
 source "$HOME/.config/.dotfiles/helpers.zsh"
 src "$(basename "${(%):-%x}")"
 
-export_n_log XDG_CONFIG_HOME="$HOME/.config"
+export_n_log CONFIG_DIR=".config"
+export_n_log XDG_CONFIG_HOME="$HOME/$CONFIG_DIR"
 export_n_log ZDOTDIR="$XDG_CONFIG_HOME/.zsh"
 export_n_log ZSH="$XDG_CONFIG_HOME/.dotfiles/zsh-setup-scripts"
 
 # Add directories to PATH and MANPATH in batch (more efficient)
-paths_to_add=(
+paths=(
   "$ZSH/bin"
   "/usr/local/sbin"
   "/usr/local/bin"
   "./bin"
   "$HOME/.local/bin"
 )
-for p in $paths_to_add; do
+for p in $paths; do
   add_to PATH "$p"
 done
 
-manpaths_to_add=(
+manpaths=(
   "/usr/local/git/man"
   "/usr/local/mysql/man"
   "/usr/local/man"
 )
-for mp in $manpaths_to_add; do
+for mp in $manpaths; do
   add_to MANPATH "$mp"
 done
 

@@ -1,13 +1,17 @@
 ---
+# Name for the theme
+name: VSCode
 # Accent color for UI elements
 accent: "#7e57c2"
+# Input cursor color (optional; defaults to accent color if omitted)
+cursor: "#95D886"
 # Terminal background color
 background: "#1F1F1F"
-# Whether the theme is lighter or darker.
-details: darker
-# The foreground color.
+# The foreground color
 foreground: "#D4D4D4"
-# Ansi escape colors.
+# Whether the theme is lighter or darker
+details: darker
+# Ansi escape colors
 terminal_colors:
   bright:
     black: "#141b27"

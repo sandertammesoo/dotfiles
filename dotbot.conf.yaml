@@ -1,15 +1,14 @@
----
 - defaults:
     link:
       create: true
       relink: true
 
-- create: ["~/.config", "~/.config/gnupg"]
+- create: ["${XDG_CONFIG_HOME}", "${XDG_CONFIG_HOME}/gnupg"]
 
 - clean:
     ~/:
       force: true
-    ~/.config:
+    ${XDG_CONFIG_HOME}:
       recursive: true
       force: true
 
@@ -25,62 +24,65 @@
     ~/.zshenv:
       relink: true
       path: "xdg_config/zsh/.zshenv"
-    ~/.config/.dotfiles:
+    ${XDG_CONFIG_HOME}/.dotfiles:
       relink: true
-      path: ""
-    # ~/.config/:
+      path: "./"
+    # ${XDG_CONFIG_HOME}/:
     #   glob: true
     #   path: "xdg_config/*"
     # prefix: "."
-    ~/.config/.zsh:
+    ${XDG_CONFIG_HOME}/.zsh:
       relink: true
       path: "xdg_config/zsh"
-    ~/.config/.hushlogin:
+    ${XDG_CONFIG_HOME}/.nvm:
+      relink: true
+      path: "xdg_config/nvm"
+    ${XDG_CONFIG_HOME}/.hushlogin:
       relink: true
       path: "xdg_config/.hushlogin"
-    ~/.config/.editorconfig:
+    ${XDG_CONFIG_HOME}/.editorconfig:
       relink: true
       path: "xdg_config/.editorconfig"
-    ~/.config/.inputrc:
+    ${XDG_CONFIG_HOME}/.inputrc:
       relink: true
       path: "xdg_config/.inputrc"
-    ~/.config/.warp:
+    ${XDG_CONFIG_HOME}/.warp:
       relink: true
       path: "xdg_config/warp"
-    ~/.config/lazygit:
+    ${XDG_CONFIG_HOME}/lazygit:
       relink: true
       path: "xdg_config/lazygit"
-    ~/.config/vim:
+    ${XDG_CONFIG_HOME}/vim:
       relink: true
       path: "xdg_config/vim"
-    ~/.config/git:
+    ${XDG_CONFIG_HOME}/git:
       relink: true
       path: "xdg_config/git"
-    ~/.config/yabai:
+    ${XDG_CONFIG_HOME}/yabai:
       relink: true
       path: "xdg_config/yabai"
-    ~/.config/skhd:
+    ${XDG_CONFIG_HOME}/skhd:
       relink: true
       path: "xdg_config/skhd"
-    ~/.config/sketchybar:
+    ${XDG_CONFIG_HOME}/sketchybar:
       relink: true
       path: "xdg_config/sketchybar"
-    ~/.config/.cheat:
+    ${XDG_CONFIG_HOME}/.cheat:
       relink: true
       path: "xdg_config/cheat"
-    ~/.config/superfile:
+    ${XDG_CONFIG_HOME}/superfile:
       relink: true
       path: "xdg_config/superfile"
-    ~/.config/borders:
+    ${XDG_CONFIG_HOME}/borders:
       relink: true
       path: "xdg_config/borders"
-    ~/.config/.gitconfig:
-      relink: true
+    # ${XDG_CONFIG_HOME}/.gitconfig:
+    #   relink: true
     #   path: "xdg_config/git/.gitconfig"
-    # ~/.config/.gitattributes:
+    # ${XDG_CONFIG_HOME}/.gitattributes:
     #   relink: true
     #   path: "xdg_config/git/.gitattributes"
-    # ~/.config/.gitignore:
+    # ${XDG_CONFIG_HOME}/.gitignore:
     #   relink: true
     #   path: "xdg_config/git/.gitignore_global"
     # ~/projects:

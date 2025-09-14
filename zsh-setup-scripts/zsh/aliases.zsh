@@ -6,6 +6,13 @@ alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
 alias reload="reload!"
 alias s=reload
 
+alias restart-yabai="yabai --restart-service"
+alias restart-yabai-hard="yabai --restart-service"
+alias restart-skhd="skhd --restart-service"
+alias restart-skhd-hard="skhd --restart-service"
+alias restart-sketchybar="sketchybar --reload"
+alias restart-sketchybar-hard="brew services restart sketchybar"
+
 # {{{1 Edit Aliases
 alias ez="$EDITOR $ZDOTDIR/.zshrc"
 alias gn="cd $XDG_CONFIG_HOME/nvim/"
@@ -28,10 +35,10 @@ fi
 
 if $(eza &>/dev/null)
 then
-  alias ls="eza --color=always --git --icons=always --group-directories-first"
-  alias l="eza --color=always --long --git --icons=always --no-time --no-user --group-directories-first --all --header"
-  alias ll="eza --color=always --long --git --icons=always --no-time --no-user --group-directories-first --header"
-  alias la='eza --color=always --git --icons=always --group-directories-first --all'
+  alias ls="eza --color=always --icons=always --group-directories-first --git"
+  alias la="eza --color=always --icons=always --group-directories-first --git --all"
+  alias ll="eza --color=always --icons=always --group-directories-first --git --long --no-time --no-user --header"
+  alias l="eza --color=always --icons=always --group-directories-first --git  --long --no-time --no-user --header --all"
 
   # List only directories
   alias lsd="gls -lF --color | grep --color=never '^d'"

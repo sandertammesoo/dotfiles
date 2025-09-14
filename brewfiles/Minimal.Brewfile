@@ -7,14 +7,11 @@
 cask_args appdir: '/Applications'
 
 tap 'homebrew/core'
-tap 'homebrew/bundle'
-tap 'homebrew/services'
 
 tap 'felixkratz/formulae'       # For Sketchybar
 tap 'koekeishiya/formulae'      # For Yabai
 tap 'sandertammesoo/formulae'      # For Yabai
 brew 'mas'                      # Apple's Mac App Store CLI
-brew 'brew-cask-completion'     # Fish completion for brew-cask
 
 #  Cask-Update tool that works with brew cask to update all of your Mac apps. To upgrade all of you Mac apps, just do: brew cu
 # Cask-Update details some other features. In particular, I like brew cu pin <caskname> which locks an app to a specific version.

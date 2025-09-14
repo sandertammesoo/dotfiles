@@ -329,7 +329,7 @@ moonlander < meh - r : sketchybar --reload;
 moonlander < meh - c : brew services restart sketchybar
 
 normal, moonlander < ctrl + lalt - w : ~/.config/yabai/space_setup_work.sh;
-normal, moonlander < ctrl + lalt - d : ~/.config/yabai/space_setup.sh;
+normal, moonlander < ctrl + lalt - d : ~/.config/yabai/space_setup_home.sh;
 
 # view the last lines of the error log
 #tail -f /tmp/yabai_$USER.err.log

@@ -27,36 +27,36 @@ user "Running DotBot installation..."
 if source ./run-dotbot; then
   success "  ✓ Dotbot completed successfully!"
 else
-  fail "  ✗ Dotbot installation failed!"
+  fail "  ✗ Dotbot failed!"
 fi
 
 # macOS-specific setup
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  debug "Detected macOS, proceeding with additional setup..."
-  export DOTS="$XDG_CONFIG_HOME/.dotfiles"
-
-  # TODO: Go over the defaults config
-  #info "Setting OS X defaults..."
-  #debug "  running: $DOTS/zsh-setup-scripts/osx/set-defaults.sh"
-  #if $DOTS/zsh-setup-scripts/osx/set-defaults.sh 2>&1
-  #then
-  #  success "  OS X defaults set"
-  #  user "    NOTE that some of these changes require a logout/restart to take effect."
-  #else
-  #  fail "  Error setting OS X defaults"
-  #fi
-
-  user "Install dependencies next..."
-  if source "$DOTS/zsh-setup-scripts/script/install-deps"; then
-    success "  ✓ Dependencies installed successfully"
-  else
-    fail "  ✗ Dependency installation failed"
-  fi
-else
-  debug "Non-macOS system detected, skipping macOS setup."
-fi
-
-# Completion message
-echo ""
-success " ✓ Installation complete!"
-echo ""
+# if [[ "$(uname -s)" == "Darwin" ]]; then
+#   debug "Detected macOS, proceeding with additional setup..."
+#   export DOTS="$XDG_CONFIG_HOME/.dotfiles"
+#
+#   # TODO: Go over the defaults config
+#   #info "Setting OS X defaults..."
+#   #debug "  running: $DOTS/zsh-setup-scripts/osx/set-defaults.sh"
+#   #if $DOTS/zsh-setup-scripts/osx/set-defaults.sh 2>&1
+#   #then
+#   #  success "  OS X defaults set"
+#   #  user "    NOTE that some of these changes require a logout/restart to take effect."
+#   #else
+#   #  fail "  Error setting OS X defaults"
+#   #fi
+#
+#   user "Install dependencies next..."
+#   if source "$DOTS/zsh-setup-scripts/script/install-deps"; then
+#     success "  ✓ Dependencies installed successfully"
+#   else
+#     fail "  ✗ Dependency installation failed"
+#   fi
+# else
+#   debug "Non-macOS system detected, skipping macOS setup."
+# fi
+#
+# # Completion message
+# echo ""
+# success " ✓ Installation complete!"
+# echo ""

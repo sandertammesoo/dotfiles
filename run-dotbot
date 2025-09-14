@@ -51,12 +51,31 @@ else
   fi
 fi
 
-CONFIG="dotbot.conf.yaml"
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# debug "Changing directory to ${BASEDIR}"
-# cd "${BASEDIR}"
+# Ensure XDG_CONFIG_HOME is set (default to ~/.config if not defined)
+typeset -gx XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-# Run Dotbot
-user "Starting Dotbot..."
-dotbot -c "${CONFIG}" "$@" | info_stream
-# dotbot -d "${BASEDIR}" -c "${CONFIG}" "$@" | info_stream
+CONFIG="dotbot.conf.yaml"
+
+if [[ ! -s "$CONFIG" ]]; then
+  echo "✗ Dotbot config file '$CONFIG' is missing or empty!" >&2
+  exit 1
+fi
+
+# Check if file contains env vars like $XDG_CONFIG_HOME
+if [[ -s "$CONFIG" ]]; then
+  if grep -q '\$' "$CONFIG"; then
+# Run DotBot with environment variable substitution
+    user "▶ Starting Dotbot with envsubst..."
+    TMPFILE="$(mktemp)"
+    envsubst < "$CONFIG" > "$TMPFILE"
+    dotbot -c "$CONFIG" "$@" | info_stream
+    rm -f "$TMPFILE"
+    # envsubst < "$CONFIG" | dotbot -c - "$@"
+  else
+    user "▶ Starting Dotbot..."
+    dotbot -c "$CONFIG" "$@" | info_stream
+  fi
+else
+  fail "Config file $CONFIG is missing or empty!"
+  exit 1
+fi

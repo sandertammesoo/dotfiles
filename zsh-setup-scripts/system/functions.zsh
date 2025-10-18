@@ -1,5 +1,8 @@
-#!/bin/zsh
-# src "$(basename "${(%):-%x}")"
+#!/usr/bin/env zsh
+# System utility functions for file/directory management, backups, and hosts
+#
+# Note: Verbose logging disabled by default
+# To enable detailed logging, uncomment: log_trace "$(basename "${(%):-%x}")"
 
 ##############################################################################
 # to_relative: Convert an absolute or relative path (TARGET) into a relative
@@ -90,11 +93,21 @@ function new_bak() {
 
     # If it's a directory => cp -r; otherwise cp
     if [[ -d "$target" ]]; then
-        mkdir -p "$backup_path"
+        mkdir -p "$backup_path" || {
+            echo "Error: Failed to create backup directory '$backup_path'"
+            return 1
+        }
         # Copy contents (.* for hidden files if needed)
-        cp -r "$target"/. "$backup_path"
+        cp -r "$target"/. "$backup_path" || {
+            echo "Error: Failed to copy directory contents to '$backup_path'"
+            rm -rf "$backup_path"  # Clean up partial backup
+            return 1
+        }
     else
-        cp "$target" "$backup_path"
+        cp "$target" "$backup_path" || {
+            echo "Error: Failed to copy file to '$backup_path'"
+            return 1
+        }
     fi
 
     echo "Created new backup: '$(to_relative "$backup_path")'"
@@ -186,7 +199,143 @@ function restore_bak() {
 }
 
 ##############################################################################
-# Restore a file from a backup, printing only relative paths
+# _sanitize_backup_path - Remove ANSI codes and newlines from path
+#
+# Internal helper for restore operations. Cleans up paths that may contain
+# terminal escape sequences or unwanted whitespace.
+#
+# Args:
+#   $1 - Path to sanitize
+#
+# Returns:
+#   Sanitized path string
+##############################################################################
+function _sanitize_backup_path() {
+    echo "$1" | tr -d '\n' | sed 's/\x1B\[[0-9;]*m//g'
+}
+
+##############################################################################
+# _parse_backup_path - Extract original path from backup path
+#
+# Internal helper that determines the original file/directory path from
+# a backup path in the .backups directory.
+#
+# Args:
+#   $1 - Backup path (e.g., /path/to/.backups/file.txt.bak0)
+#
+# Returns:
+#   Original path that the backup came from
+##############################################################################
+function _parse_backup_path() {
+    local backup="$1"
+    local backup_dir="$(dirname "$backup")"
+    local backup_name="$(basename "$backup")"
+    local original_name="${backup_name%.bak*}"
+    
+    # Get parent directory of .backups folder
+    local original_dir="$(builtin cd "$backup_dir/.." && builtin pwd)"
+    
+    echo "$original_dir/$original_name"
+}
+
+##############################################################################
+# _backup_existing_target - Create backup of existing file before restore
+#
+# Internal helper that backs up the current file/directory before restoring
+# an older version. This ensures we don't lose the current state.
+#
+# Args:
+#   $1 - Path to back up
+#
+# Returns:
+#   0 on success, 1 on failure
+##############################################################################
+function _backup_existing_target() {
+    local target="$1"
+    
+    [[ ! -e "$target" ]] && return 0  # Nothing to backup
+    
+    local prev_bak="$(new_bak "$target" | awk '{print $NF}')" || {
+        echo "Error: Failed to create backup of existing target"
+        return 1
+    }
+    
+    echo "Created new backup from '$(to_relative "$target")': $(to_relative "$prev_bak")"
+    return 0
+}
+
+##############################################################################
+# _clear_restore_target - Remove existing file/directory contents
+#
+# Internal helper that removes the existing target to prepare for restore.
+# For directories, removes contents but keeps the directory structure.
+#
+# Args:
+#   $1 - Path to clear
+#
+# Returns:
+#   0 on success
+##############################################################################
+function _clear_restore_target() {
+    local target="$1"
+    
+    if [[ -d "$target" ]]; then
+        echo "Cleaning out '$(to_relative "$target")' before restore..."
+        find "$target" -mindepth 1 -delete 2>/dev/null
+    else
+        echo "Removing file '$(to_relative "$target")' before restore..."
+        rm -f "$target"
+    fi
+}
+
+##############################################################################
+# _perform_restore - Copy backup contents to original location
+#
+# Internal helper that performs the actual file/directory copy operation
+# from backup to original location.
+#
+# Args:
+#   $1 - Backup path (source)
+#   $2 - Original path (destination)
+#
+# Returns:
+#   0 on success, 1 on failure
+##############################################################################
+function _perform_restore() {
+    local backup="$1"
+    local original="$2"
+    
+    if [[ -d "$backup" ]]; then
+        mkdir -p "$original" || {
+            echo "Error: Failed to create directory '$original'"
+            return 1
+        }
+        cp -r "$backup"/. "$original" || {
+            echo "Error: Failed to restore directory from '$backup'"
+            return 1
+        }
+    else
+        cp "$backup" "$original" || {
+            echo "Error: Failed to restore file from '$backup'"
+            return 1
+        }
+    fi
+    
+    return 0
+}
+
+##############################################################################
+# _restore_bak_file - Restore a file from a backup
+#
+# Internal function called by restore_bak. Handles the actual restoration
+# process including sanitization, backup creation, and file copying.
+# Uses helper functions for better modularity and testability.
+#
+# Args:
+#   $1 - Backup file/directory path
+#
+# Returns:
+#   0 on success, 1 on failure
 ##############################################################################
 function _restore_bak_file() {
     local backup="$1"
@@ -196,59 +345,31 @@ function _restore_bak_file() {
         return 1
     fi
 
-    # Clean up possible newlines or ANSI codes
-    backup="$(echo "$backup" | tr -d '\n' | sed 's/\x1B\[[0-9;]*m//g')"
+    # Sanitize the backup path
+    backup="$(_sanitize_backup_path "$backup")"
+    
+    # Determine the original path from the backup path
+    local original_path="$(_parse_backup_path "$backup")"
 
-    # Break down the backup path
-    local backup_dir
-    backup_dir="$(dirname "$backup")"
+    # Ensure parent directory exists
+    mkdir -p "$(dirname "$original_path")" || {
+        echo "Error: Failed to create parent directory for '$original_path'"
+        return 1
+    }
 
-    local backup_name
-    backup_name="$(basename "$backup")"
-
-    local original_name="${backup_name%.bak*}"
-
-    # Force built-in cd/pwd to avoid alias issues
-    local original_dir
-    original_dir="$(
-        builtin cd "$backup_dir/.." \
-        && builtin pwd
-    )"
-
-    local original_path="$original_dir/$original_name"
-
-    # Make sure the target directory exists
-    mkdir -p "$(dirname "$original_path")"
-
-    # If the original item (file OR folder) exists, back it up
+    # Backup the existing target if it exists
     if [[ -e "$original_path" ]]; then
-        local prev_bak
-        prev_bak="$(new_bak "$original_path" | awk '{print $NF}')"
-        echo "Created new backup from '$(to_relative "$original_path")': $(to_relative "$prev_bak")"
-
-        if [[ -d "$original_path" ]]; then
-            # Remove everything inside but leave the folder itself
-            echo "Cleaning out '$(to_relative "$original_path")' before restore..."
-            # Safely remove all contents but leave the folder
-            find "$original_path" -mindepth 1 -delete 2>/dev/null
-        else
-            # If it was just a file, remove it
-            echo "Removing file '$(to_relative "$original_path")' before restore..."
-            rm -f "$original_path"
-        fi
+        _backup_existing_target "$original_path" || return 1
+        _clear_restore_target "$original_path"
     else
         echo "Warning: The original item '$(to_relative "$original_path")' does not exist. Restoring anyway."
     fi
 
-    # For the restore, if this backup is a directory => cp -r; else cp
-    if [[ -d "$backup" ]]; then
-        mkdir -p "$original_path"       # Ensure the original folder exists
-        cp -r "$backup"/. "$original_path"
-    else
-        cp "$backup" "$original_path"
-    fi
+    # Perform the actual restore
+    _perform_restore "$backup" "$original_path" || return 1
 
     echo "Restored '$(to_relative "$original_path")' from '$(to_relative "$backup")'"
+    return 0
 }
 
 ##############################################################################
@@ -257,44 +378,74 @@ function _restore_bak_file() {
 #   If -r is given, remove ALL .backups folders under the specified target_dir.
 #   If target_dir isn't provided, use "." (the current directory).
 ##############################################################################
+##############################################################################
+# clean_bak - Remove backup directories
+#
+# Removes .backups directories either in the specified directory or
+# recursively throughout a directory tree.
+#
+# Usage:
+#   clean_bak              # Remove .backups in current directory
+#   clean_bak path/to/dir  # Remove .backups in specified directory
+#   clean_bak -r .         # Remove all .backups recursively
+#
+# Options:
+#   -r  Remove all .backups directories recursively
+#   -h  Show this help message
+#
+# Args:
+#   target_dir - Directory to clean (default: current directory)
+##############################################################################
 function clean_bak() {
-    local usage="Usage: clean_bak [ -r ] [ target_dir ]
-  -r           Remove all .backups dirs recursively below target_dir
-  target_dir   Directory to clean (default: current directory)"
+    # Parse options using zparseopts
+    local -A opts
+    zparseopts -D -A opts -- r h -help || {
+        echo "Usage: clean_bak [-r] [target_dir]"
+        return 1
+    }
 
+    # Check for help flag
+    if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
+        echo "Usage: clean_bak [-r] [target_dir]"
+        echo ""
+        echo "Options:"
+        echo "  -r           Remove all .backups dirs recursively"
+        echo "  -h, --help   Show this help message"
+        echo ""
+        echo "Args:"
+        echo "  target_dir   Directory to clean (default: current directory)"
+        return 0
+    fi
+
+    # Determine if recursive mode is enabled
     local recursive=false
-    local target="."
+    (( ${+opts[-r]} )) && recursive=true
 
-    # Parse flags/args
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -r)
-                recursive=true
-                shift
-                ;;
-            -h|--help)
-                echo "$usage"
-                return 0
-                ;;
-            *)
-                # Assume it's the target directory
-                target="$1"
-                shift
-                ;;
-        esac
-    done
+    # Get target directory (first remaining argument, or default to current dir)
+    local target="${1:-.}"
 
     # Validate that target is a directory
     if [[ ! -d "$target" ]]; then
         echo "Error: '$target' is not a directory."
-        echo "$usage"
         return 1
     fi
 
     if [[ "$recursive" == true ]]; then
         # Remove all .backups folders inside target, at any depth
-        echo "Removing all .backups directories under '$target'..."
-        find "$target" -type d -name ".backups" -exec rm -rf {} + 2>/dev/null
+        local backup_dir="$target/.backups"
+        if [[ -d "$backup_dir" ]]; then
+            echo "Removing '$backup_dir'..."
+            rm -rf "$backup_dir"
+        else
+            echo "No .backups found in '$target'."
+        fi
+        # Also remove all nested .backups directories
+        # Use array to avoid subshell issues with pipes
+        local -a nested_dirs
+        nested_dirs=("${(@f)$(find "$target" -mindepth 2 -type d -name ".backups" 2>/dev/null)}")
+        for dir in "${nested_dirs[@]}"; do
+            [[ -n "$dir" ]] && echo "Removing '$dir'..." && rm -rf "$dir"
+        done
     else
         # Remove .backups only in the target directory itself
         local backup_dir="$target/.backups"
@@ -307,7 +458,23 @@ function clean_bak() {
     fi
 }
 
-# Function to add new host entries to /etc/hosts
+##############################################################################
+# add_host - Add entry to /etc/hosts
+#
+# Adds a new IP-to-hostname mapping to /etc/hosts with duplicate checking
+# and race condition prevention. Requires sudo privileges.
+#
+# Args:
+#   $1 - IP address (e.g., 192.168.1.10)
+#   $2 - Hostname (e.g., myserver.local)
+#
+# Returns:
+#   0 on success, 1 on error
+#
+# Examples:
+#   add_host 192.168.1.10 myserver.local
+#   add_host 127.0.0.1 dev.example.com
+##############################################################################
 function add_host() {
     local ip="$1"
     local hostname="$2"
@@ -317,18 +484,58 @@ function add_host() {
         return 1
     fi
 
+    # Validate IP address format (basic check)
+    if ! [[ "$ip" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        echo "Error: Invalid IP address format '$ip'"
+        return 1
+    fi
+
+    # Use a lock file to prevent race conditions
+    local lockfile="/tmp/hosts.lock"
+    local lockfd
+    
+    # Open lock file
+    exec {lockfd}>"$lockfile"
+    
+    # Acquire exclusive lock
+    flock -x "$lockfd" || {
+        echo "Error: Failed to acquire lock"
+        exec {lockfd}>&-
+        return 1
+    }
+    
     # Check if the hostname already exists in /etc/hosts
-    if grep -q "$hostname" /etc/hosts; then
+    if grep -q "[[:space:]]$hostname[[:space:]]*$" /etc/hosts; then
         echo "Error: Hostname '$hostname' already exists in /etc/hosts."
+        exec {lockfd}>&-
         return 1
     fi
 
     # Append new entry to /etc/hosts
     echo "$ip    $hostname" | sudo tee -a /etc/hosts > /dev/null
     echo "Added: $ip -> $hostname"
+    
+    # Release lock
+    exec {lockfd}>&-
 }
 
-# Function to remove a host entry from /etc/hosts
+##############################################################################
+# remove_host - Remove entry from /etc/hosts
+#
+# Removes an IP-to-hostname mapping from /etc/hosts using exact hostname
+# matching to prevent accidentally removing similar hostnames.
+# Requires sudo privileges.
+#
+# Args:
+#   $1 - Hostname to remove (e.g., myserver.local)
+#
+# Returns:
+#   0 on success, 1 on error
+#
+# Examples:
+#   remove_host myserver.local
+#   remove_host dev.example.com
+##############################################################################
 function remove_host() {
     local hostname="$1"
 
@@ -337,33 +544,88 @@ function remove_host() {
         return 1
     fi
 
-    # Check if the hostname exists in /etc/hosts
-    if ! grep -q "\s$hostname$" /etc/hosts; then
+    # Check if the hostname exists in /etc/hosts (match exact hostname only)
+    if ! grep -q "^[0-9.]\+[[:space:]]\+$hostname[[:space:]]*$" /etc/hosts; then
         echo "Error: Hostname '$hostname' not found in /etc/hosts."
         return 1
     fi
 
     # Determine correct sed syntax for in-place editing
+    # Match: IP address + whitespace + exact hostname + optional whitespace + end of line
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        sudo sed -i '' "/[[:space:]]$hostname$/d" /etc/hosts
+        sudo sed -i '' "/^[0-9.]\+[[:space:]]\+$hostname[[:space:]]*$/d" /etc/hosts
     else
-        sudo sed -i "/[[:space:]]$hostname$/d" /etc/hosts
+        sudo sed -i "/^[0-9.]\+[[:space:]]\+$hostname[[:space:]]*$/d" /etc/hosts
     fi
 
     echo "Removed: $hostname from /etc/hosts"
 }
 
-# Create a new directory and enter it
+##############################################################################
+# mkd - Make directory and change into it
+#
+# Creates a directory (and any parent directories) and immediately changes
+# into it. Useful for quickly setting up and entering new directory structures.
+#
+# Args:
+#   $@ - Directory path(s) to create
+#
+# Examples:
+#   mkd ~/projects/new-project
+#   mkd deeply/nested/directory/structure
+##############################################################################
 function mkd() {
-	mkdir -p "$@" && cd "$_";
+	mkdir -p "$@" && cd "${@[-1]}"
 }
 
-# Remove directory
+##############################################################################
+# rmd - Remove empty directory and list parent
+#
+# Removes an empty directory and then lists the contents of the parent
+# directory. Only works on empty directories (use rm -rf for non-empty).
+#
+# Args:
+#   $@ - Directory path(s) to remove
+#
+# Examples:
+#   rmd old-empty-folder
+##############################################################################
 function rmd() {
-	rmdir "$@" && lsd;
+    local target="${1:-.}"
+    
+    # If removing current directory (. or no args), cd to parent first
+    if [[ "$target" == "." || -z "$1" ]]; then
+        local current_dir="$PWD"
+        builtin cd .. || return 1
+        rmdir "$current_dir" || { builtin cd "$current_dir"; return 1; }
+        if command -v lsd &> /dev/null; then
+            lsd
+        fi
+    else
+        # Just remove the specified directory
+        if ! command -v lsd &> /dev/null; then
+            rmdir "$@"
+        else
+            rmdir "$@" && lsd
+        fi
+    fi
 }
 
-# Determine size of a file or total size of a directory
+##############################################################################
+# fs - File/directory size
+#
+# Displays the size of a file or the total size of a directory in a
+# human-readable format. If no arguments are provided, shows sizes for
+# all files and directories (including hidden) in the current directory.
+#
+# Args:
+#   $@ - Optional file or directory paths (defaults to all items in current dir)
+#
+# Examples:
+#   fs                    # Size of everything in current directory
+#   fs ~/Documents        # Size of Documents directory
+#   fs file1.txt file2.txt
+##############################################################################
 function fs() {
 	if du -b /dev/null > /dev/null 2>&1; then
 		local arg=-sbh;
@@ -377,8 +639,20 @@ function fs() {
 	fi;
 }
 
-# `o` with no arguments opens the current directory, otherwise opens the given
-# location
+##############################################################################
+# o - Open in default application
+#
+# Opens files or directories in their default application (macOS Finder if
+# directory). If no arguments provided, opens the current directory.
+#
+# Args:
+#   $@ - Optional file or directory paths (defaults to current directory)
+#
+# Examples:
+#   o                     # Opens current directory in Finder
+#   o ~/Documents         # Opens Documents in Finder
+#   o file.pdf            # Opens PDF in default viewer
+##############################################################################
 function o() {
 	if [ $# -eq 0 ]; then
 		open .;
@@ -387,7 +661,139 @@ function o() {
 	fi;
 }
 
-# Colormap
+##############################################################################
+# colormap - Display 256-color palette
+#
+# Displays all 256 colors available in the terminal with their corresponding
+# color codes. Useful for debugging color issues and choosing colors for
+# terminal customization.
+#
+# Usage:
+#   colormap
+#
+# Output:
+#   Displays a grid of colored blocks with numbers 000-255
+##############################################################################
 function colormap() {
   for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
+}
+
+##############################################################################
+# shist - Show history with timestamps
+#
+# Displays the Zsh command history along with timestamps for each entry.
+#
+# Args:
+#   $1 - Optional number of recent entries to show (default: all)
+#
+# Returns:
+#   0 on success, 1 on error
+#
+# Examples:
+#   shist            # Show entire history with timestamps
+#   shist 20         # Show last 20 commands with timestamps
+##############################################################################
+function shist() {
+    # Declare associative array for options
+    local -A opts
+    local num_entries=""
+
+    # Parse options using zparseopts
+    zparseopts -D -A opts -- n: h -help || {
+        echo "Usage: shist [-n <number>]"
+        return 1
+    }
+
+    # Check for help flag
+    if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
+        echo "Usage: shist [-n <number>]"
+        echo ""
+        echo "Options:"
+        echo "  -n <number>   Limit to last <number> entries"
+        echo "  -h, --help    Show this help message"
+        return 0
+    fi
+
+    # Extract the -n value if provided
+    if (( ${+opts[-n]} )); then
+        num_entries="${opts[-n]}"
+    fi
+
+    # Show history with timestamps using fc -lt (works on all systems)
+    if [[ -n "$num_entries" ]]; then
+        fc -lt '%Y-%m-%d %H:%M:%S' -"$num_entries" -1
+    else
+        fc -lt '%Y-%m-%d %H:%M:%S' 1 -1
+    fi
+}
+
+##############################################################################
+# search_hist - Search history for keyword
+#
+# Search the Zsh command history for a specific keyword and displayed with
+# timestamps.
+#
+# Args:
+#   $1 - Optional keyword to search for
+#   $2 - Optional number of entries to show (default: all)
+#
+# Returns:
+#   0 on success, 1 on error
+#
+# Examples:
+#   search_hist            # Show usage info
+#   search_hist -h       # Show usage info
+#   search_hist "keyword"  # Show history entries containing "keyword"
+#   search_hist keyword     # Show history entries containing "keyword"
+#   search_hist -n 5 keyword # Show last 5 history entries containing "keyword"
+##############################################################################
+function search_hist() {
+    # Declare associative array for options
+    local -A opts
+    local num_entries=""
+
+    # Parse options using zparseopts
+    zparseopts -D -A opts -- n: h -help || {
+        echo "Usage: search_hist [-n <number>] <keyword>"
+        return 1
+    }
+
+    # Check for help flag
+    if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
+        echo "Usage: search_hist [-n <number>] <keyword>"
+        echo ""
+        echo "Options:"
+        echo "  -n <number>   Limit to last <number> entries"
+        echo "  -h, --help    Show this help message"
+        return 0
+    fi
+
+    # Extract the -n value if provided
+    if (( ${+opts[-n]} )); then
+        num_entries="${opts[-n]}"
+    fi
+
+    # Get the keyword (last remaining argument after zparseopts processed flags)
+    local keyword="${@[-1]}"
+    
+    if [[ -z "$keyword" ]]; then
+        echo "Error: Missing required keyword argument."
+        echo "Usage: search_hist [-n <number>] <keyword>"
+        return 1
+    fi
+
+    # Validate num_entries if provided
+    if [[ -n "$num_entries" && ! "$num_entries" =~ ^[0-9]+$ ]]; then
+        echo "Error: -n argument must be a number."
+        return 1
+    fi
+
+    # Use fc to get history, then grep for keyword
+    # fc -l shows history without timestamps, just number and command
+    # Use -e to handle keywords that start with dashes
+    if [[ -n "$num_entries" ]]; then
+        fc -lt '%Y-%m-%d %H:%M:%S' 1 -1 | grep -i -e "$keyword" | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//' | tail -n "$num_entries"
+    else
+        fc -lt '%Y-%m-%d %H:%M:%S' 1 -1 | grep -i -e "$keyword" | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//'
+    fi
 }

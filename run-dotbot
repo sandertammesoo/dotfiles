@@ -1,81 +1,107 @@
 #!/usr/bin/env zsh
 source helpers.zsh
-src "$(basename "${(%):-%x}")"
 
 # Ensure Homebrew is installed
-if ! command -v brew &>/dev/null; then
-  if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
-    warn " ! Homebrew not installed. Installing now..."
-    
-    # Install Homebrew based on OS
-    case "$(uname -s)" in
-      Darwin|Linux)  
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
-          success "  ✓ Homebrew install successful" || {
-          fail " ✗ Installation failed: Homebrew installation script returned an error."
-          exit 1
-        }
-        ;;
-      *)  
-        fail " ✗ Installation failed: Unsupported OS ($(uname -s))"
-        exit 1
-        ;;
-    esac
-  fi
-  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+if source zsh-setup-scripts/homebrew/is_installed.sh; then
+  log_success "Homebrew is installed"
+else
+  log_fail "Homebrew installation failed. Please check the logs above."
+  return 1
 fi
 
-# Ensure Homebrew is installed
+# Ensure dotbot is installed
 if ! command -v dotbot &>/dev/null; then
-  warn " ! Dotbot not installed. Installing now..."
-  if brew install dotbot 2>&1 | info_stream; then
-    success "  ✓ Dotbot installed successfully!"
+  log_warn "Dotbot not installed. Installing now..."
+  if brew install dotbot 2>&1 | output_stream; then
+    log_success "Dotbot installed successfully!"
   else
-    fail "  ✗ Dotbot installation failed!"
+    log_fail "Dotbot installation failed!"
+    return 1
   fi
 else
-  success "  ✓ Dotbot already installed"
+  log_success "Dotbot already installed"
 
   # Upgrade Dotbot submodule
-  user "Updating Dotbot..."
+  log_user "Updating Dotbot..."
   output=$(brew upgrade dotbot 2>&1)
   exit_code=$?  # Capture exit status
 
   # Filter output but maintain original exit code
-  echo "$output" | grep -v "already installed" | info_stream 2>/dev/null
+  echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
 
   if [ $exit_code -eq 0 ]; then
-    success "  ✓ Dotbot update successful"
+    log_success "Dotbot update successful"
   else
-    fail "  ✗ Dotbot update failed"
+    log_failure "Dotbot update failed"
+    return 1
   fi
 fi
 
 # Ensure XDG_CONFIG_HOME is set (default to ~/.config if not defined)
 typeset -gx XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+# Ensure XDG_DATA_HOME is set (default to ~/.data if not defined)
+typeset -gx XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.data}"
+# Ensure XDG_CACHE_HOME is set (default to ~/.cache if not defined)
+typeset -gx XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 
 CONFIG="dotbot.conf.yaml"
 
 if [[ ! -s "$CONFIG" ]]; then
-  echo "✗ Dotbot config file '$CONFIG' is missing or empty!" >&2
-  exit 1
+  log_failure "Dotbot config file '$CONFIG' is missing or empty!" >&2
+  return 1
 fi
 
 # Check if file contains env vars like $XDG_CONFIG_HOME
 if [[ -s "$CONFIG" ]]; then
   if grep -q '\$' "$CONFIG"; then
-# Run DotBot with environment variable substitution
-    user "▶ Starting Dotbot with envsubst..."
-    TMPFILE="$(mktemp)"
-    envsubst < "$CONFIG" > "$TMPFILE"
-    dotbot -c "$CONFIG" "$@" | info_stream
-    rm -f "$TMPFILE"
-    # envsubst < "$CONFIG" | dotbot -c - "$@"
+    # Ensure envsubst binary is installed
+    if ! command -v envsubst &>/dev/null; then
+      log_warn "envsubst binary not installed. Installing gettext now..."
+      if brew install gettext 2>&1 | output_stream; then
+        log_success "gettext installed successfully!"
+      else
+        log_failure "gettext installation failed!"
+        return 1
+      fi
+    fi
+    
+    # Try to use system envsubst; if unavailable, fallback to ./bin/envsubst if present
+    if command -v envsubst &>/dev/null; then
+      # Create a temporary file to hold the substituted config
+      TMPFILE="$(mktemp)"
+      
+      # Perform environment variable substitution
+      envsubst < "$CONFIG" > "$TMPFILE"
+
+      # Run DotBot with environment variable substitution
+      log_user "Starting Dotbot with envsubst..."
+      [[ is_debug_enabled ]] && _disable_debug && should_reenable_debug=true
+      output=$(dotbot --force-color -c "$CONFIG" "$@" 2>&1)
+      exit_code=$?  # Capture exit status
+      [[ "$should_reenable_debug" == true ]] && _enable_debug
+
+      # Capture output but maintain original exit code
+      echo "$output" | output_stream 2>/dev/null
+
+      # Clean up temporary file
+      rm -f "$TMPFILE"
+      
+    else
+      log_failure "envsubst not found. Please install gettext."
+      return 1
+    fi
+
   else
-    user "▶ Starting Dotbot..."
-    dotbot -c "$CONFIG" "$@" | info_stream
+    log_user "Starting Dotbot..."
+    [[ is_debug_enabled ]] && _disable_debug && should_reenable_debug=true
+    output=$(dotbot --force-color -c "$CONFIG" "$@" 2>&1)
+    exit_code=$?  # Capture exit status
+    [[ "$should_reenable_debug" == true ]] && _enable_debug
+
+    # Capture output but maintain original exit code
+    echo "$output" | output_stream 2>/dev/null
   fi
 else
-  fail "Config file $CONFIG is missing or empty!"
-  exit 1
+  log_failure "Config file $CONFIG is missing or empty!"
+  return 1
 fi

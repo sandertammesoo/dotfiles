@@ -1,0 +1,35 @@
+# ShellCheck configuration for zsh-setup-scripts
+# See: https://www.shellcheck.net/wiki/
+
+# Disable rules that don't apply to zsh or our coding style
+
+# SC1071: ShellCheck only supports sh/bash/dash/ksh/zsh scripts
+disable=SC1071
+
+# SC2148: Tips depend on target shell and yours is unknown (we use shebangs)
+disable=SC2148
+
+# SC1090: Can't follow non-constant source (we source dynamically)
+disable=SC1090
+
+# SC1091: Not following sourced files (we have many dynamic sources)
+disable=SC1091
+
+# SC2034: Variable appears unused (zsh often uses variables in non-obvious ways)
+disable=SC2034
+
+# SC2154: Variable is referenced but not assigned (may be from parent scope/env)
+disable=SC2154
+
+# SC2164: Use 'cd ... || exit' in case cd fails (we handle this differently)
+disable=SC2164
+
+# SC2086: Double quote to prevent globbing (sometimes we want word splitting)
+# Be careful with this one - only disable in specific cases via inline comments
+
+# Enable optional checks
+enable=avoid-nullary-conditions
+enable=quote-safe-variables
+
+# Default shell is zsh
+shell=zsh

@@ -1,53 +1,58 @@
 #!/usr/bin/env zsh
-src "$(basename "${(%):-%x}")"
 
 # Homebrew Installation & Package Management
 
 # Ensure Homebrew is installed
-if ! command -v brew &>/dev/null; then
-  if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
-    warn " ! Homebrew not installed. Installing now..."
-    
-    # Install Homebrew based on OS
-    case "$(uname -s)" in
-      Darwin|Linux)  
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
-          success "  ✓ Homebrew install successful" || {
-          fail " ✗ Installation failed: Homebrew installation script returned an error."
-          exit 1
-        }
-        ;;
-      *)  
-        fail " ✗ Installation failed: Unsupported OS ($(uname -s))"
-        exit 1
-        ;;
-    esac
-  fi
-  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+if source zsh-setup-scripts/homebrew/is_installed.sh; then
+  log_success "Homebrew is installed"
+else
+  log_failure "Homebrew installation failed. Please check the logs above."
+  return 1
 fi
 
 # Update Homebrew
-user "Updating Homebrew..."
-brew update | info_stream && success " ✓ Homebrew updated."
+log_user "Updating Homebrew..."
+if brew update 2>&1 | output_stream; then
+  log_success "Homebrew updated."
+else
+  log_failure "Homebrew update failed."
+  return 1
+fi
 
 # Install packages from Brewfiles
-user "Installing Homebrew packages..."
-for brewfile in ./brewfiles/*.Brewfile; do
-  info "  › Installing from $(basename "$brewfile")..."
-  brew bundle --file="$brewfile" 2>&1 | info_stream && success "  ✓ $(basename "$brewfile") installed."
-done
+log_user "Installing Homebrew packages from $(basename "./brewfiles/Brewfile")..."
+if brew bundle --file="./brewfiles/Brewfile" 2>&1 | output_stream; then
+  log_success "Brewfile packages installed."
+else
+  log_failure "Brewfile package installation failed."
+  return 1
+fi
+
+# Upgrade installed packages
+log_user "Running Homebrew upgrade..."
+if brew upgrade 2>&1 | output_stream; then
+  log_success "Homebrew upgrade complete."
+else
+  log_failure "Homebrew upgrade failed."
+  return 1
+fi
 
 # Cleanup
-user "Running Homebrew upgrade..."
-brew upgrade | info_stream && success " ✓ Homebrew upgrade complete."
-
-# Cleanup
-user "Running Homebrew cleanup..."
-brew cleanup | info_stream && success " ✓ Homebrew cleanup complete."
+log_user "Running Homebrew cleanup..."
+if brew cleanup 2>&1 | output_stream; then
+  log_success "Homebrew cleanup complete."
+else
+  log_failure "Homebrew cleanup failed."
+  return 1
+fi
 
 # Doctor
-user "Running Homebrew doctor..."
-brew doctor | info_stream && success " ✓ Homebrew doctor complete."
+log_user "Running Homebrew doctor..."
+if brew doctor 2>&1 | output_stream; then
+  log_success "Homebrew doctor complete."
+else
+  log_warn "Homebrew doctor found issues (this is often non-critical)."
+fi
 
-success " ✓ Homebrew setup finished!"
-exit 0
+log_success "Homebrew setup finished!"
+return 0

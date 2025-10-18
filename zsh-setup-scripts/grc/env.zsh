@@ -1,26 +1,19 @@
-#!/bin/zsh
-src "$(basename "${(%):-%x}")"
+#!/usr/bin/env zsh
 # GRC colorizes nifty unix tools all over the place
 
 # Check if 'grc' is NOT available
-if (( ! $+commands[grc] )); then
-    warn " ! 'grc' is not installed."
+if ! command -v grc &> /dev/null; then
+    log_warn "grc not found, skipping grc shell integration"
     return
 fi
 
 # Check if 'brew' is NOT available
-if (( ! $+commands[brew] )); then
-    warn " ! 'brew' is not installed."
+if ! command -v brew &> /dev/null; then
+    log_warn "brew not found, skipping grc shell integration"
     return
 fi
 
-if (( $+commands[grc] )) && (( $+commands[brew] ))
-then
+if command -v grc &> /dev/null && command -v brew &> /dev/null; then
+    log_success "grc is installed, setting up grc shell integration"
     try_source `brew --prefix`/etc/grc.zsh
-    # if [ -f `brew --prefix`/etc/grc.zsh ]
-    # then
-    #     source `brew --prefix`/etc/grc.zsh
-    # else
-    #     fail '  Could not find grc.zsh from '`brew --prefix`'/etc/...'
-    # fi
 fi

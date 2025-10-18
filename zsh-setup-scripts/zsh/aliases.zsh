@@ -1,23 +1,33 @@
-#!/bin/zsh
-src "$(basename "${(%):-%x}")"
+#!/usr/bin/env zsh
 
 # Reload the shell (i.e. invoke as a login shell)
 alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
 alias reload="reload!"
 alias s=reload
 
-alias restart-yabai="yabai --restart-service"
-alias restart-yabai-hard="yabai --restart-service"
-alias restart-skhd="skhd --restart-service"
-alias restart-skhd-hard="skhd --restart-service"
-alias restart-sketchybar="sketchybar --reload"
-alias restart-sketchybar-hard="brew services restart sketchybar"
+if command -v yabai &> /dev/null; then
+    log_success "yabai is installed, setting up aliases"
+    alias restart-yabai="yabai --restart-service"
+    alias restart-yabai-hard="yabai --restart-service"
+else
+    log_warn " yabai not found, skipping yabai aliases"
+fi
 
-# {{{1 Edit Aliases
-alias ez="$EDITOR $ZDOTDIR/.zshrc"
-alias gn="cd $XDG_CONFIG_HOME/nvim/"
-# alias en='$EDITOR ~/Git/config_manager/vim/.nvimrc'
-# }}}
+if command -v skhd &> /dev/null; then
+    log_success "skhd is installed, setting up aliases"
+    alias restart-skhd="skhd --restart-service"
+    alias restart-skhd-hard="skhd --restart-service"
+else
+    log_warn " skhd not found, skipping skhd aliases"
+fi
+
+if command -v sketchybar &> /dev/null; then
+    log_success "sketchybar is installed, setting up aliases"
+    alias restart-sketchybar="sketchybar --reload"
+    alias restart-sketchybar-hard="brew services restart sketchybar"
+else
+    log_warn " sketchybar not found, skipping sketchybar aliases"
+fi
 
 # grc overides for ls
 #   Made possible through contributions from generous benefactors like
@@ -31,9 +41,7 @@ then
 
   # List only directories
   alias lsd="gls -lF --color | grep --color=never '^d'"
-fi
-
-if $(eza &>/dev/null)
+elif $(eza &>/dev/null)
 then
   alias ls="eza --color=always --icons=always --group-directories-first --git"
   alias la="eza --color=always --icons=always --group-directories-first --git --all"
@@ -41,7 +49,13 @@ then
   alias l="eza --color=always --icons=always --group-directories-first --git  --long --no-time --no-user --header --all"
 
   # List only directories
-  alias lsd="gls -lF --color | grep --color=never '^d'"
+  alias lsd="eza --color=always --icons=always --group-directories-first --git --long --no-time --no-user --header --all --dirs-only"
+else
+  alias l="ls -lAh"
+  alias ll="ls -l"
+  alias la="ls -A"
+  # List only directories
+  alias lsd="ls -lF | grep '^d'"
 fi
 
 # Easier navigation: .., ..., ...., ....., ~ and -
@@ -69,31 +83,30 @@ alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && 
 alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
-alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; brew doctor;'
+alias update='brew update; brew upgrade; brew cleanup; brew doctor;'
 
 alias cls='clear' # Good 'ol Clear Screen command
-alias grep='grep --color'
 alias cat='bat'
+alias grep='grep --color=auto'
+export_n_log GREP_COLOR='1;32'
 
 # For https://github.com/cljoly/telescope-repo.nvim
 # https://egeek.me/2020/04/18/enabling-locate-on-osx/
-if which glocate > /dev/null; then
-  alias locate="glocate -d $HOME/locatedb"
 
-  # Using cache_list requires `LOCATE_PATH` environment var to exist in session.
-  # trouble shoot: `echo $LOCATE_PATH` needs to return db path.
-  [[ -f "$HOME/locatedb" ]] && export LOCATE_PATH="$HOME/locatedb"
+if command -v glocate &> /dev/null; then
+    log_success "glocate is installed, setting up aliases"
+    alias locate="glocate -d $HOME/locatedb"
+
+    # Using cache_list requires `LOCATE_PATH` environment var to exist in session.
+    # trouble shoot: `echo $LOCATE_PATH` needs to return db path.
+    [[ -f "$HOME/locatedb" ]] && export LOCATE_PATH="$HOME/locatedb"
+else
+    log_warn " glocate not found, skipping glocate aliases"
 fi
 
-
-alias loaddb="gupdatedb --localpaths=$HOME --prunepaths=/Volumes --output=$HOME/locatedb"
-
-# useful only for Mac OS Silicon M1, 
-# still working but useless for the other platforms
-docker() {
-  if [[ `uname -m` == "arm64" ]] && [[ "$1" == "run" || "$1" == "build" ]]; then
-     /usr/local/bin/docker "$1" --platform linux/amd64 "${@:2}"
-  else
-     /usr/local/bin/docker "$@"
-  fi
-}
+if command -v gupdatedb &> /dev/null; then
+    log_success "gupdatedb is installed, setting up aliases"
+    alias loaddb="gupdatedb --localpaths=$HOME --prunepaths=/Volumes --output=$HOME/locatedb"
+else
+    log_warn " gupdatedb not found, skipping gupdatedb aliases"
+fi

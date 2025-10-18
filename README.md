@@ -58,6 +58,23 @@ defaults, and so on. Tweak this script, and occasionally run `dot` from
 time to time to keep your environment fresh and up-to-date. You can find
 this script in `bin/`.
 
+## testing
+
+The project includes comprehensive shell script testing using [ShellSpec](https://shellspec.info/):
+
+```sh
+# Install ShellSpec (if not already installed)
+brew install shellspec
+
+# Run all tests
+shellspec
+
+# Run specific test file
+shellspec spec/logging_helpers_spec.sh
+```
+
+Tests cover the logging framework functionality with 53 test cases providing detailed coverage of all functions and edge cases.
+
 ## thanks
 
 <!--  -->

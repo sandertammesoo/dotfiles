@@ -1,10 +1,14 @@
-#!/bin/zsh
-src "$(basename "${(%):-%x}")"
+#!/usr/bin/env zsh
 
-if (( $+commands[zoxide] )); then
-    eval "$(zoxide init zsh)"
+if command -v zoxide &> /dev/null; then
+    log_success "zoxide is installed, setting up zoxide environment"
+    if eval "$(zoxide init zsh)"; then
+        log_success "zoxide initialized successfully"
+    else
+        log_error " ✗  Failed to initialize zoxide"
+    fi
     # If you want to override `cd`, you can uncomment the line below
     # eval "$(zoxide init --cmd cd zsh)"
 else
-    warn " ! Could not find zoxide. Is it installed?"
+    log_warn "zoxide not found, skipping zoxide environment setup"
 fi

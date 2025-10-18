@@ -3,13 +3,29 @@
       create: true
       relink: true
 
-- create: ["${XDG_CONFIG_HOME}", "${XDG_CONFIG_HOME}/gnupg"]
+- create:
+    - "${XDG_CONFIG_HOME}"
+    - "${XDG_DATA_HOME}"
+    - "${XDG_CACHE_HOME}"
+    - "${XDG_STATE_HOME}"
+    - "${XDG_DATA_HOME}/gnupg"
+    - "${XDG_STATE_HOME}/zsh"
+    - "${XDG_STATE_HOME}/less"
+    - "${XDG_STATE_HOME}/python"
+    - "${XDG_STATE_HOME}/node"
+    - "${XDG_CACHE_HOME}/npm"
+    - "${XDG_CACHE_HOME}/python"
+    - "${XDG_CACHE_HOME}/composer"
+    - "${XDG_DATA_HOME}/cargo"
+    - "${XDG_DATA_HOME}/rustup"
+    - "${XDG_DATA_HOME}/composer"
+    - "${XDG_CONFIG_HOME}/npm"
+    - "${XDG_CONFIG_HOME}/docker"
+    - "${XDG_CONFIG_HOME}/ipython"
+    - "${XDG_CONFIG_HOME}/jupyter"
 
 - clean:
     ~/:
-      force: true
-    ${XDG_CONFIG_HOME}:
-      recursive: true
       force: true
 
 - shell:
@@ -18,25 +34,17 @@
       stdin: true
       stdout: true
       description: Installing submodules
-      quiet: true
 
 - link:
-    ~/.zshenv:
-      relink: true
-      path: "xdg_config/zsh/.zshenv"
     ${XDG_CONFIG_HOME}/.dotfiles:
       relink: true
       path: "./"
-    # ${XDG_CONFIG_HOME}/:
-    #   glob: true
-    #   path: "xdg_config/*"
-    # prefix: "."
     ${XDG_CONFIG_HOME}/.zsh:
       relink: true
       path: "xdg_config/zsh"
-    ${XDG_CONFIG_HOME}/.nvm:
+    ~/.zshenv:
       relink: true
-      path: "xdg_config/nvm"
+      path: "${XDG_CONFIG_HOME}/.zsh/.zshenv"
     ${XDG_CONFIG_HOME}/.hushlogin:
       relink: true
       path: "xdg_config/.hushlogin"
@@ -88,6 +96,31 @@
     # ~/projects:
     #   relink: true
     #   path: "$PROJECTS"
-# - shell:
-#     # - git update-submodules # after linking ~/.gitconfig
-#     - [git submodule update --init --recursive, Installing submodules]
+
+- shell:
+    # - git update-submodules # after linking ~/.gitconfig
+    - [git submodule update --init --recursive, Installing submodules]
+
+- shell:
+    - command: |
+        if [ ! -f "$XDG_STATE_HOME/zsh/history" ]; then
+          touch "$XDG_STATE_HOME/zsh/history"
+        fi
+        if [ -f "${HOME}/.zsh_history" ]; then
+          cat "${HOME}/.zsh_history" >> "$XDG_STATE_HOME/zsh/history"
+          rm "${HOME}/.zsh_history"
+        fi
+      stdin: true
+      stdout: true
+      description: Move or create zsh_history file
+    - command: |
+        if [ -d "${HOME}/.zsh_sessions" ]; then
+          if [ ! -d "${XDG_STATE_HOME}/zsh/sessions" ]; then
+            mkdir -p "${XDG_STATE_HOME}/zsh/sessions"
+          fi
+          mv "${HOME}/.zsh_sessions/"* "${XDG_STATE_HOME}/zsh/sessions/"
+          rmdir "${HOME}/.zsh_sessions"
+        fi
+      stdin: true
+      stdout: true
+      description: Move zsh_sessions directory

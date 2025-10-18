@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 #
 # This lets you quickly jump into a project directory.
 #
@@ -13,4 +13,21 @@
 #
 # ...to quickly jump into holman/boom, for example.
 
-cd "$PROJECTS/$1"
+c() {
+    # if [[ -z "$PROJECTS" ]]; then
+    #   # if log_error function is available
+    #   if command -v log_error > /dev/null; then
+    #     always log_error "Error: \$PROJECTS environment variable is not set"
+    #   else
+    #     echo "Error: \$PROJECTS environment variable is not set" >&2
+    #   fi
+    #   return 1
+    # fi
+
+    if [[ -z "$1" ]]; then
+    echo "Usage: c <project-name>"
+    return 1
+    fi
+
+    cd "$PROJECTS/$1"
+}

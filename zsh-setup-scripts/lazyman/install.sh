@@ -1,37 +1,47 @@
 #!/usr/bin/env zsh
-src "$(basename "${(%):-%x}")"
 
 # Lazyman - A tool for managing multiple Neovim configurations
 # https://lazyman.dev/about/
 
-user "Checking Lazyman installation..."
+log_user "Checking Lazyman installation..."
+
+# Skip Lazyman installation for now, as it's not fully ready yet.
+log_info "  ✗   Skipping Lazyman installation for now, as it's not fully ready yet."
+return 1
 
 if command -v lazyman > /dev/null; then
-  success " ✓ Lazyman is already installed. Skipping installation."
+  log_success "Lazyman is already installed. Skipping installation."
 else
-  # Check if the Lazyman submodule exists before attempting installation
+  log_debug "Check if the Lazyman submodule exists before attempting installation"
   LAZYMAN_SCRIPT="$XDG_CONFIG_HOME/.dotfiles/git-submodules/nvim-lazyman/lazyman.sh"
   
   if [[ -x "$LAZYMAN_SCRIPT" ]]; then
-    info "Installing Lazyman from submodule..."
-    "$LAZYMAN_SCRIPT" -h -z -Q
-    success " ✓ Lazyman installed successfully."
+    log_info "Installing Lazyman from submodule..."
+    log_debug "Running: $LAZYMAN_SCRIPT -h -z -Q -n"  # -n for dry run;
+    if "$LAZYMAN_SCRIPT" -h -z -Q -n; then # -n for dry run;
+      log_success "Lazyman installed successfully."
+    else
+      log_failure "Failed to install Lazyman."
+      return 1
+    fi
   else
-    warn " ! Lazyman submodule not found. Skipping installation."
+    log_warn "Lazyman submodule not found. Skipping installation."
+    return 1
   fi
 fi
 
-user "Checking nvim-myAstroNvim configuration..."
+log_user "Checking nvim-myAstroNvim configuration..."
 
 NVIM_CONFIG_DIR="$XDG_CONFIG_HOME/nvim-myAstroNvim"
 
 if [[ -d "$NVIM_CONFIG_DIR" ]]; then
-  success " ✓ nvim-myAstroNvim already exists. Skipping setup."
+  log_success "nvim-myAstroNvim already exists. Skipping setup."
 else
-  info "Cloning AstroNvim configuration..."
-  if lazyman -C "https://github.com/sandertammesoo/AstroNvim.git" -N "nvim-myAstroNvim" -z -Q; then
-    success " ✓ nvim-myAstroNvim installed successfully."
+  log_info "Cloning AstroNvim configuration..."
+  if lazyman -C "https://github.com/sandertammesoo/AstroNvim.git" -N "nvim-myAstroNvim" -z -Q -n; then # -n for dry run; TODO: Remove -n when ready
+    log_success "nvim-myAstroNvim installed successfully."
   else
-    fail " ✗ Failed to install nvim-myAstroNvim."
+    log_failure "Failed to install nvim-myAstroNvim."
+    return 1
   fi
 fi

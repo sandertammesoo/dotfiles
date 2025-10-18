@@ -1,9 +1,9 @@
-#!/bin/zsh
-src "$(basename "${(%):-%x}")"
+#!/usr/bin/env zsh
 
-if (( $+commands[go] )); then
+if command -v go &> /dev/null; then
+    log_success "go is installed, setting up go environment"
     export_n_log GOPATH=$PROJECTS/go
     add_to PATH "$GOPATH/bin"
 else
-    warn " ! Could not find go. go is not installed?"
+    log_warn "go not found, skipping go environment setup"
 fi

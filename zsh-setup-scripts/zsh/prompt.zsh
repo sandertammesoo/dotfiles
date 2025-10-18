@@ -1,11 +1,10 @@
-#!/bin/zsh
-src "$(basename "${(%):-%x}")"
+#!/usr/bin/env zsh
 
 autoload colors && colors
 # cheers, @ehrenmurdick
 # http://github.com/ehrenmurdick/config/blob/master/zsh/prompt.zsh
 
-if (( $+commands[git] ))
+if command -v git &> /dev/null;
 then
   git="$commands[git]"
 else
@@ -69,9 +68,10 @@ battery_status() {
   fi
 }
 
-export PROMPT=$'\n$(battery_status)in $(directory_name) $(git_dirty)$(need_push)\n› '
+# export_n_log PROMPT=$'\n$(battery_status)in $(directory_name) $(git_dirty)$(need_push)\n› '
+
 set_prompt () {
-  export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
+  # export_n_log RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
 }
 
 precmd() {

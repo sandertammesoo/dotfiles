@@ -1,62 +1,129 @@
 #!/usr/bin/env zsh
-src "$(basename "${(%):-%x}")"
+
+# Ensure LOG_LEVEL is set to INFO
+typeset -gx LOG_LEVEL="${LOG_LEVEL:-INFO}" # TODO: Find out why this is needed here, because if not set here, most sourced scripts will error and fail
+
+source helpers.zsh
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-debug "Detected BASEDIR=$BASEDIR"
+log_verbose "Detected BASEDIR=$BASEDIR"
 
-# Request sudo privileges
-user "Requesting sudo privileges..."
+# Request sudo privileges once
+log_user "Requesting sudo privileges..."
 if sudo -v 2>/dev/null; then
-  success "  ✓ Sudo access granted"
-  debug "  Keeping sudo alive..."
-  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+  log_success "Sudo access granted"
+  log_trace "Keeping sudo alive..."
+  # Keep sudo token alive in background
+  (while true; do 
+    sudo -v
+    sleep 30
+  done) 2>/dev/null &
+  SUDO_KEEPALIVE_PID=$!
+  
+  # Cleanup function
+  cleanup() {
+    log_trace "Cleaning up sudo keep-alive process..."
+    kill $SUDO_KEEPALIVE_PID 2>/dev/null
+  }
+  trap cleanup EXIT
 else
-  fail "  ✗ Sudo access denied"
+  log_fail "Sudo access denied"
+  exit 1
 fi
 
 #info "Checking local git setup..."
 #if setup_gitconfig 2>&1
 #then
-#  success "  Git config setup done"
+#  log_success "Git config setup done"
 #else
-#  fail "  Error setting up git config"
+#  log_fail "Error setting up git config"
 #fi
 
 # Run DotBot install script
-user "Running DotBot installation..."
+log_user "Running DotBot installation..."
 if source ./run-dotbot; then
-  success "  ✓ Dotbot completed successfully!"
+  log_success "Dotbot completed successfully!"
 else
-  fail "  ✗ Dotbot failed!"
+  log_failure "Dotbot failed!"
+  exit 1
 fi
 
 # macOS-specific setup
-# if [[ "$(uname -s)" == "Darwin" ]]; then
-#   debug "Detected macOS, proceeding with additional setup..."
-#   export DOTS="$XDG_CONFIG_HOME/.dotfiles"
-#
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  log_info "Detected macOS, proceeding with additional setup..."
+  export_n_log DOTS="$XDG_CONFIG_HOME/.dotfiles"
+
 #   # TODO: Go over the defaults config
-#   #info "Setting OS X defaults..."
-#   #debug "  running: $DOTS/zsh-setup-scripts/osx/set-defaults.sh"
+#   #log_info "Setting OS X defaults..."
 #   #if $DOTS/zsh-setup-scripts/osx/set-defaults.sh 2>&1
 #   #then
-#   #  success "  OS X defaults set"
-#   #  user "    NOTE that some of these changes require a logout/restart to take effect."
+#   #  log_success "OS X defaults set"
+#   #  log_info "NOTE that some of these changes require a logout/restart to take effect."
 #   #else
-#   #  fail "  Error setting OS X defaults"
+#   #  log_fail "Error setting OS X defaults"
 #   #fi
-#
-#   user "Install dependencies next..."
-#   if source "$DOTS/zsh-setup-scripts/script/install-deps"; then
-#     success "  ✓ Dependencies installed successfully"
-#   else
-#     fail "  ✗ Dependency installation failed"
-#   fi
-# else
-#   debug "Non-macOS system detected, skipping macOS setup."
-# fi
-#
-# # Completion message
-# echo ""
-# success " ✓ Installation complete!"
-# echo ""
+
+  log_user "Install dependencies next..."
+  log_user "Searching for installers..."
+  installers=($(find . -name install.sh))
+
+  if [[ ${#installers[@]} -eq 0 ]]; then
+    log_warn "No installers found."
+  else
+    log_info "Found ${#installers[@]} installers. Executing..."
+    failed_installers=()
+    for installer in "${installers[@]}"; do
+      log_info "Running ${installer}..."
+      if source "${installer}"; then
+        log_success "${installer} completed successfully."
+      else
+        log_warn "${installer} failed, but continuing with remaining installers."
+        failed_installers+=("${installer}")
+      fi
+    done
+    
+    if [[ ${#failed_installers[@]} -gt 0 ]]; then
+      log_warn "The following installers failed:"
+      for failed in "${failed_installers[@]}"; do
+        log_warn "  - ${failed}"
+      done
+    fi
+  fi
+else
+  log_info "Non-macOS system detected, skipping macOS setup."
+fi
+
+# Completion message
+log_success "Installation complete!"
+
+# Start services
+log_info "Starting window management services..."
+
+log_info "Running yabai bootstrap..."
+if zsh zsh-setup-scripts/yabai/bootstrap.sh; then
+  log_success "Yabai setup completed successfully!"
+else
+  log_fail "Yabai setup failed!"
+fi
+
+log_info "Running skhd bootstrap..."
+if zsh zsh-setup-scripts/skhd/bootstrap.sh; then
+  log_success "skhd setup completed successfully!"
+else
+  log_fail "skhd setup failed!"
+fi
+
+log_info "Running sketchybar bootstrap..."
+if zsh zsh-setup-scripts/sketchybar/bootstrap.sh; then
+  log_success "sketchybar setup completed successfully!"
+else
+  log_fail "sketchybar setup failed!"
+fi
+
+# Final completion message
+log_success "All installation and configuration complete!"
+log_info "Your dotfiles have been successfully installed and configured."
+
+
+
+

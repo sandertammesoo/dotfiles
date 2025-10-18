@@ -1,2 +1,0 @@
-inner-file1
-Lorem ipsum

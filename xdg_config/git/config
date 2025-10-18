@@ -180,8 +180,9 @@
     insteadOf = "gist:"
 
 [user]
-	name = SanderT
+	name = Sander Tammesoo
 	email = sander.tammesoo@gmail.com
+	signingkey = 55D489D1E74A99DFB868FB0CAB6290C14D94F414
     
 [credential]
 	helper = osxkeychain
@@ -190,3 +191,7 @@
         protocol = https
 [pull]
 	rebase = false
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true

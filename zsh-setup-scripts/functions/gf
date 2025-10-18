@@ -1,4 +1,10 @@
 gf() {
-  local branch=$1
-  git checkout -b $branch origin/$branch
+  local branch="$1"
+  
+  if [[ -z "$branch" ]]; then
+    echo "Usage: gf <branch-name>"
+    return 1
+  fi
+  
+  git checkout -b "$branch" origin/"$branch"
 }

@@ -1,8 +1,12 @@
-#!/bin/zsh
-src "$(basename "${(%):-%x}")"
+#!/usr/bin/env zsh
 
-if (( $+commands[fzf] )); then
-    source <(fzf --zsh)
+if command -v fzf &> /dev/null; then
+    log_success "fzf is installed, setting up shell integration"
+    if source <(fzf --zsh) 2>/dev/null; then
+        log_success "fzf shell integration configured successfully"
+    else
+        log_failure "Failed to initialize fzf shell integration"
+    fi
 else
-    warn " ! Could not find fzf. Is it installed?"
+    log_warn "fzf not found, skipping fzf shell integration"
 fi

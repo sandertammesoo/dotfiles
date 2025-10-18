@@ -1,2 +1,0 @@
-folderA-file1
-Lorem ipsum

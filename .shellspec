@@ -1,0 +1,24 @@
+--require spec_helper
+
+## Shell Configuration
+--shell zsh
+
+## Output format - use 'documentation' for detailed output during migration
+--format documentation
+# --format tap
+
+## Suppress specific messages
+--quiet
+
+--no-warning-as-failure
+
+## Parallel execution (disable during migration for clearer output)
+# --jobs 4
+
+## Coverage options for zsh files  
+--kcov-options "--include-path=. --path-strip-level=1"
+--kcov-options "--include-pattern=.zsh,.sh"
+--kcov-options "--exclude-pattern=/.shellspec,/spec/,/coverage/,/report/,/test/,/git-submodules/"
+
+## Include our main helper files for coverage
+--kcov-options "--include-pattern=helpers_logging.zsh,helpers_misc.zsh,helpers.zsh"

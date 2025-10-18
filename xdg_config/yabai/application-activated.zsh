@@ -7,7 +7,7 @@
 local WINDOWS_ARRAY=$(yabai -m query --spaces --space \
   | jq -re ".index" \
   | xargs -I{} yabai -m query --windows --space {} \
-  | jq -r 'map(select(.minimized==0 and .floating==0))')
+  | jq -r 'map(select(.["is-minimized"]==false and .["is-floating"]==false))')
 
 # Get the number of windows on the current space
 local NUMBER_OF_WINDOWS=$(echo $WINDOWS_ARRAY | jq -r 'length')

@@ -42,8 +42,7 @@ yabai -m rule --add app="^Facetime$" manage=off
 yabai -m rule --add app="^Stream Deck$" manage=off
 yabai -m rule --add app="^DigiDoc4 Client$" manage=off
 yabai -m rule --add app="^Preview$" manage=off
-yabai -m rule --add app="^DBeave$" manage=off
-yabai -m rule --add app="^Finder$" manage=off
+yabai -m rule --add app="^DBeaver$" manage=off
 yabai -m rule --add app="^Numbers$" manage=off
 yabai -m rule --add app="^Wave Link$" manage=off
 yabai -m rule --add app="^Inkscape$" manage=off
@@ -95,6 +94,8 @@ yabai -m config \
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') left_padding 0
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') right_padding 0
 
+# Optional signals - disabled by default
+# Uncomment if you want automatic window stacking/positioning based on application events
 #yabai -m signal --add event=application_activated action="zsh ~/.config/yabai/application-activated.zsh"
 #yabai -m signal --add event=window_created action="zsh ~/.config/yabai/window-created.zsh"
 

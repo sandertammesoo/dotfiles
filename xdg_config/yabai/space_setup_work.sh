@@ -51,8 +51,20 @@ function run_setup_spaces {
 }
 
 run_setup_spaces
-run_setup_spaces
 sketchybar --reload
+
+#
+# add rules for automatic space assignment
+#
+echo " "
+echo "Adding rules for automatic space assignment..."
+yabai -m rule --add app="^Spotify$" space=^6
+yabai -m rule --add app="^Notion$" space=^9
+yabai -m rule --add app="^Warp$" space=^4
+yabai -m rule --add app="^Messenger$" space=^5
+yabai -m rule --add app="^Signal$" space=^5
+yabai -m rule --add app="^Keymapp$" space=^6
+yabai -m rule --add app="^Figma$" space=^3
 
 #
 # move open apps
@@ -102,16 +114,5 @@ if [ -n "${apps}" ]; then
 else
   echo "No open applications found."
 fi
-
-# sketchybar --reload
-
-# move some apps automatically to specific spaces
-yabai -m rule --add app="^Spotify$" space=^6
-yabai -m rule --add app="^Notion$" space=^9
-yabai -m rule --add app="^Warp$" space=^4
-yabai -m rule --add app="^Messenger$" space=^5
-yabai -m rule --add app="^Signal$" space=^5
-yabai -m rule --add app="^Keymapp$" space=^6
-yabai -m rule --add app="^Figma$" space=^3
 
 yabai -m space --focus 1

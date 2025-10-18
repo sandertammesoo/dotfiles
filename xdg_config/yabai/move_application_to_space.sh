@@ -44,7 +44,7 @@ if [ -n "${focused_app}" ]; then
 		echo "Moving window '$id' of $focused_app to space $space"
 		yabai -m window $id --space $space
 	done
-	yabai -m space --focus $id
+	yabai -m space --focus $space
 else
 	echo "No focused application found."
 fi

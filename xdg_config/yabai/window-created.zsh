@@ -8,7 +8,9 @@ is_app() {
 }
 
 if [[ $(is_app "Finder") == "Finder" ]]; then
+    # Use grid-based positioning for better cross-display compatibility
+    # Grid: 20 rows, 30 cols, start at (0,14), span 20 cols x 6 rows
+    # This positions Finder window at bottom of screen with consistent proportions
     yabai -m window --focus $YABAI_WINDOW_ID \
-        & yabai -m window --move abs:0:709 \
-        & yabai -m window --resize abs:1500:730
+        & yabai -m window --grid 20:30:0:14:20:6
 fi

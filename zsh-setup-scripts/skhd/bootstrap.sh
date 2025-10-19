@@ -2,7 +2,7 @@
 
 # Check if Homebrew is installed
 if ! command -v brew &> /dev/null; then
-    log_failure "Homebrew not installed. Please install it first."
+    log_fatal "Homebrew not installed. Please install it first."
     return 1
 fi
 
@@ -15,13 +15,13 @@ else
     if brew install koekeishiya/formulae/skhd 2>&1 | output_stream; then
         log_success "skhd installed successfully!"
     else
-        log_failure "skhd installation failed!"
+        log_fatal "skhd installation failed!"
         return 1
     fi
 fi
 # Verify skhd installation
 if ! command -v skhd &> /dev/null; then
-    log_failure "skhd installation verification failed!"
+    log_fatal "skhd installation verification failed!"
     return 1
 fi
 
@@ -31,7 +31,7 @@ if skhd --restart-service &> /dev/null; then
     if skhd --stop-service 2>&1 | output_stream; then
         log_success "skhd service stopped successfully."
     else
-        log_failure "Failed to stop skhd service."
+        log_fatal "Failed to stop skhd service."
         return 1
     fi
 else
@@ -47,7 +47,7 @@ echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
 if [ $exit_code -eq 0 ]; then
     log_success "skhd update successful"
 else
-    log_failure "skhd update failed"
+    log_fatal "skhd update failed"
 fi
 
 # Start skhd service
@@ -55,7 +55,7 @@ log_user "Starting skhd service..."
 if skhd --start-service 2>&1 | output_stream; then
     log_success "Started skhd service."
 else
-    log_failure "Failed to start skhd service."
+    log_fatal "Failed to start skhd service."
     return 1
 fi
 

@@ -10,6 +10,5 @@ nvm
 dotfiles.code-workspace
 *.ignore
 xdg_config/zsh/.revolver
-.claude
 .config
 .vscode

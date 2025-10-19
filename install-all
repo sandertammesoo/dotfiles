@@ -44,7 +44,7 @@ log_user "Running DotBot installation..."
 if source ./run-dotbot; then
   log_success "Dotbot completed successfully!"
 else
-  log_failure "Dotbot failed!"
+  log_fatal "Dotbot failed!"
   exit 1
 fi
 

@@ -2,7 +2,7 @@
 
 # Check if Homebrew is installed
 if ! command -v brew &> /dev/null; then
-    log_failure "Homebrew not installed. Please install it first."
+    log_fatal "Homebrew not installed. Please install it first."
     return 1
 fi
 
@@ -18,13 +18,13 @@ else
     if [ $exit_code -eq 0 ]; then
         log_success "sketchybar installed successfully!"
     else
-        log_failure "sketchybar installation failed!"
+        log_fatal "sketchybar installation failed!"
         return 1
     fi
 fi
 # Verify sketchybar installation
 if ! command -v sketchybar &> /dev/null; then
-    log_failure "sketchybar installation verification failed!"
+    log_fatal "sketchybar installation verification failed!"
     return 1
 fi
 
@@ -40,13 +40,13 @@ else
     if [ $exit_code -eq 0 ]; then
         log_success "font-sketchybar-app-font installed successfully!"
     else
-        log_failure "font-sketchybar-app-font installation failed!"
+        log_fatal "font-sketchybar-app-font installation failed!"
         return 1
     fi
 fi
 # Verify font-sketchybar-app-font installation
 if ! brew info font-sketchybar-app-font | grep -q "Installed"; then
-    log_failure "font-sketchybar-app-font installation verification failed!"
+    log_fatal "font-sketchybar-app-font installation verification failed!"
     return 1
 fi
 
@@ -59,7 +59,7 @@ if brew services list | grep -q '^sketchybar.*started'; then
     if [ $exit_code -eq 0 ]; then
         log_success "sketchybar service stopped successfully."
     else
-        log_failure "Failed to stop sketchybar service."
+        log_fatal "Failed to stop sketchybar service."
         return 1
     fi
 else
@@ -75,7 +75,7 @@ echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
 if [ $exit_code -eq 0 ]; then
     log_success "sketchybar update successful"
 else
-    log_failure "sketchybar update failed"
+    log_fatal "sketchybar update failed"
 fi
 
 # Clone and build sketchybar-app-font
@@ -85,7 +85,7 @@ output=$(git clone https://github.com/kvndrsslr/sketchybar-app-font.git "$TEMP_D
 exit_code=$?
 echo "$output" | output_stream
 if [ $exit_code -ne 0 ]; then
-    log_failure "Failed to clone sketchybar-app-font repository"
+    log_fatal "Failed to clone sketchybar-app-font repository"
     rm -rf "$TEMP_DIR"
     return 1
 else
@@ -96,7 +96,7 @@ else
         log_info "Installing pnpm..."
 
         if ! command -v npm &> /dev/null; then
-            log_failure "npm is not installed. Please install Node.js which includes npm."
+            log_fatal "npm is not installed. Please install Node.js which includes npm."
             # Cleanup
             cd - > /dev/null 2>&1 || true  # Don't fail if cd - doesn't work
             rm -rf "$TEMP_DIR"
@@ -109,7 +109,7 @@ else
         if [ $exit_code -eq 0 ]; then
             log_success "pnpm installed successfully!"
         else
-            log_failure "pnpm installation failed."
+            log_fatal "pnpm installation failed."
             # Cleanup
             cd - > /dev/null 2>&1 || true  # Don't fail if cd - doesn't work
             rm -rf "$TEMP_DIR"
@@ -128,7 +128,7 @@ else
     if [ $exit_code1 -eq 0 ] && [ $exit_code2 -eq 0 ]; then
         log_success "Sketchybar app font installed successfully!"
     else
-        log_failure "Failed to build and install sketchybar app font"
+        log_fatal "Failed to build and install sketchybar app font"
         rm -rf "$TEMP_DIR"
         return 1
     fi
@@ -146,7 +146,7 @@ echo "$output" | output_stream
 if [ $exit_code -eq 0 ]; then
     log_success "Started sketchybar service."
 else
-    log_failure "Failed to start sketchybar service."
+    log_fatal "Failed to start sketchybar service."
     return 1
 fi
 

@@ -60,7 +60,7 @@ if command -v starship &> /dev/null; then
     if eval "$(starship init zsh)"; then
         log_success "starship init successful"
     else
-        log_failure "starship init failed"
+        log_fatal "starship init failed"
     fi
 else
     log_warn "starship not found, skipping starship shell integration"

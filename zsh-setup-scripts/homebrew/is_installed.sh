@@ -9,12 +9,12 @@ if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
     Darwin|Linux)  
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
         log_success "Homebrew install successful" || {
-        log_failure "Installation failed: Homebrew installation script returned an error."
+        log_fatal "Installation failed: Homebrew installation script returned an error."
         return 1
       }
       ;;
     *)  
-      log_failure "Installation failed: Unsupported OS ($(uname -s))"
+      log_fatal "Installation failed: Unsupported OS ($(uname -s))"
       return 1
       ;;
   esac
@@ -25,7 +25,7 @@ fi
 if eval "$(/opt/homebrew/bin/brew shellenv zsh)"; then
     log_success "Homebrew shell environment setup successful"
 else
-    log_failure "Homebrew shell environment setup failed"
+    log_fatal "Homebrew shell environment setup failed"
     return 1
 fi
 

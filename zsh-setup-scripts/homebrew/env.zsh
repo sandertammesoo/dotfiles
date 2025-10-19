@@ -30,8 +30,8 @@ if eval "$($BREW_PATH shellenv zsh)"; then
         export_n_log HOMEBREW_NO_AUTO_UPDATE=1 # disable auto update before commands
         log_success "Homebrew environment configured successfully"
     else
-        log_failure "Failed to configure Homebrew environment"  
+        log_fatal "Failed to configure Homebrew environment"
     fi
 else
-    log_failure "Failed to evaluate Homebrew shellenv"
+    log_fatal "Failed to evaluate Homebrew shellenv"
 fi

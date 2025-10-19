@@ -3,7 +3,7 @@
 
 log_debug "Ensure script is only executed on macOS"
 if [[ "$(uname)" != "Darwin" ]]; then
-  log_failure "MacOS not detected!"
+  log_fatal "MacOS not detected!"
   return 1
 fi
 
@@ -44,5 +44,5 @@ fi
 # if sudo softwareupdate -i -a | output_stream; then
 #   log_success "Software update completed."
 # else
-#   log_failure "Software update failed."
+#   log_fatal "Software update failed."
 # fi

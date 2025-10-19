@@ -15,9 +15,8 @@
 
 c() {
     # if [[ -z "$PROJECTS" ]]; then
-    #   # if log_error function is available
-    #   if command -v log_error > /dev/null; then
-    #     always log_error "Error: \$PROJECTS environment variable is not set"
+    #   if command -v log_fatal > /dev/null; then
+    #     always log_fatal "Error: \$PROJECTS environment variable is not set"
     #   else
     #     echo "Error: \$PROJECTS environment variable is not set" >&2
     #   fi

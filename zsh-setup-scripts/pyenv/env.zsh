@@ -24,7 +24,7 @@ if command -v python3 &> /dev/null || command -v pyenv &> /dev/null; then
             log_success "pyenv init successful"
             export_n_log PYENV_VIRTUALENV_CACHE_PATH="$XDG_CACHE_HOME/pyenv/pyenv-virtualenv" # Set pyenv-virtualenv cache location
         else
-            log_failure "pyenv init failed"
+            log_fatal "pyenv init failed"
         fi
     else
         log_warn "pyenv not found, skipping pyenv environment setup"

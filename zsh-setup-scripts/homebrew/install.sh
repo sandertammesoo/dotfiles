@@ -6,7 +6,7 @@
 if source zsh-setup-scripts/homebrew/is_installed.sh; then
   log_success "Homebrew is installed"
 else
-  log_failure "Homebrew installation failed. Please check the logs above."
+  log_fatal "Homebrew installation failed. Please check the logs above."
   return 1
 fi
 
@@ -15,7 +15,7 @@ log_user "Updating Homebrew..."
 if brew update 2>&1 | output_stream; then
   log_success "Homebrew updated."
 else
-  log_failure "Homebrew update failed."
+  log_fatal "Homebrew update failed."
   return 1
 fi
 
@@ -24,7 +24,7 @@ log_user "Installing Homebrew packages from $(basename "./brewfiles/Brewfile")..
 if brew bundle --file="./brewfiles/Brewfile" 2>&1 | output_stream; then
   log_success "Brewfile packages installed."
 else
-  log_failure "Brewfile package installation failed."
+  log_fatal "Brewfile package installation failed."
   return 1
 fi
 
@@ -33,7 +33,7 @@ log_user "Running Homebrew upgrade..."
 if brew upgrade 2>&1 | output_stream; then
   log_success "Homebrew upgrade complete."
 else
-  log_failure "Homebrew upgrade failed."
+  log_fatal "Homebrew upgrade failed."
   return 1
 fi
 
@@ -42,7 +42,7 @@ log_user "Running Homebrew cleanup..."
 if brew cleanup 2>&1 | output_stream; then
   log_success "Homebrew cleanup complete."
 else
-  log_failure "Homebrew cleanup failed."
+  log_fatal "Homebrew cleanup failed."
   return 1
 fi
 

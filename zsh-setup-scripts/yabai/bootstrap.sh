@@ -2,7 +2,7 @@
 
 # Check if Homebrew is installed
 if ! command -v brew &> /dev/null; then
-    log_failure "Homebrew not installed. Please install it first."
+    log_fatal "Homebrew not installed. Please install it first."
     return 1
 fi
 
@@ -15,13 +15,13 @@ else
     if brew install koekeishiya/formulae/yabai 2>&1 | output_stream; then
         log_success "yabai installed successfully!"
     else
-        log_failure "yabai installation failed!"
+        log_fatal "yabai installation failed!"
         return 1
     fi
 fi
 # Verify yabai installation
 if ! command -v yabai &> /dev/null; then
-    log_failure "yabai installation verification failed!"
+    log_fatal "yabai installation verification failed!"
     return 1
 fi
 
@@ -34,13 +34,13 @@ else
     if brew install felixkratz/formulae/borders 2>&1 | output_stream; then
         log_success "borders installed successfully!"
     else
-        log_failure "borders installation failed!"
+        log_fatal "borders installation failed!"
         return 1
     fi
 fi
 # Verify borders installation
 if ! command -v borders &> /dev/null; then
-    log_failure "borders installation verification failed!"
+    log_fatal "borders installation verification failed!"
     return 1
 fi
 
@@ -50,7 +50,7 @@ if yabai -m rule --list &> /dev/null; then
     if yabai --stop-service 2>&1 | output_stream; then
         log_success "yabai service stopped successfully."
     else
-        log_failure "Failed to stop yabai service."
+        log_fatal "Failed to stop yabai service."
         return 1
     fi
 else
@@ -66,7 +66,7 @@ echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
 if [ $exit_code -eq 0 ]; then
     log_success "yabai update successful"
 else
-    log_failure "yabai update failed"
+    log_fatal "yabai update failed"
 fi
 
 # Get the hash of yabai
@@ -102,7 +102,7 @@ if [ "$UPDATE_FILE" = true ]; then
     if echo "$LINE_TO_ADD" | sudo tee $SUDOERS_FILE; then   
         log_success "Sudoers file created/updated successfully."
     else
-        log_failure "Failed to create/update sudoers file."
+        log_fatal "Failed to create/update sudoers file."
         return 1
     fi
 
@@ -110,7 +110,7 @@ if [ "$UPDATE_FILE" = true ]; then
     if sudo chmod 440 $SUDOERS_FILE; then
         log_success "Sudoers file permissions set to 440."
     else
-        log_failure "Failed to set permissions for sudoers file."
+        log_fatal "Failed to set permissions for sudoers file."
         return 1
     fi
 fi
@@ -120,7 +120,7 @@ log_user "Loading yabai scripting addition..."
 if sudo yabai --load-sa; then
     log_success "yabai scripting addition loaded successfully."
 else
-    log_failure "Failed to load yabai scripting addition."
+    log_fatal "Failed to load yabai scripting addition."
     return 1
 fi
 
@@ -137,7 +137,7 @@ log_user "Starting yabai service..."
 if yabai --start-service 2>&1 | output_stream; then
     log_success "Started yabai service."
 else
-    log_failure "Failed to start yabai service."
+    log_fatal "Failed to start yabai service."
     return 1
 fi
 

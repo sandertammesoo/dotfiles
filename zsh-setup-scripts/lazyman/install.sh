@@ -21,7 +21,7 @@ else
     if "$LAZYMAN_SCRIPT" -h -z -Q -n; then # -n for dry run;
       log_success "Lazyman installed successfully."
     else
-      log_failure "Failed to install Lazyman."
+      log_fatal "Failed to install Lazyman."
       return 1
     fi
   else
@@ -41,7 +41,7 @@ else
   if lazyman -C "https://github.com/sandertammesoo/AstroNvim.git" -N "nvim-myAstroNvim" -z -Q -n; then # -n for dry run; TODO: Remove -n when ready
     log_success "nvim-myAstroNvim installed successfully."
   else
-    log_failure "Failed to install nvim-myAstroNvim."
+    log_fatal "Failed to install nvim-myAstroNvim."
     return 1
   fi
 fi

@@ -89,7 +89,7 @@ if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]
 
   # Load fpath settings early for functions and completions
   if ! try_source "$ZSH/zsh/fpath.zsh" error; then
-      log_failure "Failed to load fpath settings"
+      log_fatal "Failed to load fpath settings"
       return 1
   fi
 

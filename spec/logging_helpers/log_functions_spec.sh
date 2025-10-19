@@ -271,7 +271,7 @@ Describe 'helpers_logging.zsh - Core Logging Functions'
 
     Context 'should always log messages regardless of LOG_ENABLED'
       BeforeEach 'source_with_loglevel_info'
-      always_caller_test='always log_info "This message should always be logged."'
+      always_caller_test='l_always log_info "This message should always be logged."'
 
       Parameters
         'true'

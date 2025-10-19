@@ -5,7 +5,7 @@ if ! command -v spf &> /dev/null; then
     return
 fi
 
-success "superfile (spf) is installed, setting up superfile shell integration"
+log_success "superfile (spf) is installed, setting up superfile shell integration"
 
 # Set up lastdir path based on OS (export once, not in function)
 case "$(uname -s)" in

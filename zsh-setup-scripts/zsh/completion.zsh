@@ -13,7 +13,3 @@ if zstyle ':completion:*' insert-tab pending; then
 else
     log_warn "Failed to set up Tab key behavior for completion"
 fi
-
-try 'zsh-users/zsh-completions' && {
-    log_debug "zsh-completions plugin loaded successfully"
-} || log_warn "Failed to load zsh-completions plugin"

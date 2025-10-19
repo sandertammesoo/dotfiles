@@ -668,20 +668,20 @@ function log_user() { _log INFO "$(color_text white bold "$USER_ADORN") $1"; }
 function log_user2() { _log INFO "$(color_text white bold "$USER2_ADORN") $1"; }
 
 ################################################################################
-# always - Force logging regardless of LOG_ENABLED state
+# l_always - Force logging regardless of LOG_ENABLED state
 #
 # Wrapper that bypasses the LOG_ENABLED check, useful for critical messages
 # that must always be displayed even when logging is disabled.
 #
-# Usage: always LOG_FUNCTION MESSAGE
-#   always log_trace "Critical trace"
-#   always log_info "Always show this"
-#   always log_error "Must see this error"
+# Usage: l_always LOG_FUNCTION MESSAGE
+#   l_always log_trace "Critical trace"
+#   l_always log_info "Always show this"
+#   l_always log_error "Must see this error"
 #
 # Works with any logging function: log_trace, log_debug, log_info, log_warn,
 # log_error, log_fatal, log_success, log_failure, and their short aliases
 ################################################################################
-function always() {
+function l_always() {
   local func="$1"
   shift
   

@@ -108,7 +108,8 @@
     # More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
     trustctime = false
 
-    editor = nvim
+    editor = vim
+	pager = delta
 
 [color]
 
@@ -149,6 +150,7 @@
 
     # Include summaries of merged commits in newly created merge commit messages
     log = true
+    conflictStyle = zdiff3
 
 [push]
 
@@ -195,3 +197,30 @@
 	gpgsign = true
 [tag]
 	gpgsign = true
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    #dark = true      # or light = true, or omit for auto-detection
+    #true-color = always
+    
+    hyperlinks = true
+    hyperlinks-file-link-format = "vscode://file/{path}:{line}"
+
+    features = line-numbers decorations
+    syntax-theme = Dracula
+    plus-style = syntax "#003800"
+    minus-style = syntax "#3f0001"
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+    hunk-header-decoration-style = cyan box ul
+
+[delta "line-numbers"]
+    line-numbers-left-style = cyan
+    line-numbers-right-style = cyan
+    line-numbers-minus-style = 124
+    line-numbers-plus-style = 28

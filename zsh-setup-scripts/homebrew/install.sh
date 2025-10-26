@@ -10,49 +10,62 @@ else
   return 1
 fi
 
-# Update Homebrew
-log_user "Updating Homebrew..."
-if brew update 2>&1 | output_stream; then
-  log_success "Homebrew updated."
+# If SKIP_BREW_UPGRADES or SKIP_UPDATES is set, skip updates and upgrades
+if (( ${SKIP_BREW_UPGRADES:-0} )) || (( ${SKIP_UPDATES:-0} )); then
+  log_info "  ✗   Skipping Homebrew updates and upgrades."
 else
-  log_fatal "Homebrew update failed."
-  return 1
+  # Update Homebrew
+  log_user "Updating Homebrew..."
+  if brew update 2>&1 | output_stream; then
+    log_success "Homebrew updated."
+  else
+    log_fatal "Homebrew update failed."
+    return 1
+  fi
+
+  # Upgrade installed packages
+  log_user "Running Homebrew upgrade..."
+  if brew upgrade 2>&1 | output_stream; then
+    log_success "Homebrew upgrade complete."
+  else
+    log_fatal "Homebrew upgrade failed."
+    return 1
+  fi
 fi
 
-# Install packages from Brewfiles
-log_user "Installing Homebrew packages from $(basename "./brewfiles/Brewfile")..."
-if brew bundle --file="./brewfiles/Brewfile" 2>&1 | output_stream; then
-  log_success "Brewfile packages installed."
+if (( ${SKIP_APP_INSTALLATION:-0} )) || (( ${SKIP_UPDATES:-0} )); then
+  log_info "  ✗   Skipping Homebrew package installation."
 else
-  log_fatal "Brewfile package installation failed."
-  return 1
+  # Install packages from Brewfiles
+  log_user "Installing Homebrew packages from $(basename "./brewfiles/Brewfile")..."
+  if brew bundle --file="./brewfiles/Brewfile" 2>&1 | output_stream; then
+    log_success "Brewfile packages installed."
+  else
+    log_fatal "Brewfile package installation failed."
+    return 1
+  fi
 fi
 
-# Upgrade installed packages
-log_user "Running Homebrew upgrade..."
-if brew upgrade 2>&1 | output_stream; then
-  log_success "Homebrew upgrade complete."
+# If neither upgrades nor app installation were skipped, run cleanup and doctor
+if (( ${SKIP_UPDATES:-0} )) || [[ (( ${SKIP_BREW_UPGRADES:-0} )) && (( ${SKIP_APP_INSTALLATION:-0} )) ]]; then
+  log_info "  ✗   Skipping Homebrew cleanup and doctor."
 else
-  log_fatal "Homebrew upgrade failed."
-  return 1
+  # Cleanup
+  log_user "Running Homebrew cleanup..."
+  if brew cleanup 2>&1 | output_stream; then
+    log_success "Homebrew cleanup complete."
+  else
+    log_fatal "Homebrew cleanup failed."
+    return 1
+  fi
+
+  # Doctor
+  log_user "Running Homebrew doctor..."
+  if brew doctor 2>&1 | output_stream; then
+    log_success "Homebrew doctor complete."
+  else
+    log_warn "Homebrew doctor found issues (this is often non-critical)."
+  fi
 fi
 
-# Cleanup
-log_user "Running Homebrew cleanup..."
-if brew cleanup 2>&1 | output_stream; then
-  log_success "Homebrew cleanup complete."
-else
-  log_fatal "Homebrew cleanup failed."
-  return 1
-fi
-
-# Doctor
-log_user "Running Homebrew doctor..."
-if brew doctor 2>&1 | output_stream; then
-  log_success "Homebrew doctor complete."
-else
-  log_warn "Homebrew doctor found issues (this is often non-critical)."
-fi
-
-log_success "Homebrew setup finished!"
 return 0

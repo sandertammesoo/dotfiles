@@ -25,7 +25,7 @@ if eval "$($BREW_PATH shellenv zsh)"; then
         # export HOMEBREW_NO_ANALYTICS=1 # disable analytics
         # export HOMEBREW_NO_ENV_HINTS=1  # disable env hints
         # export HOMEBREW_AUTO_UPDATE_SECS=86400 # 24 hours
-        # export HOMEBREW_NO_INSTALL_CLEANUP=1 # disable auto cleanup
+        export_n_log HOMEBREW_NO_INSTALL_CLEANUP=1 # disable auto cleanup
         export_n_log HOMEBREW_NO_EMOJI=1 # disable emoji in output
         export_n_log HOMEBREW_NO_AUTO_UPDATE=1 # disable auto update before commands
         log_success "Homebrew environment configured successfully"

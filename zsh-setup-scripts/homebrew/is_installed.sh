@@ -19,11 +19,11 @@ if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
       ;;
   esac
 else
-  log_success "Homebrew already installed. Skipping installation."
+  log_verbose "Homebrew already installed. Skipping installation."
 fi
 
 if eval "$(/opt/homebrew/bin/brew shellenv zsh)"; then
-    log_success "Homebrew shell environment setup successful"
+    log_verbose "Homebrew shell environment setup successful"
 else
     log_fatal "Homebrew shell environment setup failed"
     return 1

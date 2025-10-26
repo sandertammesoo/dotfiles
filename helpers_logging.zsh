@@ -844,7 +844,10 @@ function init_logging() {
       typeset -gx LOG_COLOR="never"
     fi
   fi
-  typeset -gx HELPERS_LOGGING_INITIALIZED=1
+  typeset -gx HELPERS_LOGGING_INITIALIZED=1  
+  
+  # Load logging helper functions
+  autoload -Uz throw catch
 }
 
 # Initialize on load
@@ -884,6 +887,34 @@ try_source() {
     _log "${level:u}" "File not found: $file"
     return 0  # Missing files not an error (optional sourcing pattern)
   fi
+
+  # {
+  #   # "try" block
+  #   [[ -f "$file" ]] || throw MyExceptFileNotFound
+  #   source "$file" || throw MyExceptFailedToSource
+  #   _log VERB "Sourced $file"
+  # } always {
+  #   # "always" block
+  #   # code
+
+  #   # "catch" block
+  #   if catch *; then
+  #     case $CAUGHT in
+  #       (MyExceptFileNotFound)
+  #         _log "${level:u}" "Caught my own exception: $CAUGHT"
+  #         ;;
+  #       (MyExceptFailedToSource)
+  #         _log "${level:u}" "Caught my own exception: $CAUGHT"
+  #         ;;
+  #       (*)
+  #         _log "${level:u}" "Caught some other exception: $CAUGHT"
+  #         ;;
+  #     esac
+  #   fi
+
+  #   # "finally" block
+  #   # code
+  # }
 }
 
 ################################################################################

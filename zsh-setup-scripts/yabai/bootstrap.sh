@@ -124,7 +124,7 @@ else
     return 1
 fi
 
-log_info "Configuring macOS system settings for optimal yabai performance..."
+log_debug "Configuring macOS system settings for optimal yabai performance..."
 # Disable macOS window animations for better performance with yabai
 defaults write com.apple.finder DisableAllAnimations -bool true
 killall Finder # or logout and login

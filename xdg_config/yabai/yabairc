@@ -15,10 +15,15 @@ yabai -m signal --add event="window_title_changed" action="sketchybar -m --trigg
 # yabai -m signal --add label="flash_focus" event="window_focused" action="yabai -m window \$YABAI_WINDOW_ID --opacity 0.3 && sleep 0.2 && yabai -m window \$YABAI_WINDOW_ID --opacity 0.0"
 
 # D E B U G  L O G G I N G  F O R  M I N I M I Z E  B U G
-yabai -m signal --add event=window_minimized action="echo \"[$(date '+%Y-%m-%d %H:%M:%S')] MINIMIZED: \$YABAI_WINDOW_ID (\$YABAI_WINDOW_APP)\" >> /tmp/yabai_minimize_debug.log"
-yabai -m signal --add event=window_deminimized action="echo \"[$(date '+%Y-%m-%d %H:%M:%S')] DEMINIMIZED: \$YABAI_WINDOW_ID (\$YABAI_WINDOW_APP)\" >> /tmp/yabai_minimize_debug.log"
-yabai -m signal --add event=window_focused action="echo \"[$(date '+%Y-%m-%d %H:%M:%S')] FOCUSED: \$YABAI_WINDOW_ID (\$YABAI_WINDOW_APP) - is-minimized=\$(yabai -m query --windows --window \$YABAI_WINDOW_ID 2>/dev/null | jq -r '.\"is-minimized\"')\" >> /tmp/yabai_minimize_debug.log"
-yabai -m signal --add event=application_front_switched action="echo \"[$(date '+%Y-%m-%d %H:%M:%S')] APP SWITCHED: \$YABAI_PROCESS_ID - \$(ps -p \$YABAI_PROCESS_ID -o comm= 2>/dev/null)\" >> /tmp/yabai_minimize_debug.log"
+yabai -m signal --add event=window_minimized action="date '+[%Y-%m-%d %H:%M:%S] MINIMIZED: \$YABAI_WINDOW_ID (\$YABAI_WINDOW_APP)' >> /tmp/yabai_minimize_debug.log"
+yabai -m signal --add event=window_deminimized action="date '+[%Y-%m-%d %H:%M:%S] DEMINIMIZED: \$YABAI_WINDOW_ID (\$YABAI_WINDOW_APP)' >> /tmp/yabai_minimize_debug.log"
+yabai -m signal --add event=window_focused action="echo \"[\$(date '+%Y-%m-%d %H:%M:%S')] FOCUSED: \$YABAI_WINDOW_ID (\$YABAI_WINDOW_APP) - is-minimized=\$(yabai -m query --windows --window \$YABAI_WINDOW_ID 2>/dev/null | jq -r '.\"is-minimized\"')\" >> /tmp/yabai_minimize_debug.log"
+yabai -m signal --add event=application_front_switched action="echo \"[\$(date '+%Y-%m-%d %H:%M:%S')] APP SWITCHED: \$YABAI_PROCESS_ID - \$(ps -p \$YABAI_PROCESS_ID -o comm= 2>/dev/null)\" >> /tmp/yabai_minimize_debug.log"
+
+# Optional signals - disabled by default
+# Uncomment if you want automatic window stacking/positioning based on application events
+yabai -m signal --add event=application_activated action="zsh ~/.config/yabai/application-activated.zsh"
+yabai -m signal --add event=window_created action="zsh ~/.config/yabai/window-created.zsh"
 
 # float system preferences. Most of these just diable Yabai form resizing them.
 # Do not manage these apps
@@ -99,11 +104,6 @@ yabai -m config \
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[0]') right_padding 0
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') left_padding 0
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') right_padding 0
-
-# Optional signals - disabled by default
-# Uncomment if you want automatic window stacking/positioning based on application events
-#yabai -m signal --add event=application_activated action="zsh ~/.config/yabai/application-activated.zsh"
-#yabai -m signal --add event=window_created action="zsh ~/.config/yabai/window-created.zsh"
 
 echo "yabai configuration loaded.."
 

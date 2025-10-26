@@ -3,12 +3,14 @@
 # Lazyman - A tool for managing multiple Neovim configurations
 # https://lazyman.dev/about/
 
+
+# Check if Lazyman installation should be skipped
+if (( ${SETUP_LAZYMAN:-0} == 0 )); then
+  log_info "  ✗   Skipping Lazyman installation for now, as it's not fully ready yet."
+  return 0
+fi
+
 log_user "Checking Lazyman installation..."
-
-# Skip Lazyman installation for now, as it's not fully ready yet.
-log_info "  ✗   Skipping Lazyman installation for now, as it's not fully ready yet."
-return 1
-
 if command -v lazyman > /dev/null; then
   log_success "Lazyman is already installed. Skipping installation."
 else

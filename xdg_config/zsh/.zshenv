@@ -22,6 +22,10 @@ if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]
   # false = Only ERROR and FATAL messages are logged (production default)
   # true  = All messages at or above LOG_LEVEL are logged (debug mode)
   typeset -gx LOG_ENABLED="${LOG_ENABLED:-true}"
+
+  # Load logging helper functions
+  autoload -Uz throw catch
+
   source "$HOME/projects/dotfiles/helpers.zsh"
 
   # Detect if running in an SSH session

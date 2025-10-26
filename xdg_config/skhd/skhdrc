@@ -48,8 +48,8 @@ moonlander < meh - q : yabai -m window --focus prev || yabai -m window --focus l
 moonlander < meh - e : yabai -m window --focus next || yabai -m window --focus first
 
 # Cycle windows forwards and backwards in focused stack only
-# normal < lalt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
-# moonlander < meh - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+normal < lalt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+moonlander < meh - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
 
 # Cycle windows forwards and backwards but stops at ends
 # normal < lalt - tab : yabai -m window --focus stack.prev || yabai -m window --focus prev || yabai -m window --focus last

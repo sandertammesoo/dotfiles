@@ -1,8 +1,125 @@
 #!/usr/bin/env zsh
 
-# Ensure LOG_LEVEL is set to INFO
-typeset -gx LOG_LEVEL="${LOG_LEVEL:-INFO}" # TODO: Find out why this is needed here, because if not set here, most sourced scripts will error and fail
+# Parse options using zparseopts
+local -A opts
 
+# Parse options using zparseopts
+# zparseopts syntax reference: https://zsh.sourceforge.io/Doc/Release/Parameters.html#index-zparseopts
+# zparseopts flags: 
+  # -D : Enable debug output
+  # -A : Store options in associative array
+  # -E : Stop option parsing at first non-option argument
+  # -F : 
+zparseopts -D -E -F -A opts -- \
+  h -help \
+  d -skip-dotbot \
+  u -skip-updates \
+  o -skip-osx-updates \
+  i -skip-app-installation \
+  b -skip-brew-upgrades \
+  s -skip-services \
+  l -setup-lazyman \
+  T -trace \
+  V -verbose \
+  D -debug \
+  Q -quiet \
+  S -silent || {
+    echo "Error parsing options"
+    echo "Usage: ./install-all [options] [--help]"
+    return 1
+  }
+
+# Check for help flag
+if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
+    echo "Usage: ./install-all [options]"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help                    Show this help message"
+    echo "  -d, --skip-dotbot             Skip DotBot installation"
+    echo "  -u, --skip-updates            Skip updates (OSX, Homebrew updates and installs)"
+    echo "  -o, --skip-osx-updates        Skip macOS updates"
+    echo "  -i, --skip-app-installation   Skip application installation (Homebrew/mas)"
+    echo "  -b, --skip-brew-upgrades      Skip Homebrew updates"
+    echo "  -s, --skip-services           Skip Homebrew services setup"
+    echo "  -l, --setup-lazyman           Setup Lazyman setup"
+    echo "  -T, --trace                   Show trace output"
+    echo "  -V, --verbose                 Show verbose output"
+    echo "  -D, --debug                   Show debug output"
+    echo "  -Q, --quiet                   Suppress output except for errors"
+    echo "  -S, --silent                  Suppress all output"
+    return 0
+fi
+
+# Save current logging environment variable values to restore later
+local SAVED_LOG_LEVEL="${LOG_LEVEL:-INFO}"
+local SAVED_LOG_ENABLED="${LOG_ENABLED:-false}"
+
+# Set logging level based on options
+if (( ${+opts[-T]} )) || (( ${+opts[--trace]} )); then
+    typeset -gx LOG_LEVEL="TRACE"
+    typeset -gx LOG_ENABLED=true
+elif (( ${+opts[-V]} )) || (( ${+opts[--verbose]} )); then
+    typeset -gx LOG_LEVEL="VERB"
+    typeset -gx LOG_ENABLED=true
+elif (( ${+opts[-D]} )) || (( ${+opts[--debug]} )); then
+    typeset -gx LOG_LEVEL="DEBUG"
+    typeset -gx LOG_ENABLED=true
+elif (( ${+opts[-Q]} )) || (( ${+opts[--quiet]} )); then
+    typeset -gx LOG_LEVEL="ERROR"
+    typeset -gx LOG_ENABLED=false
+elif (( ${+opts[-S]} )) || (( ${+opts[--silent]} )); then
+    typeset -gx LOG_LEVEL="FATAL"
+    typeset -gx LOG_ENABLED=false
+else
+    typeset -gx LOG_LEVEL="INFO"
+    typeset -gx LOG_ENABLED=true
+fi
+
+# Set global flags to skip certain steps
+typeset -gx SKIP_DOTBOT=$(( ${+opts[-d]} || ${+opts[--skip-dotbot]} ))
+typeset -gx SKIP_UPDATES=$(( ${+opts[-u]} || ${+opts[--skip-updates]} ))
+typeset -gx SKIP_OSX_UPDATES=$(( ${+opts[-o]} || ${+opts[--skip-osx-updates]} ))
+typeset -gx SKIP_APP_INSTALLATION=$(( ${+opts[-i]} || ${+opts[--skip-app-installation]} ))
+typeset -gx SKIP_BREW_UPGRADES=$(( ${+opts[-b]} || ${+opts[--skip-brew-upgrades]} ))
+typeset -gx SKIP_SERVICES=$(( ${+opts[-s]} || ${+opts[--skip-services]} ))
+typeset -gx SETUP_LAZYMAN=$(( ${+opts[-l]} || ${+opts[--setup-lazyman]} ))
+
+# Cleanup function on exit_code to unset global flags if they are set
+cleanup() {
+  log_trace "Restoring logging environment variables..."
+  typeset -gx LOG_LEVEL="$SAVED_LOG_LEVEL"
+  typeset -gx LOG_ENABLED="$SAVED_LOG_ENABLED"
+
+  if [[ -n "$SUDO_KEEPALIVE_PID" ]]; then
+    log_trace "Killing sudo keep-alive process..."
+    kill $SUDO_KEEPALIVE_PID 2>/dev/null
+  fi
+
+  if (( SKIP_DOTBOT )); then
+    unset SKIP_DOTBOT
+  fi
+  if (( SKIP_UPDATES )); then
+    unset SKIP_UPDATES
+  fi
+  if (( SKIP_OSX_UPDATES )); then
+    unset SKIP_OSX_UPDATES
+  fi
+  if (( SKIP_APP_INSTALLATION )); then
+    unset SKIP_APP_INSTALLATION
+  fi
+  if (( SKIP_BREW_UPGRADES )); then
+    unset SKIP_BREW_UPGRADES
+  fi
+  if (( SKIP_SERVICES )); then
+    unset SKIP_SERVICES
+  fi
+  if (( SETUP_LAZYMAN )); then
+    unset SETUP_LAZYMAN
+  fi
+}
+trap cleanup EXIT
+
+# Load helper functions for logging
 source helpers.zsh
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,15 +136,8 @@ if sudo -v 2>/dev/null; then
     sleep 30
   done) 2>/dev/null &
   SUDO_KEEPALIVE_PID=$!
-  
-  # Cleanup function
-  cleanup() {
-    log_trace "Cleaning up sudo keep-alive process..."
-    kill $SUDO_KEEPALIVE_PID 2>/dev/null
-  }
-  trap cleanup EXIT
 else
-  log_fail "Sudo access denied"
+  log_fatal "Sudo access denied"
   exit 1
 fi
 
@@ -39,18 +149,23 @@ fi
 #  log_fail "Error setting up git config"
 #fi
 
-# Run DotBot install script
-log_user "Running DotBot installation..."
-if source ./run-dotbot; then
-  log_success "Dotbot completed successfully!"
+# Check if DotBot installation should be skipped
+if (( ${SKIP_DOTBOT:-0} )); then
+  log_info "  ✗   Skipping DotBot installation."
 else
-  log_fatal "Dotbot failed!"
-  exit 1
+  # Run DotBot install script
+  log_user "Running DotBot installation..."
+  if source ./run-dotbot; then
+    log_success "Dotbot completed successfully!"
+  else
+    log_fatal "Dotbot failed!"
+    exit 1
+  fi
 fi
 
 # macOS-specific setup
 if [[ "$(uname -s)" == "Darwin" ]]; then
-  log_info "Detected macOS, proceeding with additional setup..."
+  log_trace "Detected macOS, proceeding with additional setup..."
   export_n_log DOTS="$XDG_CONFIG_HOME/.dotfiles"
 
 #   # TODO: Go over the defaults config
@@ -70,10 +185,10 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   if [[ ${#installers[@]} -eq 0 ]]; then
     log_warn "No installers found."
   else
-    log_info "Found ${#installers[@]} installers. Executing..."
+    log_debug "Found ${#installers[@]} installers. Executing..."
     failed_installers=()
     for installer in "${installers[@]}"; do
-      log_info "Running ${installer}..."
+      log_debug "Running ${installer}..."
       if source "${installer}"; then
         log_success "${installer} completed successfully."
       else
@@ -96,34 +211,39 @@ fi
 # Completion message
 log_success "Installation complete!"
 
-# Start services
-log_info "Starting window management services..."
 
-log_info "Running yabai bootstrap..."
-if zsh zsh-setup-scripts/yabai/bootstrap.sh; then
-  log_success "Yabai setup completed successfully!"
+# Check if services setup should be skipped
+if (( ${SKIP_SERVICES:-0} )); then
+  log_info "  ✗   Skipping Homebrew services setup."
 else
-  log_fail "Yabai setup failed!"
-fi
+  log_user "Running yabai bootstrap..."
+  if zsh zsh-setup-scripts/yabai/bootstrap.sh; then
+    log_success "Yabai setup completed successfully!"
+  else
+    log_fail "Yabai setup failed!"
+  fi
 
-log_info "Running skhd bootstrap..."
-if zsh zsh-setup-scripts/skhd/bootstrap.sh; then
-  log_success "skhd setup completed successfully!"
-else
-  log_fail "skhd setup failed!"
-fi
+  log_user "Running skhd bootstrap..."
+  if zsh zsh-setup-scripts/skhd/bootstrap.sh; then
+    log_success "skhd setup completed successfully!"
+  else
+    log_fail "skhd setup failed!"
+  fi
 
-log_info "Running sketchybar bootstrap..."
-if zsh zsh-setup-scripts/sketchybar/bootstrap.sh; then
-  log_success "sketchybar setup completed successfully!"
-else
-  log_fail "sketchybar setup failed!"
+  log_user "Running sketchybar bootstrap..."
+  if zsh zsh-setup-scripts/sketchybar/bootstrap.sh; then
+    log_success "sketchybar setup completed successfully!"
+  else
+    log_fail "sketchybar setup failed!"
+  fi
 fi
 
 # Final completion message
 log_success "All installation and configuration complete!"
 log_info "Your dotfiles have been successfully installed and configured."
 
-
+# Restore previous logging environment variable values
+typeset -gx LOG_LEVEL="$SAVED_LOG_LEVEL"
+typeset -gx LOG_ENABLED="$SAVED_LOG_ENABLED"
 
 

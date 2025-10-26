@@ -1,6 +1,11 @@
 #!/usr/bin/env zsh
 # exec 2> >(error_stream)
 
+if [[ (( ${SKIP_MACOS_UPDATES:-0} )) || (( ${SKIP_UPDATES:-0} )) ]]; then
+  log_info "  ✗   Skipping macOS software updates."
+  return 0
+fi
+
 log_debug "Ensure script is only executed on macOS"
 if [[ "$(uname)" != "Darwin" ]]; then
   log_fatal "MacOS not detected!"

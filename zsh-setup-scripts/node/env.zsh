@@ -12,5 +12,5 @@ if command -v node &> /dev/null || command -v npm &> /dev/null; then
     # Add npm global bin to PATH
     add_to PATH "$XDG_DATA_HOME/npm/bin"
 else
-    log_info " !  Node.js not found, skipping Node.js environment setup"
+    log_skip "Node.js not found, skipping Node.js environment setup"
 fi

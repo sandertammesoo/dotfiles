@@ -14,7 +14,7 @@ if command -v nvim &> /dev/null; then
     # alias nvr="nvr --remote-tab" # requires neovim-remote (brew install neovim-remote)
     # alias nvs="nvr --remote-send '<C-\><C-n>'" # requires neovim-remote (brew install neovim-remote)
 else
-    log_warn "Neovim not found, skipping Neovim aliases"
+    log_skip "Neovim not found, skipping Neovim aliases"
     return
 fi
 

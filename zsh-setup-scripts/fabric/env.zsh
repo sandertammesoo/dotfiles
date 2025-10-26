@@ -27,8 +27,8 @@ if command -v fabric-ai &> /dev/null; then
             fi
         fi
     else
-        log_warn "go not found, skipping fabric-ai GOPATH setup"
+        log_skip "go not found, skipping fabric-ai GOPATH setup"
     fi 
 else
-    log_warn "fabric-ai not found, skipping fabric-ai environment setup"
+    log_skip "fabric-ai not found, skipping fabric-ai environment setup"
 fi

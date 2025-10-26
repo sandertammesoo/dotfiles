@@ -151,7 +151,7 @@ fi
 
 # Check if DotBot installation should be skipped
 if (( ${SKIP_DOTBOT:-0} )); then
-  log_info "  ✗   Skipping DotBot installation."
+  log_skip "Skipping DotBot installation."
 else
   # Run DotBot install script
   log_user "Running DotBot installation..."
@@ -214,7 +214,7 @@ log_success "Installation complete!"
 
 # Check if services setup should be skipped
 if (( ${SKIP_SERVICES:-0} )); then
-  log_info "  ✗   Skipping Homebrew services setup."
+  log_skip "Skipping Homebrew services setup."
 else
   log_user "Running yabai bootstrap..."
   if zsh zsh-setup-scripts/yabai/bootstrap.sh; then

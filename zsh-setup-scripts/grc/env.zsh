@@ -3,13 +3,13 @@
 
 # Check if 'grc' is NOT available
 if ! command -v grc &> /dev/null; then
-    log_warn "grc not found, skipping grc shell integration"
+    log_skip "grc not found, skipping grc shell integration"
     return
 fi
 
 # Check if 'brew' is NOT available
 if ! command -v brew &> /dev/null; then
-    log_warn "brew not found, skipping grc shell integration"
+    log_skip "brew not found, skipping grc shell integration"
     return
 fi
 

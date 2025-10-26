@@ -66,9 +66,10 @@ typeset -Ag LOG_LEVELS=(
   [DEBUG]=2    # General debugging information
   [OUTPUT]=2    # Output stream messages
   [INFO]=3     # Informational messages (default minimum)
-  [WARN]=4     # Warning messages
-  [ERROR]=5    # Error messages
-  [FATAL]=6    # Fatal errors
+  [SKIP]=4     # Skipped messages
+  [WARN]=5     # Warning messages
+  [ERROR]=6    # Error messages
+  [FATAL]=7    # Fatal errors
 )
 
 # ANSI color codes for each log level
@@ -78,6 +79,7 @@ typeset -Ag LOG_COLORS=(
   [DEBUG]="blue"
   [OUTPUT]="blue"
   [INFO]="cyan"
+  [SKIP]="yellow"
   [WARN]="yellow"
   [ERROR]="red"
   [FATAL]="red"  # Will be styled bold
@@ -90,16 +92,20 @@ typeset -Ag LOG_NAMES=(
   [DEBUG]="DEBUG"
   [OUTPUT]=" ... "
   [INFO]="INFO "
+  [SKIP]="SKIP "
   [WARN]="WARN "
   [ERROR]="ERROR"
   [FATAL]="FATAL"
 )
 
 # Message adornments for semantic logging functions
-SUCCESS_ADORN="  ✓  "    # Success marker
-WARNING_ADORN="  !  "    # Warning marker
-FAILURE_ADORN="  ✗  "    # Failure marker
-USER_ADORN="  ▶  "       # User interaction marker
+SUCCESS_ADORN="  ✔︎  "    # Success marker
+# WARNING_ADORN="  !  "    # Warning marker
+WARNING_ADORN="  ⚠︎  "    # Warning marker
+SKIP_ADORN="  ⏩  "    # Skipped marker
+FAILURE_ADORN="  ✘  "    # Failure marker
+# FAILURE_ADORN="  ✗  "    # Failure marker
+USER_ADORN="  ►  "       # User interaction marker
 USER2_ADORN="  ...  "    # Secondary user interaction marker
 
 ################################################################################
@@ -663,6 +669,7 @@ function log_fatal() { _log FATAL "$1"; }
 ################################################################################
 
 function log_success() { _log INFO "$(color_text green bold "$SUCCESS_ADORN") $1"; }
+function log_skip() { _log SKIP "$(color_text yellow bold "$SKIP_ADORN") $1"; }
 function log_failure() { _log ERROR "$(color_text red bold "$FAILURE_ADORN") $1"; }
 function log_user() { _log INFO "$(color_text white bold "$USER_ADORN") $1"; }
 function log_user2() { _log INFO "$(color_text white bold "$USER2_ADORN") $1"; }

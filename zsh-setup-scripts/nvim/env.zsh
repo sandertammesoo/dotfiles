@@ -10,6 +10,6 @@ if command -v nvim &> /dev/null; then
         export_n_log NVIM_APPNAME=nvim
     fi
 else
-    log_warn "nvim not found, skipping nvim environment setup"
+    log_skip "nvim not found, skipping nvim environment setup"
 fi
 

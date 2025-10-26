@@ -8,5 +8,5 @@ if command -v fzf &> /dev/null; then
         log_failure "Failed to initialize fzf shell integration"
     fi
 else
-    log_warn "fzf not found, skipping fzf shell integration"
+    log_skip "fzf not found, skipping fzf shell integration"
 fi

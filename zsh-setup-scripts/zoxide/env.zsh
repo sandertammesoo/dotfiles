@@ -10,5 +10,5 @@ if command -v zoxide &> /dev/null; then
     # If you want to override `cd`, you can uncomment the line below
     # eval "$(zoxide init --cmd cd zsh)"
 else
-    log_warn "zoxide not found, skipping zoxide environment setup"
+    log_skip "zoxide not found, skipping zoxide environment setup"
 fi

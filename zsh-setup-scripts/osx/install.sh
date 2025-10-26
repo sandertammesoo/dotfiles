@@ -2,7 +2,7 @@
 # exec 2> >(error_stream)
 
 if [[ (( ${SKIP_MACOS_UPDATES:-0} )) || (( ${SKIP_UPDATES:-0} )) ]]; then
-  log_info "  ✗   Skipping macOS software updates."
+  log_skip "Skipping macOS software updates."
   return 0
 fi
 
@@ -19,12 +19,12 @@ log_info "    Waiting 30 seconds for input, then skipping..."
 log_user "Continue with software update? [Y/n] "
 if ! read -t 30 reply; then
     echo ""
-    log_info "Timed out waiting for input. Skipping software updates."
+    log_skip "Timed out waiting for input. Skipping software updates."
     return 1
 fi
 
 if [[ "$reply" =~ ^[Nn] ]]; then
-    log_info "Skipping software updates."
+    log_skip "Skipping software updates."
     return 1
 fi
 echo ""

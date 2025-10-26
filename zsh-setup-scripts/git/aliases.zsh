@@ -39,7 +39,7 @@ if command -v git &> /dev/null; then
         git push --set-upstream origin "$branch"
     }
 else
-    log_info " !  Git not found, skipping Git aliases"
+    log_skip "Git not found, skipping Git aliases"
     return
 fi
 

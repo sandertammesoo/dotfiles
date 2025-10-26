@@ -7,7 +7,7 @@ if command -v lazygit &> /dev/null; then
     alias lazygit="lazygit -ucd $XDG_CONFIG_HOME/lazygit/"
 
 else
-    log_info " !  Lazygit not found, skipping Lazygit aliases"
+    log_skip "Lazygit not found, skipping Lazygit aliases"
     return
 fi
 

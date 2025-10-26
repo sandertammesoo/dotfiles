@@ -26,7 +26,7 @@ if command -v xargs &> /dev/null; then
     log_success "xargs is installed, setting up aliases"
     alias map="xargs -n1"
 else
-    log_warn "xargs not found, skipping xargs aliases"
+    log_skip "xargs not found, skipping xargs aliases"
 fi
 
 # One of @janmoesen’s ProTip™s
@@ -37,7 +37,7 @@ if command -v lwp-request &> /dev/null; then
         alias "$method"="lwp-request -m '$method'"
     done
 else
-    log_warn "lwp-request not found, skipping lwp-request aliases"
+    log_skip "lwp-request not found, skipping lwp-request aliases"
 fi
 
 # IP addresses
@@ -55,7 +55,7 @@ if command -v ngrep &> /dev/null && command -v tcpdump &> /dev/null; then
     alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
     alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
 else
-    log_warn "ngrep and/or tcpdump not found, skipping ngrep and tcpdump aliases"
+    log_skip "ngrep and/or tcpdump not found, skipping ngrep and tcpdump aliases"
 fi
 
 
@@ -71,6 +71,6 @@ if [ -d "/Applications/Visual Studio Code.app" ]; then
     #  command code --extensions-dir "$XDG_DATA_HOME/vscode/extensions" --user-data-dir "$XDG_DATA_HOME/vscode/settings" "$@"
     #}
 else
-    log_warn "Visual Studio Code not found, skipping Visual Studio Code aliases"
+    log_skip "Visual Studio Code not found, skipping Visual Studio Code aliases"
 fi
 

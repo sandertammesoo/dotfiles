@@ -30,5 +30,5 @@
 #     done
 
 # else
-#     log_warn "fabric-ai not found, skipping fabric-ai aliases setup"
+#     log_skip "fabric-ai not found, skipping fabric-ai aliases setup"
 # fi

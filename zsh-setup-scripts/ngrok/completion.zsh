@@ -8,5 +8,5 @@ if command -v ngrok &>/dev/null; then
         log_failure "ngrok completion setup failed"
     fi
 else
-    log_warn "ngrok not found, skipping ngrok completion setup"
+    log_skip "ngrok not found, skipping ngrok completion setup"
 fi

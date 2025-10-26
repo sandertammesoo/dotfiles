@@ -27,8 +27,8 @@ if command -v python3 &> /dev/null || command -v pyenv &> /dev/null; then
             log_fatal "pyenv init failed"
         fi
     else
-        log_warn "pyenv not found, skipping pyenv environment setup"
+        log_skip "pyenv not found, skipping pyenv environment setup"
     fi
 else
-    log_info " !  Python not found, skipping Python environment setup"
+    log_skip "Python not found, skipping Python environment setup"
 fi

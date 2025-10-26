@@ -14,7 +14,7 @@ if command -v gpg &> /dev/null; then
     export_n_log GPG_AGENT_INFO="$GNUPGHOME/S.gpg-agent:0:1" # Set GPG agent info
     export_n_log GPG_TTY=$(tty) # Set GPG TTY
 else
-    log_warn "gpg not found, skipping gpg environment setup"
+    log_skip "gpg not found, skipping gpg environment setup"
     return
 fi
 

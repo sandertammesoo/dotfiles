@@ -10,7 +10,7 @@ if command -v yabai &> /dev/null; then
     alias restart-yabai="yabai --restart-service"
     alias restart-yabai-hard="yabai --restart-service"
 else
-    log_warn " yabai not found, skipping yabai aliases"
+    log_skip "yabai not found, skipping yabai aliases"
 fi
 
 if command -v skhd &> /dev/null; then
@@ -18,7 +18,7 @@ if command -v skhd &> /dev/null; then
     alias restart-skhd="skhd --restart-service"
     alias restart-skhd-hard="skhd --restart-service"
 else
-    log_warn " skhd not found, skipping skhd aliases"
+    log_skip "skhd not found, skipping skhd aliases"
 fi
 
 if command -v sketchybar &> /dev/null; then
@@ -26,7 +26,7 @@ if command -v sketchybar &> /dev/null; then
     alias restart-sketchybar="sketchybar --reload"
     alias restart-sketchybar-hard="brew services restart sketchybar"
 else
-    log_warn " sketchybar not found, skipping sketchybar aliases"
+    log_skip "sketchybar not found, skipping sketchybar aliases"
 fi
 
 # grc overides for ls
@@ -101,12 +101,12 @@ if command -v glocate &> /dev/null; then
     # trouble shoot: `echo $LOCATE_PATH` needs to return db path.
     [[ -f "$HOME/locatedb" ]] && export LOCATE_PATH="$HOME/locatedb"
 else
-    log_warn " glocate not found, skipping glocate aliases"
+    log_skip "glocate not found, skipping glocate aliases"
 fi
 
 if command -v gupdatedb &> /dev/null; then
     log_success "gupdatedb is installed, setting up aliases"
     alias loaddb="gupdatedb --localpaths=$HOME --prunepaths=/Volumes --output=$HOME/locatedb"
 else
-    log_warn " gupdatedb not found, skipping gupdatedb aliases"
+    log_skip "gupdatedb not found, skipping gupdatedb aliases"
 fi

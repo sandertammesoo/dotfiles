@@ -15,5 +15,5 @@ if command -v jupyter &> /dev/null; then
     [[ -d $JUPYTER_RUNTIME_DIR/bin ]] && add_to PATH "$JUPYTER_RUNTIME_DIR/bin" # Add Jupyter runtime bin to PATH
     log_success "Jupyter environment configured successfully"
 else
-    log_warn "Jupyter not found, skipping jupyter environment setup"
+    log_skip "Jupyter not found, skipping jupyter environment setup"
 fi

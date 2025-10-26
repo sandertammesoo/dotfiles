@@ -63,5 +63,5 @@ if command -v starship &> /dev/null; then
         log_fatal "starship init failed"
     fi
 else
-    log_warn "starship not found, skipping starship shell integration"
+    log_skip "starship not found, skipping starship shell integration"
 fi

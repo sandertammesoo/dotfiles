@@ -62,6 +62,6 @@ if command -v docker &> /dev/null; then
         fi
     fi
 else
-    log_warn "Docker not found, skipping Docker aliases"
+    log_skip "Docker not found, skipping Docker aliases"
     return
 fi

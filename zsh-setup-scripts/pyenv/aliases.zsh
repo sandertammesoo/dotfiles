@@ -17,6 +17,6 @@ if command -v pyenv &> /dev/null; then
     #alias pip=pip3
     #alias python=python3
 else
-    log_info " !  pyenv not found, skipping pyenv aliases"
+    log_skip "pyenv not found, skipping pyenv aliases"
     return
 fi

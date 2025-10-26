@@ -13,7 +13,7 @@ elif [[ -x "/usr/local/bin/brew" ]]; then
     # Intel Mac
     BREW_PATH="/usr/local/bin/brew"
 else
-    log_warn "Homebrew not found, skipping Homebrew shell integration"
+    log_skip "Homebrew not found, skipping Homebrew shell integration"
     return
 fi
 

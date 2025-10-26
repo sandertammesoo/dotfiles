@@ -5,12 +5,12 @@
 
 # Check if 'git' is NOT available
 if ! command -v git &> /dev/null; then
-    log_warn "git not found, skipping git completion setup"
+    log_skip "git not found, skipping git completion setup"
     return
 fi
 
 if ! command -v brew &> /dev/null; then
-    log_warn "brew not found, skipping git completion setup"
+    log_skip "brew not found, skipping git completion setup"
     return
 fi
 

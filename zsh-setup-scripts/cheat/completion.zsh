@@ -69,6 +69,6 @@ if command -v cheat &> /dev/null; then
     compdef _cheat cheat
 
 else
-    log_warn "cheat not found, skipping cheat completions"
+    log_skip "cheat not found, skipping cheat completions"
     return
 fi

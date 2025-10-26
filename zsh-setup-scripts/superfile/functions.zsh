@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 if ! command -v spf &> /dev/null; then
-    log_info " !  superfile (spf) not found, skipping superfile shell integration"
+    log_skip "superfile (spf) not found, skipping superfile shell integration"
     return
 fi
 

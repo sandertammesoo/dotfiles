@@ -10,7 +10,7 @@ fi
 if command -v sketchybar &> /dev/null; then
     log_success "sketchybar is already installed."
 else
-    log_info "  !   sketchybar not found. Proceeding with installation."
+    log_user "sketchybar not found. Proceeding with installation."
     log_user "Installing sketchybar..."
     output=$(brew install FelixKratz/formulae/sketchybar 2>&1)
     exit_code=$?
@@ -32,7 +32,7 @@ fi
 if brew info font-sketchybar-app-font | grep -q "Installed"; then
     log_success "font-sketchybar-app-font is already installed."
 else
-    log_info "  !   font-sketchybar-app-font not found. Proceeding with installation."
+    log_user "font-sketchybar-app-font not found. Proceeding with installation."
     log_user "Installing font-sketchybar-app-font..."
     output=$(brew install font-sketchybar-app-font 2>&1)
     exit_code=$?
@@ -52,7 +52,7 @@ fi
 
 # Stop sketchybar service if it's running using sketchybar command
 if brew services list | grep -q '^sketchybar.*started'; then
-    log_info "  !   sketchybar service is currently running. Stopping it first..."
+    log_user "sketchybar service is currently running. Stopping it first..."
     output=$(brew services stop sketchybar 2>&1)
     exit_code=$?
     echo "$output" | output_stream
@@ -63,7 +63,7 @@ if brew services list | grep -q '^sketchybar.*started'; then
         return 1
     fi
 else
-    log_info "  !   sketchybar service is not running. Proceeding..."
+    log_skip "sketchybar service is not running. Proceeding..."
 fi
 
 # Try and update sketchybar to the latest version

@@ -10,7 +10,7 @@ fi
 if command -v skhd &> /dev/null; then
     log_success "skhd is already installed."
 else
-    log_info "  !   skhd not found. Proceeding with installation."
+    log_user "skhd not found. Proceeding with installation."
     log_user "Installing skhd..."
     if brew install koekeishiya/formulae/skhd 2>&1 | output_stream; then
         log_success "skhd installed successfully!"
@@ -27,7 +27,7 @@ fi
 
 # Stop skhd service if it's running using skhd command
 if skhd --restart-service &> /dev/null; then
-    log_info "  !   skhd service is currently running. Stopping it first..."
+    log_user "skhd service is currently running. Stopping it first..."
     if skhd --stop-service 2>&1 | output_stream; then
         log_success "skhd service stopped successfully."
     else
@@ -35,7 +35,7 @@ if skhd --restart-service &> /dev/null; then
         return 1
     fi
 else
-    log_info "  !   skhd service is not running. Proceeding..."
+    log_skip "skhd service is not running. Proceeding..."
 fi
 
 # Try and update skhd to the latest version

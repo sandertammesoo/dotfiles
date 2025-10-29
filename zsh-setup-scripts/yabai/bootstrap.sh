@@ -10,7 +10,7 @@ fi
 if command -v yabai &> /dev/null; then
     log_success "yabai is already installed."
 else
-    log_info "  !   yabai not found. Proceeding with installation."
+    log_user "yabai not found. Proceeding with installation."
     log_user "Installing yabai..."
     if brew install koekeishiya/formulae/yabai 2>&1 | output_stream; then
         log_success "yabai installed successfully!"
@@ -29,7 +29,7 @@ fi
 if command -v borders &> /dev/null; then
     log_success "borders is already installed."
 else
-    log_info "  !   borders not found. Proceeding with installation."
+    log_user "borders not found. Proceeding with installation."
     log_user "Installing borders..."
     if brew install felixkratz/formulae/borders 2>&1 | output_stream; then
         log_success "borders installed successfully!"
@@ -46,7 +46,7 @@ fi
 
 # Stop yabai service if it's running using yabai command
 if yabai -m rule --list &> /dev/null; then
-    log_info "  !   yabai service is currently running. Stopping it first..."
+    log_user "yabai service is currently running. Stopping it first..."
     if yabai --stop-service 2>&1 | output_stream; then
         log_success "yabai service stopped successfully."
     else
@@ -54,7 +54,7 @@ if yabai -m rule --list &> /dev/null; then
         return 1
     fi
 else
-    log_info "  !   yabai service is not running. Proceeding..."
+    log_skip "yabai service is not running. Proceeding..."
 fi
 
 # Try and update yabai to the latest version
@@ -86,7 +86,7 @@ if [ -f "$SUDOERS_FILE" ]; then
         UPDATE_FILE=true
     fi
 else
-    log_info "  !   Sudoers file for yabai not found. It will be created."
+    log_user "Sudoers file for yabai not found. It will be created."
     UPDATE_FILE=true
 fi
 

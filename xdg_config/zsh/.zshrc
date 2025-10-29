@@ -45,9 +45,18 @@ get_zsh_files func && {
 } || log_warn "No function setup files found to source"
 
 # Initialize autocomplete before loading completions
+# Note: fpath must be set up BEFORE this point (done in .zshenv via fpath.zsh)
 log_debug "Initializing autocomplete"
-autoload -U compinit
-compinit
+autoload -U compinit && {
+    log_success "compinit autoloaded successfully"
+} || {
+    log_error "Failed to autoload compinit"
+}
+compinit && {
+    log_success "compinit initialized successfully"
+} || {
+    log_error "compinit initialization failed"
+}
 
 # Use a custom location for the completion dump file to avoid permission issues
 if [[ -f "$XDG_CONFIG_HOME/.zcompdump" ]]; then
@@ -56,19 +65,29 @@ else
     log_info "No existing completion dump file found, creating new one at $XDG_CONFIG_HOME/.zcompdump"
     touch "$XDG_CONFIG_HOME/.zcompdump"
 fi
-compinit -d "$XDG_CONFIG_HOME/.zcompdump" -C -u # -C -u to avoid security checks
+# -C -u to avoid security checks
+compinit -d "$XDG_CONFIG_HOME/.zcompdump" -C -u && {
+    log_success "compinit with custom dump file initialized successfully"
+} || {
+    log_error "compinit with custom dump file initialization failed"
+}
+
+# Load completion setup files (individual tool completion configurations)
+# These can safely run after compinit since they mainly set up completion functions
+get_zsh_files completion && {
+    log_debug "Sourcing ${#matched_files} completion setup files"
+    for file in $matched_files; do try_source "$file" warn; done
+} || log_warn "No completion setup files found to source"
 
 log_debug "Source zoxide environment variable setup"
 try_source "$ZSH/zoxide/env.zsh" error
 # For zoxide completions to work, the above file must be sourced after
 # compinit is called. You may have to rebuild your completions cache by
 # running rm ~/.zcompdump*; compinit.
-rm -f "$XDG_CONFIG_HOME/.zcompdump"*; compinit -d "$XDG_CONFIG_HOME/.zcompdump" -C -u # Rebuild completions cache
 
-get_zsh_files completion && {
-    log_debug "Sourcing ${#matched_files} completion setup files"
-    for file in $matched_files; do try_source "$file" warn; done
-} || log_warn "No completion setup files found to source"
+# Rebuild completion cache after all completion sources have been loaded
+# This ensures any dynamically generated completions (like zoxide) are available
+_rebuild_completion_cache  # Safely rebuild completion cache (now defined in zsh/completion.zsh)
 
 # Cleanup
 unset config_files env_files func_files alias_files completion_files other_files

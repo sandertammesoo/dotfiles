@@ -6,10 +6,6 @@
 
 
 
-
-
-
-
 ### START-OF-ICON-MAP
 function __icon_map() {
     case "$1" in

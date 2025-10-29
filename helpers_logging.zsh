@@ -3,7 +3,7 @@
 # helpers_logging.zsh - Comprehensive logging framework for Zsh
 #
 # This module provides a flexible, multi-level logging system with:
-# - 7 log levels: TRACE, VERB, DEBUG, INFO, WARN, ERROR, FATAL
+# - 7 log levels: TRACE, VERBOSE, DEBUG, INFO, WARN, ERROR, FATAL
 # - Configurable formatting (standard, minimal, detailed)
 # - Color support with automatic terminal detection
 # - Caller information tracking for debugging
@@ -62,7 +62,7 @@ typeset -gx LOG_ENABLED="${LOG_ENABLED:-false}"
 ################################################################################
 typeset -Ag LOG_LEVELS=(
   [TRACE]=0    # Most verbose - trace execution flow
-  [VERB]=1     # Verbose debugging information
+  [VERBOSE]=1     # Verbose debugging information
   [DEBUG]=2    # General debugging information
   [OUTPUT]=2    # Output stream messages
   [INFO]=3     # Informational messages (default minimum)
@@ -75,7 +75,7 @@ typeset -Ag LOG_LEVELS=(
 # ANSI color codes for each log level
 typeset -Ag LOG_COLORS=(
   [TRACE]="242"
-  [VERB]="magenta"
+  [VERBOSE]="magenta"
   [DEBUG]="blue"
   [OUTPUT]="blue"
   [INFO]="cyan"
@@ -88,7 +88,7 @@ typeset -Ag LOG_COLORS=(
 # Display names with consistent 5-character width for alignment
 typeset -Ag LOG_NAMES=(
   [TRACE]="TRACE"
-  [VERB]="VERB "
+  [VERBOSE]="VERB "
   [DEBUG]="DEBUG"
   [OUTPUT]=" ... "
   [INFO]="INFO "
@@ -99,14 +99,14 @@ typeset -Ag LOG_NAMES=(
 )
 
 # Message adornments for semantic logging functions
-SUCCESS_ADORN="  ✔︎  "    # Success marker
-# WARNING_ADORN="  !  "    # Warning marker
-WARNING_ADORN="  ⚠︎  "    # Warning marker
-SKIP_ADORN="  ⏩  "    # Skipped marker
-FAILURE_ADORN="  ✘  "    # Failure marker
-# FAILURE_ADORN="  ✗  "    # Failure marker
-USER_ADORN="  ►  "       # User interaction marker
-USER2_ADORN="  ...  "    # Secondary user interaction marker
+SUCCESS_ADORN=" ✔︎ "    # Success marker
+WARNING_ADORN=" ! "    # Warning marker
+# WARNING_ADORN=" ⚠︎ "    # Warning marker
+SKIP_ADORN=" ◎ "    # Skipped marker
+FAILURE_ADORN=" ✘ "    # Failure marker
+# FAILURE_ADORN=" ✗ "    # Failure marker
+USER_ADORN=" ► "       # User interaction marker
+USER2_ADORN=" ... "    # Secondary user interaction marker
 
 ################################################################################
 # set_log_level - Set the minimum logging level
@@ -116,7 +116,7 @@ USER2_ADORN="  ...  "    # Secondary user interaction marker
 # and FATAL are logged regardless).
 #
 # Usage: set_log_level <LEVEL>
-#   LEVEL: TRACE, VERB, DEBUG, INFO, WARN, ERROR, or FATAL
+#   LEVEL: TRACE, VERBOSE, DEBUG, INFO, WARN, ERROR, or FATAL
 #
 # Examples:
 #   set_log_level DEBUG
@@ -136,7 +136,7 @@ function set_log_level() {
   # Log the change BEFORE setting the new level (if debugging is enabled)
   # Behavior depends on current log level:
   # - If current level <= DEBUG: log all changes (current level allows DEBUG messages)
-  # - If current level > DEBUG: only log when setting to TRACE/VERB/DEBUG
+  # - If current level > DEBUG: only log when setting to TRACE/VERBOSE/DEBUG
   if is_debug_enabled; then
     local new_level_num="${LOG_LEVELS[$level]}"
     local current_level_num="${LOG_LEVELS[$LOG_LEVEL]}"
@@ -654,7 +654,7 @@ function _log() {
 ################################################################################
 
 function log_trace() { _log TRACE "$1"; }
-function log_verbose() { _log VERB "$1"; }
+function log_verbose() { _log VERBOSE "$1"; }
 function log_debug() { _log DEBUG "$1"; }
 function log_info() { _log INFO "$1"; }
 function log_warn() { _log WARN "$(color_text yellow bold "$WARNING_ADORN") $1"; }
@@ -695,7 +695,7 @@ function l_always() {
   # For basic log levels, use _log with ALWAYS flag
   case "$func" in
     log_trace|trace) _log TRACE "$*" ALWAYS ;;
-    log_verb|verb) _log VERB "$*" ALWAYS ;;
+    log_verb|verb) _log VERBOSE "$*" ALWAYS ;;
     log_debug|debug) _log DEBUG "$*" ALWAYS ;;
     log_info|info) _log INFO "$*" ALWAYS ;;
     log_warn|warn) _log WARN "$*" ALWAYS ;;
@@ -884,7 +884,7 @@ try_source() {
   
   if [[ -f "$file" ]]; then
     if source "$file" 2>/dev/null; then
-      _log VERB "Sourced $file"
+      _log VERBOSE "Sourced $file"
       return 0
     else
       _log "${level:u}" "Failed to source $file"
@@ -899,7 +899,7 @@ try_source() {
   #   # "try" block
   #   [[ -f "$file" ]] || throw MyExceptFileNotFound
   #   source "$file" || throw MyExceptFailedToSource
-  #   _log VERB "Sourced $file"
+  #   _log VERBOSE "Sourced $file"
   # } always {
   #   # "always" block
   #   # code

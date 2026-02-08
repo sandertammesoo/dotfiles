@@ -13,7 +13,7 @@
 if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]]; then
 
   # Minimum severity level for logging (messages below this are ignored)
-  typeset -gx LOG_LEVEL="${LOG_LEVEL:-INFO}"  # Options: TRACE, VERBOSE, DEBUG, INFO, WARN, ERROR, FATAL
+  typeset -gx LOG_LEVEL="${LOG_LEVEL:-WARN}"  # Options: TRACE, VERBOSE, DEBUG, INFO, WARN, ERROR, FATAL
 
   # Color output control
   typeset -gx LOG_COLOR="${LOG_COLOR:-always}"        # Options: auto, always, never

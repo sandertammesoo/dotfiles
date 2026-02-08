@@ -3,13 +3,12 @@
 # Parse options using zparseopts
 local -A opts
 
-# Parse options using zparseopts
 # zparseopts syntax reference: https://zsh.sourceforge.io/Doc/Release/Parameters.html#index-zparseopts
-# zparseopts flags: 
-  # -D : Enable debug output
+# zparseopts flags:
+  # -D : Remove recognized options from positional parameters
   # -A : Store options in associative array
   # -E : Stop option parsing at first non-option argument
-  # -F : 
+  # -F : Fail if unknown options are encountered 
 zparseopts -D -E -F -A opts -- \
   h -help \
   d -skip-dotbot \
@@ -76,15 +75,31 @@ else
 fi
 
 # Set global flags to skip certain steps
-typeset -gx SKIP_DOTBOT=$(( ${+opts[-d]} || ${+opts[--skip-dotbot]} ))
-typeset -gx SKIP_UPDATES=$(( ${+opts[-u]} || ${+opts[--skip-updates]} ))
-typeset -gx SKIP_OSX_UPDATES=$(( ${+opts[-o]} || ${+opts[--skip-osx-updates]} ))
-typeset -gx SKIP_APP_INSTALLATION=$(( ${+opts[-i]} || ${+opts[--skip-app-installation]} ))
-typeset -gx SKIP_BREW_UPGRADES=$(( ${+opts[-b]} || ${+opts[--skip-brew-upgrades]} ))
-typeset -gx SKIP_SERVICES=$(( ${+opts[-s]} || ${+opts[--skip-services]} ))
-typeset -gx SETUP_LAZYMAN=$(( ${+opts[-l]} || ${+opts[--setup-lazyman]} ))
+typeset -gx SKIP_DOTBOT=false
+(( ${+opts[-d]} || ${+opts[--skip-dotbot]} )) && SKIP_DOTBOT=true
 
-# Cleanup function on exit_code to unset global flags if they are set
+typeset -gx SKIP_UPDATES=false
+(( ${+opts[-u]} || ${+opts[--skip-updates]} )) && SKIP_UPDATES=true
+
+typeset -gx SKIP_OSX_UPDATES=false
+(( ${+opts[-o]} || ${+opts[--skip-osx-updates]} )) && SKIP_OSX_UPDATES=true
+
+typeset -gx SKIP_APP_INSTALLATION=false
+(( ${+opts[-i]} || ${+opts[--skip-app-installation]} )) && SKIP_APP_INSTALLATION=true
+
+typeset -gx SKIP_BREW_UPGRADES=false
+(( ${+opts[-b]} || ${+opts[--skip-brew-upgrades]} )) && SKIP_BREW_UPGRADES=true
+
+typeset -gx SKIP_SERVICES=false
+(( ${+opts[-s]} || ${+opts[--skip-services]} )) && SKIP_SERVICES=true
+
+typeset -gx SETUP_LAZYMAN=false
+(( ${+opts[-l]} || ${+opts[--setup-lazyman]} )) && SETUP_LAZYMAN=true
+
+# Track exit code - start with success, set to 1 on any failure
+local exit_code=0
+
+# Cleanup function on exit to unset global flags if they are set
 cleanup() {
   log_trace "Restoring logging environment variables..."
   typeset -gx LOG_LEVEL="$SAVED_LOG_LEVEL"
@@ -92,37 +107,26 @@ cleanup() {
 
   if [[ -n "$SUDO_KEEPALIVE_PID" ]]; then
     log_trace "Killing sudo keep-alive process..."
-    kill $SUDO_KEEPALIVE_PID 2>/dev/null
+    if kill "$SUDO_KEEPALIVE_PID" &>/dev/null; then
+      log_trace "Successfully killed sudo keep-alive process"
+    fi
+    unset SUDO_KEEPALIVE_PID
   fi
 
-  if (( SKIP_DOTBOT )); then
-    unset SKIP_DOTBOT
-  fi
-  if (( SKIP_UPDATES )); then
-    unset SKIP_UPDATES
-  fi
-  if (( SKIP_OSX_UPDATES )); then
-    unset SKIP_OSX_UPDATES
-  fi
-  if (( SKIP_APP_INSTALLATION )); then
-    unset SKIP_APP_INSTALLATION
-  fi
-  if (( SKIP_BREW_UPGRADES )); then
-    unset SKIP_BREW_UPGRADES
-  fi
-  if (( SKIP_SERVICES )); then
-    unset SKIP_SERVICES
-  fi
-  if (( SETUP_LAZYMAN )); then
-    unset SETUP_LAZYMAN
-  fi
+  [[ -n "${SKIP_DOTBOT+x}" ]] && unset SKIP_DOTBOT
+  [[ -n "${SKIP_UPDATES+x}" ]] && unset SKIP_UPDATES
+  [[ -n "${SKIP_OSX_UPDATES+x}" ]] && unset SKIP_OSX_UPDATES
+  [[ -n "${SKIP_APP_INSTALLATION+x}" ]] && unset SKIP_APP_INSTALLATION
+  [[ -n "${SKIP_BREW_UPGRADES+x}" ]] && unset SKIP_BREW_UPGRADES
+  [[ -n "${SKIP_SERVICES+x}" ]] && unset SKIP_SERVICES
+  [[ -n "${SETUP_LAZYMAN+x}" ]] && unset SETUP_LAZYMAN
 }
 trap cleanup EXIT
 
 # Load helper functions for logging
 source helpers.zsh
 
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASEDIR="${0:A:h}"
 log_verbose "Detected BASEDIR=$BASEDIR"
 
 # Request sudo privileges once
@@ -130,12 +134,14 @@ log_user "Requesting sudo privileges..."
 if sudo -v 2>/dev/null; then
   log_success "Sudo access granted"
   log_trace "Keeping sudo alive..."
-  # Keep sudo token alive in background
-  (while true; do 
-    sudo -v
+  # Keep sudo token alive in background with timeout and parent check
+  # Max 60 iterations = 30 minutes, stops if parent process exits
+  (for i in {1..60}; do
+    sudo -n true 2>/dev/null || break
+    kill -0 $$ 2>/dev/null || break  # Check if parent still exists
     sleep 30
-  done) 2>/dev/null &
-  SUDO_KEEPALIVE_PID=$!
+  done) &
+  SUDO_KEEPALIVE_PID="$!"
 else
   log_fatal "Sudo access denied"
   exit 1
@@ -150,7 +156,7 @@ fi
 #fi
 
 # Check if DotBot installation should be skipped
-if (( ${SKIP_DOTBOT:-0} )); then
+if [[ "$SKIP_DOTBOT" == "true" ]]; then
   log_skip "Skipping DotBot installation."
 else
   # Run DotBot install script
@@ -166,7 +172,7 @@ fi
 # macOS-specific setup
 if [[ "$(uname -s)" == "Darwin" ]]; then
   log_trace "Detected macOS, proceeding with additional setup..."
-  export_n_log DOTS="$XDG_CONFIG_HOME/.dotfiles"
+  local DOTS="$XDG_CONFIG_HOME/.dotfiles"
 
 #   # TODO: Go over the defaults config
 #   #log_info "Setting OS X defaults..."
@@ -180,12 +186,37 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 
   log_user "Install dependencies next..."
   log_user "Searching for installers..."
-  installers=($(find . -name install.sh))
+
+  # Whitelist of allowed installer directories for security
+  local allowed_installer_paths=(
+    "zsh-setup-scripts/homebrew/install.sh"
+    "zsh-setup-scripts/osx/install.sh"
+    # "zsh-setup-scripts/lazyman/install.sh"
+  )
+
+  # Build list of installers using null-terminated find for safety with spaces
+  local -a installers
+  while IFS= read -r -d '' installer; do
+    # Validate installer is in whitelist
+    local is_allowed=false
+    for allowed_path in "${allowed_installer_paths[@]}"; do
+      if [[ "$installer" == "./$allowed_path" || "$installer" == "$allowed_path" ]]; then
+        is_allowed=true
+        break
+      fi
+    done
+
+    if [[ "$is_allowed" == "true" ]]; then
+      installers+=("$installer")
+    else
+      log_skip "Skipping non-whitelisted installer: $installer"
+    fi
+  done < <(find . -name install.sh -print0)
 
   if [[ ${#installers[@]} -eq 0 ]]; then
-    log_warn "No installers found."
+    log_warn "No whitelisted installers found."
   else
-    log_debug "Found ${#installers[@]} installers. Executing..."
+    log_debug "Found ${#installers[@]} whitelisted installers. Executing..."
     failed_installers=()
     for installer in "${installers[@]}"; do
       log_debug "Running ${installer}..."
@@ -196,12 +227,13 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
         failed_installers+=("${installer}")
       fi
     done
-    
+
     if [[ ${#failed_installers[@]} -gt 0 ]]; then
       log_warn "The following installers failed:"
       for failed in "${failed_installers[@]}"; do
         log_warn "  - ${failed}"
       done
+      exit_code=1
     fi
   fi
 else
@@ -213,7 +245,7 @@ log_success "Installation complete!"
 
 
 # Check if services setup should be skipped
-if (( ${SKIP_SERVICES:-0} )); then
+if [[ "$SKIP_SERVICES" == "true" ]]; then
   log_skip "Skipping Homebrew services setup."
 else
   log_user "Running yabai bootstrap..."
@@ -221,6 +253,7 @@ else
     log_success "Yabai setup completed successfully!"
   else
     log_fail "Yabai setup failed!"
+    exit_code=1
   fi
 
   log_user "Running skhd bootstrap..."
@@ -228,6 +261,7 @@ else
     log_success "skhd setup completed successfully!"
   else
     log_fail "skhd setup failed!"
+    exit_code=1
   fi
 
   log_user "Running sketchybar bootstrap..."
@@ -235,15 +269,19 @@ else
     log_success "sketchybar setup completed successfully!"
   else
     log_fail "sketchybar setup failed!"
+    exit_code=1
   fi
 fi
 
 # Final completion message
-log_success "All installation and configuration complete!"
-log_info "Your dotfiles have been successfully installed and configured."
+if [[ $exit_code -eq 0 ]]; then
+  log_success "All installation and configuration complete!"
+  log_info "Your dotfiles have been successfully installed and configured."
+else
+  log_warn "Installation completed with some failures. Please review the logs above."
+fi
 
-# Restore previous logging environment variable values
-typeset -gx LOG_LEVEL="$SAVED_LOG_LEVEL"
-typeset -gx LOG_ENABLED="$SAVED_LOG_ENABLED"
+# Exit with appropriate code
+exit $exit_code
 
 

@@ -6,6 +6,9 @@
 
 
 
+
+
+
 ### START-OF-ICON-MAP
 function __icon_map() {
     case "$1" in
@@ -120,6 +123,9 @@ function __icon_map() {
    "Bear")
         icon_result=":bear:"
         ;;
+   "Beeper" | "Beeper Desktop")
+        icon_result=":beeper:"
+        ;;
    "BetterTouchTool")
         icon_result=":bettertouchtool:"
         ;;
@@ -149,6 +155,9 @@ function __icon_map() {
         ;;
    "Brave Browser")
         icon_result=":brave_browser:"
+        ;;
+   "Broadcasts")
+        icon_result=":broadcasts:"
         ;;
    "Bruno")
         icon_result=":bruno:"
@@ -591,7 +600,7 @@ function __icon_map() {
    "Messages" | "信息" | "Nachrichten" | "メッセージ")
         icon_result=":messages:"
         ;;
-   "Messenger")
+   "Messenger" | "MessengerApp")
         icon_result=":messenger:"
         ;;
    "Microsoft Edge")
@@ -795,7 +804,7 @@ function __icon_map() {
    "Pixelmator Pro")
         icon_result=":pixelmator_pro:"
         ;;
-   "Play")
+   "Play" | "PS Remote Play")
         icon_result=":play:"
         ;;
    "Plex")

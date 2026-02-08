@@ -44,7 +44,7 @@ Describe 'Configuration Functions'
 
         Parameters
           'TRACE'
-          'VERB'
+          'VERBOSE'
           'DEBUG'
           'INFO'
           'WARN'
@@ -69,7 +69,7 @@ Describe 'Configuration Functions'
       Parameters
         'false' 'INFO'   # debugging disabled, default level
         'true' 'WARN'    # debugging enabled, high level (INFO or higher)
-        'true' 'VERB'    # debugging enabled, low level (DEBUG or lower)
+        'true' 'VERBOSE'    # debugging enabled, low level (DEBUG or lower)
       End
 
       It "should reject invalid level and remain at $2 when LOG_ENABLED=$1"
@@ -96,7 +96,7 @@ Describe 'Configuration Functions'
       Context 'should set valid log level with debug output for lower levels'
         Parameters
           'TRACE' 'Log level set to TRACE'
-          'VERB' 'Log level set to VERB'
+          'VERBOSE' 'Log level set to VERBOSE'
           'DEBUG' 'Log level set to DEBUG'
         End
 
@@ -147,14 +147,14 @@ Describe 'Configuration Functions'
       # - This is because the current level allows DEBUG messages to be shown
       logenabled_with_verb() {
           export LOG_ENABLED="true"
-          export LOG_LEVEL="VERB"
+          export LOG_LEVEL="VERBOSE"
         }
       BeforeEach 'logenabled_with_verb'
       
       Context 'should set valid log level with debug output for all levels'
         Parameters
           'TRACE' 'Log level set to TRACE'
-          'VERB' 'Log level set to VERB'
+          'VERBOSE' 'Log level set to VERBOSE'
           'DEBUG' 'Log level set to DEBUG'
           'INFO' 'Log level set to INFO'
           'WARN' 'Log level set to WARN'
@@ -176,7 +176,7 @@ Describe 'Configuration Functions'
         # This test verifies that get_caller_info() truncates long paths
         # to show only the last 3 directory levels for readability
         # e.g., ../../../../tmp/xyz/long/path/to/file/script.sh → ../to/file/script.sh
-        When run create_set_log_level_script "DEBUG" "VERB" "detailed"
+        When run create_set_log_level_script "DEBUG" "VERBOSE" "detailed"
         The status should be success
         The output should include "[DEBUG]"
         # Use flexible pattern matching for path components
@@ -198,7 +198,7 @@ Describe 'print_log_level'
 
     Parameters
       'TRACE'
-      'VERB'
+      'VERBOSE'
       'DEBUG'
       'INFO'
       'WARN'
@@ -225,7 +225,7 @@ Describe 'is_debug_enabled'
     Parameters
       'false' 'INFO' 1  # debugging disabled, default level
       'false' 'WARN' 1  # debugging disabled, high level (INFO or higher)
-      'true'  'VERB' 0  # debugging enabled, low level (DEBUG or lower)
+      'true'  'VERBOSE' 0  # debugging enabled, low level (DEBUG or lower)
       'true'  'DEBUG' 0  # debugging enabled, low level (DEBUG or lower)
       'false' 'INFO' 1  # debugging disabled, high level (INFO or higher)
       'false' 'ERROR' 1  # debugging disabled, high level (INFO or higher)

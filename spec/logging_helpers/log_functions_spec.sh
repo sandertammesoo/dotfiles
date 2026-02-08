@@ -247,7 +247,7 @@ Describe 'helpers_logging.zsh - Core Logging Functions'
       export LOG_ENABLED="true"
       When call log_success "Operation completed successfully."
       The status should be success
-      The output should include "[INFO ]   ✓   Operation completed successfully."
+      The output should include "[INFO ]  ✔︎  Operation completed successfully."
     End
   End
 
@@ -261,7 +261,7 @@ Describe 'helpers_logging.zsh - Core Logging Functions'
       export LOG_ENABLED="true"
       When call log_failure "Operation failed."
       The status should be success
-      The error should include "[ERROR]   ✗   Operation failed."
+      The error should include "[ERROR]  ✘  Operation failed."
     End
   End
 

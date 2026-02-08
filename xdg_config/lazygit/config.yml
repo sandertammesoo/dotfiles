@@ -31,13 +31,12 @@ git:
   # for more information.
   # pagers:
   #   - pager: delta --dark --paging=never --line-numbers --side-by-side --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
-  paging:
-      # see: delta --help
-    pager: delta --paging=never
-    # pager: delta --paging=never --side-by-side --line-numbers --hyperlinks
-    # pager: --dark --paging=never --line-numbers --side-by-side --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
-    colorArg: always
-
+  pagers:
+    - # see: delta --help
+      pager: delta --paging=never
+      # pager: delta --paging=never --side-by-side --line-numbers --hyperlinks
+      # pager: --dark --paging=never --line-numbers --side-by-side --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+      colorArg: always
   # Command used when displaying the current branch git log in the main window
   branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=local --date-order --pretty=oneline {{branchName}} --
   # branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} -- # Default config
@@ -51,15 +50,12 @@ git:
   # allBranchesLogCmd: "git log --graph --all --color=always --abbrev-commit --decorate --date=local --date-order --pretty=oneline"
   # allBranchesLogCmd: "git log --graph --all --color=always --abbrev-commit --decorate --date=relative  --pretty=medium"
   # allBranchesLogCmd: "git log --graph --pretty=format:'%Cred%h%Creset - %C(auto)%d%Creset %s %Cgreen(%cr by %C(bold blue)<%an>%Cgreen)%Creset %C(yellow)(%cd)' --date=local -n 20 --abbrev-commit --date-order --all"
-
 os:
   # Command for editing a file. Should contain "{{filename}}".
   edit: "vim {{filename}}"
-
   # Command for editing a file at a given line number. Should contain
   # "{{filename}}", and may optionally contain "{{line}}".
   editAtLine: "vim +{{line}} {{filename}}"
-
   # Same as EditAtLine, except that the command needs to wait until the window is
   # closed.
   # editAtLineAndWait: ""
@@ -77,7 +73,6 @@ os:
   # Command for opening a file, as if the file is double-clicked. Should contain
   # "{{filename}}", but doesn't support "{{line}}".
   open: "open {{filename}}"
-
   # Command for opening a link. Should contain "{{link}}".
   # openLink: ""
 
@@ -94,7 +89,6 @@ os:
   # available in the `:` command prompt or even in custom commands.
   # See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#using-aliases-or-functions-in-shell-commands
   # shellFunctionsFile: ""
-
 # What to do when opening Lazygit outside of a git repo.
 # - 'prompt': (default) ask whether to initialize a new repo or open in the most
 # recent repo

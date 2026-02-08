@@ -84,7 +84,7 @@ brew "grc"                      # Generic Colouriser https://kassiopeia.juls.sav
 
 # Documentation & Help
 brew "cheat"                    # Create and view interactive cheat sheets for *nix commands https://github.com/cheat/cheat
-brew "tldr"                     # Simplified and community-driven man pages https://tldr.sh/
+brew "tlrc"                     # Official tldr client written in Rust https://tldr.sh/tlrc
 
 #########################
 ### Development Tools ###
@@ -290,6 +290,11 @@ mas "Timer RH", id: 929960914                   # Simple and elegant timer appli
 # Uncomment as needed for specific use cases
 
 # AI Assistant Tools
+cask "claude"                   # Anthropic's Claude AI assistant desktop application
+cask "claude-code"              # Claude AI for coding and development tasks
+cask "codex"                    # AI-powered code completion and generation tool
+brew "gemini-cli"               # Command-line interface for Google Gemini AI
+brew "opencode"                 # AI-powered code analysis and generation tool
 # brew "ata"                    # ChatGPT in the terminal https://github.com/transformrs/ata
 
 # Utility Tools

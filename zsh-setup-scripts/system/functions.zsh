@@ -461,12 +461,13 @@ function clean_bak() {
 ##############################################################################
 # add_host - Add entry to /etc/hosts
 #
-# Adds a new IP-to-hostname mapping to /etc/hosts with duplicate checking
-# and race condition prevention. Requires sudo privileges.
+# Adds a new IP-to-hostname mapping to a hosts file with duplicate checking.
+# Requires sudo privileges when modifying /etc/hosts.
 #
 # Args:
 #   $1 - IP address (e.g., 192.168.1.10)
 #   $2 - Hostname (e.g., myserver.local)
+#   $3 - (Optional) Hosts file path (default: /etc/hosts)
 #
 # Returns:
 #   0 on success, 1 on error
@@ -474,13 +475,15 @@ function clean_bak() {
 # Examples:
 #   add_host 192.168.1.10 myserver.local
 #   add_host 127.0.0.1 dev.example.com
+#   add_host 192.168.1.10 myserver.local /tmp/hosts  # For testing
 ##############################################################################
 function add_host() {
     local ip="$1"
     local hostname="$2"
+    local hosts_file="${3:-/etc/hosts}"
 
     if [[ -z "$ip" || -z "$hostname" ]]; then
-        echo "Usage: add_host <IP> <hostname>"
+        echo "Usage: add_host <IP> <hostname> [hosts_file]"
         return 1
     fi
 
@@ -490,44 +493,33 @@ function add_host() {
         return 1
     fi
 
-    # Use a lock file to prevent race conditions
-    local lockfile="/tmp/hosts.lock"
-    local lockfd
-    
-    # Open lock file
-    exec {lockfd}>"$lockfile"
-    
-    # Acquire exclusive lock
-    flock -x "$lockfd" || {
-        echo "Error: Failed to acquire lock"
-        exec {lockfd}>&-
-        return 1
-    }
-    
-    # Check if the hostname already exists in /etc/hosts
-    if grep -q "[[:space:]]$hostname[[:space:]]*$" /etc/hosts; then
-        echo "Error: Hostname '$hostname' already exists in /etc/hosts."
-        exec {lockfd}>&-
+    # Check if the hostname already exists in hosts file
+    # Use mixed quoting to prevent zsh from interpreting [[:space:]] as array subscript
+    if grep -q '[[:space:]]'"$hostname"'[[:space:]]*$' "$hosts_file"; then
+        echo "Error: Hostname '$hostname' already exists in $hosts_file."
         return 1
     fi
 
-    # Append new entry to /etc/hosts
-    echo "$ip    $hostname" | sudo tee -a /etc/hosts > /dev/null
+    # Append new entry to hosts file
+    # Use sudo only for /etc/hosts, direct write for other files
+    if [[ "$hosts_file" == "/etc/hosts" ]]; then
+        echo "$ip    $hostname" | sudo tee -a "$hosts_file" > /dev/null
+    else
+        echo "$ip    $hostname" >> "$hosts_file"
+    fi
     echo "Added: $ip -> $hostname"
-    
-    # Release lock
-    exec {lockfd}>&-
 }
 
 ##############################################################################
 # remove_host - Remove entry from /etc/hosts
 #
-# Removes an IP-to-hostname mapping from /etc/hosts using exact hostname
+# Removes an IP-to-hostname mapping from a hosts file using exact hostname
 # matching to prevent accidentally removing similar hostnames.
-# Requires sudo privileges.
+# Requires sudo privileges when modifying /etc/hosts.
 #
 # Args:
 #   $1 - Hostname to remove (e.g., myserver.local)
+#   $2 - (Optional) Hosts file path (default: /etc/hosts)
 #
 # Returns:
 #   0 on success, 1 on error
@@ -535,30 +527,44 @@ function add_host() {
 # Examples:
 #   remove_host myserver.local
 #   remove_host dev.example.com
+#   remove_host myserver.local /tmp/hosts  # For testing
 ##############################################################################
 function remove_host() {
     local hostname="$1"
+    local hosts_file="${2:-/etc/hosts}"
 
     if [[ -z "$hostname" ]]; then
-        echo "Usage: remove_host <hostname>"
+        echo "Usage: remove_host <hostname> [hosts_file]"
         return 1
     fi
 
-    # Check if the hostname exists in /etc/hosts (match exact hostname only)
-    if ! grep -q "^[0-9.]\+[[:space:]]\+$hostname[[:space:]]*$" /etc/hosts; then
-        echo "Error: Hostname '$hostname' not found in /etc/hosts."
+    # Check if the hostname exists in hosts file (match exact hostname only)
+    # Use mixed quoting to prevent zsh from interpreting [[:space:]] as array subscript
+    if ! grep -q '^[0-9.]\+[[:space:]]\+'"$hostname"'[[:space:]]*$' "$hosts_file"; then
+        echo "Error: Hostname '$hostname' not found in $hosts_file."
         return 1
     fi
 
     # Determine correct sed syntax for in-place editing
     # Match: IP address + whitespace + exact hostname + optional whitespace + end of line
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        sudo sed -i '' "/^[0-9.]\+[[:space:]]\+$hostname[[:space:]]*$/d" /etc/hosts
+    # Use mixed quoting to prevent zsh from interpreting [[:space:]] as array subscript
+    # Use -E for extended regex (required on macOS where \+ is literal in basic regex)
+    # Use sudo only for /etc/hosts
+    if [[ "$hosts_file" == "/etc/hosts" ]]; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sudo sed -i '' -E '/^[0-9.]+[[:space:]]+'"$hostname"'[[:space:]]*$/d' "$hosts_file"
+        else
+            sudo sed -i -E '/^[0-9.]+[[:space:]]+'"$hostname"'[[:space:]]*$/d' "$hosts_file"
+        fi
     else
-        sudo sed -i "/^[0-9.]\+[[:space:]]\+$hostname[[:space:]]*$/d" /etc/hosts
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' -E '/^[0-9.]+[[:space:]]+'"$hostname"'[[:space:]]*$/d' "$hosts_file"
+        else
+            sed -i -E '/^[0-9.]+[[:space:]]+'"$hostname"'[[:space:]]*$/d' "$hosts_file"
+        fi
     fi
 
-    echo "Removed: $hostname from /etc/hosts"
+    echo "Removed: $hostname from $hosts_file"
 }
 
 ##############################################################################

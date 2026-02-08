@@ -1,202 +1,187 @@
 # shellcheck shell=zsh
 # ShellSpec tests for host management functions
+#
+# These tests verify the actual add_host and remove_host functions work correctly,
+# including proper handling of:
+# - Zsh array subscript quoting (mixed quoting for [[:space:]] patterns)
+# - macOS BSD sed requiring -E for extended regex
+# - Full round-trip add/remove operations
 
 Describe 'Host Management Functions'
   Include zsh-setup-scripts/system/functions.zsh
 
-  setup() {
-    # Create temporary hosts file for testing
-    TEST_HOSTS_FILE="$(mktemp)"
-    
-    # Mock hosts file with some entries
-    cat > "$TEST_HOSTS_FILE" <<EOF
+  Describe 'add_host()'
+    setup() {
+      TEST_HOSTS_FILE="$(mktemp)"
+      cat > "$TEST_HOSTS_FILE" <<'EOF'
 127.0.0.1       localhost
 ::1             localhost
 192.168.1.1     router.local
 10.0.0.5        server.example.com
 EOF
-    
-    # Mock sudo for testing (will need actual sudo for integration tests)
-    sudo() {
-      if [[ "$1" == "flock" ]]; then
-        # Skip flock wrapper, just execute the command
-        shift
-        shift
-        shift
-        eval "$@"
-      else
-        command sudo "$@"
-      fi
     }
-  }
 
-  cleanup() {
-    rm -f "$TEST_HOSTS_FILE"
-    unset -f sudo
-  }
+    cleanup() {
+      rm -f "$TEST_HOSTS_FILE"
+    }
 
-  Before 'setup'
-  After 'cleanup'
+    Before 'setup'
+    After 'cleanup'
 
-  Describe 'add_host()' 
-    # Note: These tests require mocking sudo or running with appropriate permissions
-    # In real usage, add_host modifies /etc/hosts which requires sudo
-    
     It 'shows usage when called without arguments'
       When call add_host
       The status should be failure
       The output should include "Usage: add_host"
     End
 
-    It 'shows usage when called with only one argument'
+    It 'shows usage when called with only IP argument'
       When call add_host 192.168.1.10
       The status should be failure
       The output should include "Usage: add_host"
     End
 
-    It 'validates IP address format'
-      # Mock the sudo call to test validation without actually modifying /etc/hosts
-      add_host_test() {
-        local ip="$1"
-        local hostname="$2"
-        
-        # Just run the IP validation part
-        if ! [[ "$ip" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-          echo "Error: Invalid IP address format: '$ip'"
-          return 1
-        fi
-        echo "IP is valid"
-        return 0
-      }
-
-      When call add_host_test "invalid-ip" "hostname"
+    It 'rejects invalid IP address format'
+      When call add_host "invalid-ip" "hostname" "$TEST_HOSTS_FILE"
       The status should be failure
-      The output should include "Invalid IP address"
+      The output should include "Invalid IP address format"
+    End
+
+    It 'rejects IP with letters'
+      When call add_host "192.168.1.abc" "hostname" "$TEST_HOSTS_FILE"
+      The status should be failure
+      The output should include "Invalid IP address format"
     End
 
     It 'accepts valid IP addresses'
-      add_host_test() {
-        local ip="$1"
-        local hostname="$2"
-        
-        if ! [[ "$ip" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-          echo "Error: Invalid IP address format: '$ip'"
-          return 1
-        fi
-        echo "IP is valid"
-        return 0
-      }
-
-      When call add_host_test "192.168.1.10" "myhost"
+      When call add_host "192.168.1.10" "newhost.local" "$TEST_HOSTS_FILE"
       The status should be success
-      The output should include "IP is valid"
+      The output should include "Added: 192.168.1.10 -> newhost.local"
+    End
+
+    It 'actually writes entry to hosts file'
+      add_host "192.168.1.10" "newhost.local" "$TEST_HOSTS_FILE"
+      When call grep "192.168.1.10.*newhost.local" "$TEST_HOSTS_FILE"
+      The status should be success
     End
 
     It 'detects duplicate hostname entries'
-      # Test duplicate detection logic
-      check_duplicate() {
-        local hostname="$1"
-        local hosts_file="$TEST_HOSTS_FILE"
-        
-        if grep -qE "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+${hostname}([[:space:]]|$)" "$hosts_file"; then
-          echo "Error: Hostname '$hostname' already exists in $hosts_file"
-          return 1
-        fi
-        echo "Hostname is unique"
-        return 0
-      }
-
-      When call check_duplicate "router.local"
+      When call add_host "10.0.0.99" "router.local" "$TEST_HOSTS_FILE"
       The status should be failure
       The output should include "already exists"
     End
 
     It 'allows adding new unique hostnames'
-      check_duplicate() {
-        local hostname="$1"
-        local hosts_file="$TEST_HOSTS_FILE"
-        
-        if grep -qE "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+${hostname}([[:space:]]|$)" "$hosts_file"; then
-          echo "Error: Hostname '$hostname' already exists in $hosts_file"
-          return 1
-        fi
-        echo "Hostname is unique"
-        return 0
-      }
-
-      When call check_duplicate "newhost.local"
+      When call add_host "10.0.0.99" "unique-host.local" "$TEST_HOSTS_FILE"
       The status should be success
-      The output should include "Hostname is unique"
+      The output should include "Added:"
+    End
+
+    It 'handles hostnames that are substrings of existing ones'
+      # "server" should be allowed even though "server.example.com" exists
+      When call add_host "10.0.0.99" "server" "$TEST_HOSTS_FILE"
+      The status should be success
     End
   End
 
   Describe 'remove_host()'
+    setup() {
+      TEST_HOSTS_FILE="$(mktemp)"
+      cat > "$TEST_HOSTS_FILE" <<'EOF'
+127.0.0.1       localhost
+::1             localhost
+192.168.1.1     router.local
+10.0.0.5        server.example.com
+192.168.1.100   test-host
+EOF
+    }
+
+    cleanup() {
+      rm -f "$TEST_HOSTS_FILE"
+    }
+
+    Before 'setup'
+    After 'cleanup'
+
     It 'shows usage when called without arguments'
       When call remove_host
       The status should be failure
       The output should include "Usage: remove_host"
     End
 
-    It 'removes exact hostname match only'
-      # Test the regex pattern for exact matching
-      test_exact_match() {
-        local hostname="$1"
-        local test_line="$2"
-        
-        # Use the same pattern as remove_host
-        if echo "$test_line" | grep -qE "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+${hostname}([[:space:]]|$)"; then
-          echo "Would remove: $test_line"
-          return 0
-        else
-          echo "Would NOT remove: $test_line"
-          return 1
-        fi
-      }
+    It 'reports error for non-existent hostname'
+      When call remove_host "nonexistent.local" "$TEST_HOSTS_FILE"
+      The status should be failure
+      The output should include "not found"
+    End
 
-      # Should match exact hostname
-      When call test_exact_match "router.local" "192.168.1.1     router.local"
+    It 'removes exact hostname match'
+      When call remove_host "test-host" "$TEST_HOSTS_FILE"
       The status should be success
-      The output should include "Would remove"
+      The output should include "Removed: test-host"
     End
 
-    It 'does not remove substring matches'
-      test_exact_match() {
-        local hostname="$1"
-        local test_line="$2"
-        
-        if echo "$test_line" | grep -qE "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+${hostname}([[:space:]]|$)"; then
-          echo "Would remove: $test_line"
-          return 0
-        else
-          echo "Would NOT remove: $test_line"
-          return 1
-        fi
-      }
-
-      # Should NOT match when searching for "router" against "router.local"
-      When call test_exact_match "router" "192.168.1.1     router.local"
+    It 'actually removes entry from hosts file'
+      remove_host "test-host" "$TEST_HOSTS_FILE"
+      When call grep "test-host" "$TEST_HOSTS_FILE"
       The status should be failure
-      The output should include "Would NOT remove"
     End
 
-    It 'requires IP address at start of line'
-      test_exact_match() {
-        local hostname="$1"
-        local test_line="$2"
-        
-        if echo "$test_line" | grep -qE "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+${hostname}([[:space:]]|$)"; then
-          echo "Would remove: $test_line"
-          return 0
-        else
-          echo "Would NOT remove: $test_line"
-          return 1
-        fi
-      }
-
-      # Should NOT match comment lines
-      When call test_exact_match "router.local" "# 192.168.1.1     router.local"
+    It 'does not remove when hostname is substring of existing'
+      # "router" should NOT match "router.local"
+      When call remove_host "router" "$TEST_HOSTS_FILE"
       The status should be failure
-      The output should include "Would NOT remove"
+      The output should include "not found"
+    End
+
+    It 'preserves other entries when removing'
+      remove_host "test-host" "$TEST_HOSTS_FILE"
+      When call grep "router.local" "$TEST_HOSTS_FILE"
+      The status should be success
+    End
+  End
+
+  Describe 'Integration: add then remove'
+    setup() {
+      TEST_HOSTS_FILE="$(mktemp)"
+      cat > "$TEST_HOSTS_FILE" <<'EOF'
+127.0.0.1       localhost
+EOF
+    }
+
+    cleanup() {
+      rm -f "$TEST_HOSTS_FILE"
+    }
+
+    Before 'setup'
+    After 'cleanup'
+
+    It 'can add and then remove a host entry'
+      # Add the host
+      add_host "192.168.1.50" "my-test-host" "$TEST_HOSTS_FILE"
+
+      # Verify it was added
+      grep -q "my-test-host" "$TEST_HOSTS_FILE" || return 1
+
+      # Remove the host
+      When call remove_host "my-test-host" "$TEST_HOSTS_FILE"
+      The status should be success
+    End
+
+    It 'verifies host is gone after removal'
+      add_host "192.168.1.50" "my-test-host" "$TEST_HOSTS_FILE"
+      remove_host "my-test-host" "$TEST_HOSTS_FILE"
+
+      When call grep "my-test-host" "$TEST_HOSTS_FILE"
+      The status should be failure
+    End
+
+    It 'prevents re-adding duplicate after failed removal attempt'
+      add_host "192.168.1.50" "my-test-host" "$TEST_HOSTS_FILE"
+
+      # Try to add again - should fail
+      When call add_host "192.168.1.60" "my-test-host" "$TEST_HOSTS_FILE"
+      The status should be failure
+      The output should include "already exists"
     End
   End
 
@@ -204,11 +189,11 @@ EOF
     Describe 'mkd()'
       setup_mkd() {
         TEST_DIR="$(mktemp -d)"
-       builtin cd "$TEST_DIR" || exit 1
+        builtin cd "$TEST_DIR" || exit 1
       }
 
       cleanup_mkd() {
-       builtin cd /
+        builtin cd /
         rm -rf "$TEST_DIR"
       }
 
@@ -235,11 +220,11 @@ EOF
     Describe 'fs()'
       setup_fs() {
         TEST_DIR="$(mktemp -d)"
-       builtin cd "$TEST_DIR" || exit 1
+        builtin cd "$TEST_DIR" || exit 1
       }
 
       cleanup_fs() {
-       builtin cd /
+        builtin cd /
         rm -rf "$TEST_DIR"
       }
 
@@ -249,7 +234,7 @@ EOF
       It 'displays file size in human-readable format'
         # Create a file of known size (1KB)
         dd if=/dev/zero of=testfile bs=1024 count=1 2>/dev/null
-        
+
         When call fs testfile
         The output should include "testfile"
         # Size should be displayed (exact format may vary by system)

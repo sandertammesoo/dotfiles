@@ -5,7 +5,7 @@
 
 
 # Check if Lazyman installation should be skipped
-if (( ${SETUP_LAZYMAN:-0} == 0 )); then
+if [[ "${SETUP_LAZYMAN:-false}" != "true" ]]; then
   log_skip "Skipping Lazyman installation for now, as it's not fully ready yet."
   return 0
 fi

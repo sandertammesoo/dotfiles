@@ -11,7 +11,7 @@ else
 fi
 
 # If SKIP_BREW_UPGRADES or SKIP_UPDATES is set, skip updates and upgrades
-if (( ${SKIP_BREW_UPGRADES:-0} )) || (( ${SKIP_UPDATES:-0} )); then
+if [[ "${SKIP_BREW_UPGRADES:-false}" == "true" ]] || [[ "${SKIP_UPDATES:-false}" == "true" ]]; then
   log_skip "Skipping Homebrew updates and upgrades."
 else
   # Update Homebrew
@@ -33,7 +33,7 @@ else
   fi
 fi
 
-if (( ${SKIP_APP_INSTALLATION:-0} )) || (( ${SKIP_UPDATES:-0} )); then
+if [[ "${SKIP_APP_INSTALLATION:-false}" == "true" ]] || [[ "${SKIP_UPDATES:-false}" == "true" ]]; then
   log_skip "Skipping Homebrew package installation."
 else
   # Install packages from Brewfiles
@@ -47,7 +47,7 @@ else
 fi
 
 # If neither upgrades nor app installation were skipped, run cleanup and doctor
-if (( ${SKIP_UPDATES:-0} )) || [[ (( ${SKIP_BREW_UPGRADES:-0} )) && (( ${SKIP_APP_INSTALLATION:-0} )) ]]; then
+if [[ "${SKIP_UPDATES:-false}" == "true" ]] || [[ "${SKIP_BREW_UPGRADES:-false}" == "true" && "${SKIP_APP_INSTALLATION:-false}" == "true" ]]; then
   log_skip "Skipping Homebrew cleanup and doctor."
 else
   # Cleanup

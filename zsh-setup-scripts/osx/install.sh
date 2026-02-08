@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 # exec 2> >(error_stream)
 
-if [[ (( ${SKIP_MACOS_UPDATES:-0} )) || (( ${SKIP_UPDATES:-0} )) ]]; then
+if [[ "${SKIP_OSX_UPDATES:-false}" == "true" ]] || [[ "${SKIP_UPDATES:-false}" == "true" ]]; then
   log_skip "Skipping macOS software updates."
   return 0
 fi

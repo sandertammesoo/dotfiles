@@ -5,7 +5,7 @@ DEBUG_LOG_FILE="/tmp/yabai_minimize_debug.log"
 
 # Function to log to debug file with timestamp
 debug_log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] WINDOW_CREATED: $1" >> "$DEBUG_LOG_FILE"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S:%N')] WINDOW_CREATED: $1" >> "$DEBUG_LOG_FILE"
 }
 
 # Log script start

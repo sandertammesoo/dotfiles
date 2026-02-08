@@ -5,11 +5,25 @@
 
 # Define the debug log file path
 DEBUG_LOG_FILE="/tmp/yabai_minimize_debug.log"
+LOCK_FILE="/tmp/yabai_app_activated.lock"
 
 # Function to log to debug file with timestamp
 debug_log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] APP_ACTIVATED: $1" >> "$DEBUG_LOG_FILE"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S:%N')] APP_ACTIVATED: $1" >> "$DEBUG_LOG_FILE"
 }
+
+# CRITICAL: Prevent cascade by implementing rate limiting
+# Exit immediately if script ran recently (within 2 seconds)
+if [[ -f "$LOCK_FILE" ]]; then
+    local lock_age=$(( $(date +%s) - $(stat -f %m "$LOCK_FILE" 2>/dev/null || echo 0) ))
+    if [[ $lock_age -lt 2 ]]; then
+        debug_log "Script skipped - rate limited (last run ${lock_age}s ago)"
+        exit 0
+    fi
+fi
+
+# Create lock file to prevent rapid re-execution
+touch "$LOCK_FILE"
 
 # Log script start
 debug_log "Script started - checking for window stacking conditions"
@@ -59,3 +73,6 @@ else
 fi
 
 debug_log "Script completed - stacking logic finished"
+
+# Clean up lock file on successful completion
+rm -f "$LOCK_FILE" 2>/dev/null

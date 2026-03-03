@@ -1,88 +1,121 @@
 #!/usr/bin/env zsh
 
 # Check if Homebrew is installed
-if ! command -v brew &> /dev/null; then
-    log_fatal "Homebrew not installed. Please install it first."
-    return 1
-fi
+require_brew || return 1
 
 # Install yabai if not installed
-if command -v yabai &> /dev/null; then
-    log_success "yabai is already installed."
-else
-    log_user "yabai not found. Proceeding with installation."
-    log_user "Installing yabai..."
-    if brew install koekeishiya/formulae/yabai 2>&1 | output_stream; then
-        log_success "yabai installed successfully!"
-    else
-        log_fatal "yabai installation failed!"
-        return 1
-    fi
-fi
-# Verify yabai installation
-if ! command -v yabai &> /dev/null; then
-    log_fatal "yabai installation verification failed!"
-    return 1
-fi
+brew_install_if_missing "yabai" "local/yabai/yabai" || return 1
 
 # Install borders if not installed
-if command -v borders &> /dev/null; then
-    log_success "borders is already installed."
-else
-    log_user "borders not found. Proceeding with installation."
-    log_user "Installing borders..."
-    if brew install felixkratz/formulae/borders 2>&1 | output_stream; then
-        log_success "borders installed successfully!"
-    else
-        log_fatal "borders installation failed!"
-        return 1
-    fi
-fi
-# Verify borders installation
-if ! command -v borders &> /dev/null; then
-    log_fatal "borders installation verification failed!"
-    return 1
-fi
+brew_install_if_missing "borders" "felixkratz/formulae/borders" || return 1
 
 # Stop yabai service if it's running using yabai command
-if yabai -m rule --list &> /dev/null; then
+log_user "Checking if yabai service is running..."
+run_cmd="yabai -m rule --list"
+log_verbose "Running command: $run_cmd"
+output=$(eval "$run_cmd" 2>&1)
+exit_code=$?  # Capture exit status
+# echo "Output: $output" | verbose_stream
+if [ $exit_code -eq 0 ]; then
     log_user "yabai service is currently running. Stopping it first..."
-    if yabai --stop-service 2>&1 | output_stream; then
+    run_cmd="yabai --stop-service --verbose"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    if [ $exit_code -eq 0 ]; then
+        echo "$output" | output_stream
         log_success "yabai service stopped successfully."
     else
+        echo "$output" | output_stream FATAL
         log_fatal "Failed to stop yabai service."
         return 1
     fi
 else
+    echo "Output: $output" | verbose_stream
     log_skip "yabai service is not running. Proceeding..."
+fi
+
+# Try and remove old service file because homebrew changes binary path and old service file will break if it exists
+log_user "Removing old yabai service file if it exists..."
+run_cmd="yabai --uninstall-service --verbose"
+log_verbose "Running command: $run_cmd"
+output=$(eval "$run_cmd" 2>&1)
+exit_code=$?  # Capture exit status
+if [ $exit_code -eq 0 ]; then
+    echo "$output" | output_stream
+    log_success "Old yabai service file removed successfully."
+else
+    echo "$output" | output_stream ERROR
+    log_warn "Failed to remove old yabai service file. It may not exist, Double checking..."
+    PLIST_FILE="$HOME/Library/LaunchAgents/com.asmvik.yabai.plist"
+    if [ -f "$PLIST_FILE" ]; then
+        log_warn "Old yabai service file still exists at $PLIST_FILE. Attempting to remove it..."
+        run_cmd="rm \"$PLIST_FILE\""
+        log_verbose "Running command: $run_cmd"
+        output=$(eval "$run_cmd" 2>&1)
+        exit_code=$?  # Capture exit status
+        if [ $exit_code -eq 0 ]; then
+            echo "$output" | output_stream
+            log_success "Old yabai service file removed successfully."
+        else
+            echo "$output" | output_stream FATAL
+            log_fatal "Failed to remove old yabai service file. Please check the error message above and remove the file manually before proceeding."
+            return 1
+        fi
+    else
+        log_success "Old yabai service file does not exist. Proceeding..."
+    fi
 fi
 
 # Try and update yabai to the latest version
 log_user "Updating yabai to the latest version..."
-output=$(brew upgrade koekeishiya/formulae/yabai 2>&1)
-exit_code=$?  # Capture exit status
-# Filter output but maintain original exit code
-echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
-if [ $exit_code -eq 0 ]; then
-    log_success "yabai update successful"
-else
-    log_fatal "yabai update failed"
-fi
+log_skip "Skipping upgrade to 7.1.17 to avoid installing a broken version."
+log_warn "See: https://github.com/asmvik/yabai/issues/2747"
+# run_cmd="brew upgrade asmvik/formulae/yabai"
+# log_verbose "Running command: $run_cmd"
+# output=$(eval "$run_cmd" 2>&1)
+# exit_code=$?  # Capture exit status
+# if [ $exit_code -eq 0 ]; then
+#     # Filter output but maintain original exit code
+#     echo "Output: $output" | verbose_stream
+#     echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
+#     log_success "yabai update successful"
+# else
+#     echo "$output" | output_stream FATAL
+#     log_fatal "yabai update failed"
+# fi
 
 # Get the hash of yabai
 YABAI_HASH=$(shasum -a 256 $(which yabai) | awk '{print $1}')
 
 # Check if sudoers file already contains the correct line
+log_user "Checking if sudoers file for yabai already contains the correct line..."
 SUDOERS_FILE="/private/etc/sudoers.d/yabai"
 UPDATE_FILE=false
 if [ -f "$SUDOERS_FILE" ]; then
-    if sudo grep -q "$YABAI_HASH" "$SUDOERS_FILE"; then
+    run_cmd="sudo grep -q \"$YABAI_HASH\" \"$SUDOERS_FILE\""
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    echo "Output: $output" | verbose_stream
+    if [ $exit_code -eq 0 ]; then
         log_success "Sudoers file for yabai already configured."
     else
         log_warn "Sudoers file for yabai exists but does not contain the correct hash. It will be updated."
         # Backup existing sudoers file if it exists
         log_info "Backing up existing sudoers file..."
-        sudo cp "$SUDOERS_FILE" "${SUDOERS_FILE}.bak_$(date +%Y%m%d%H%M%S)"
+        run_cmd="sudo cp \"$SUDOERS_FILE\" \"${SUDOERS_FILE}.bak_$(date +%Y%m%d%H%M%S)\""
+        log_verbose "Running command: $run_cmd"
+        output=$(eval "$run_cmd" 2>&1)
+        exit_code=$?  # Capture exit status
+        if [ $exit_code -eq 0 ]; then
+            echo "Output: $output" | output_stream VERBOSE
+            log_success "Sudoers file backed up successfully."
+        else
+            echo "$output" | output_stream FATAL
+            log_fatal "Failed to back up existing sudoers file."
+            return 1
+        fi
         UPDATE_FILE=true
     fi
 else
@@ -99,7 +132,14 @@ if [ "$UPDATE_FILE" = true ]; then
     # Create or update the sudoers file
     LINE_TO_ADD="$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | cut -d " " -f 1) $(which yabai) --load-sa"
     log_debug "Sudoers line to add: $LINE_TO_ADD"
-    if echo "$LINE_TO_ADD" | sudo tee $SUDOERS_FILE; then   
+    if echo "$LINE_TO_ADD" | sudo tee $SUDOERS_FILE; then  
+        # Validate the sudoers file content
+        if sudo grep -q "$LINE_TO_ADD" $SUDOERS_FILE; then
+            log_success "Sudoers file content verified successfully."
+        else
+            log_fatal "Sudoers file content verification failed."
+            return 1
+        fi
         log_success "Sudoers file created/updated successfully."
     else
         log_fatal "Failed to create/update sudoers file."
@@ -113,30 +153,114 @@ if [ "$UPDATE_FILE" = true ]; then
         log_fatal "Failed to set permissions for sudoers file."
         return 1
     fi
+
+    # Clear backups
+    log_info "Clearing old backup sudoers files..."
+    run_cmd="sudo find /private/etc/sudoers.d/ -name \"yabai.bak_*\" -type f -delete"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    if [ $exit_code -eq 0 ]; then
+        echo "Output: $output" | output_stream VERBOSE
+        log_success "Old backup sudoers files cleared successfully."
+    else
+        echo "$output" | output_stream FATAL
+        log_fatal "Failed to clear old backup sudoers files."
+        return 1
+    fi
 fi
 
-# Load the scripting addition
+# Try and load the scripting addition
 log_user "Loading yabai scripting addition..."
-if sudo yabai --load-sa; then
+run_cmd="sudo yabai --load-sa --verbose"
+log_verbose "Running command: $run_cmd"
+output=$(eval "$run_cmd" 2>&1)
+exit_code=$?  # Capture exit status
+if [ $exit_code -eq 0 ]; then
+    echo "$output" | output_stream
     log_success "yabai scripting addition loaded successfully."
 else
+    echo "$output" | output_stream FATAL
     log_fatal "Failed to load yabai scripting addition."
+
+    log_debug "Checking if the failure is due to SIP being enabled..."
+    run_cmd="csrutil status"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    echo "Output: $output" | output_stream VERBOSE
+    if [[ "$output" == *"System Integrity Protection status: enabled"* ]]; then
+        log_fatal "SIP is enabled, which is likely causing the failure to load the scripting addition. Please disable SIP and try again."
+    else
+        log_fatal "SIP does not appear to be enabled. Please investigate the error message above to determine the cause of the failure to load the scripting addition."
+    fi
+
+    log_debug "Checking boot-args for amfi_get_out_of_my_way=1..."
+    run_cmd="nvram -p | grep boot-args"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    if [ $exit_code -eq 0 ]; then
+        echo "Output: $output" | output_stream VERBOSE
+    else
+        log_warn "Failed to retrieve boot-args value."
+    fi
+
+    log_debug "Checking nvram variables..."
+    run_cmd="nvram -p"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    if [ $exit_code -eq 0 ]; then
+        echo "Output: $output" | output_stream VERBOSE
+    else
+        log_warn "Failed to retrieve nvram variables."
+    fi
+
+    log_debug "Checking sysctl kern.bootargs for amfi_get_out_of_my_way=1..."
+    run_cmd="sysctl kern.bootargs"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    if [ $exit_code -eq 0 ]; then
+        echo "Output: $output" | output_stream VERBOSE
+    else
+        log_warn "Failed to retrieve kern.bootargs value."
+    fi
+
+    log_debug "Getting system information for further debugging..."
+    run_cmd="system_profiler SPHardwareDataType SPSoftwareDataType"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval "$run_cmd" 2>&1)
+    exit_code=$?  # Capture exit status
+    echo "Output: $output" | output_stream VERBOSE
+    if [ $exit_code -ne 0 ]; then
+        log_warn "Failed to retrieve system information."
+    fi
+
     return 1
 fi
 
 log_debug "Configuring macOS system settings for optimal yabai performance..."
 # Disable macOS window animations for better performance with yabai
 defaults write com.apple.finder DisableAllAnimations -bool true
+log_debug "Restarting Finder to apply animation settings..."
 killall Finder # or logout and login
 
 # to reset system defaults, delete the key instead
 # defaults delete com.apple.finder DisableAllAnimations
 
-# Start yabai service
+# Try and start yabai service
 log_user "Starting yabai service..."
-if yabai --start-service 2>&1 | output_stream; then
+run_cmd="yabai --start-service --verbose"
+log_verbose "Running command: $run_cmd"
+output=$(eval "$run_cmd" 2>&1)
+exit_code=$?  # Capture exit status
+if [ $exit_code -eq 0 ]; then
+    echo "$output" | output_stream VERBOSE
     log_success "Started yabai service."
 else
+    echo "$output" | output_stream FATAL
     log_fatal "Failed to start yabai service."
     return 1
 fi

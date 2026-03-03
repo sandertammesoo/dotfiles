@@ -1,60 +1,64 @@
 #!/usr/bin/env zsh
 
 # Check if Homebrew is installed
-if ! command -v brew &> /dev/null; then
-    log_fatal "Homebrew not installed. Please install it first."
-    return 1
-fi
+require_brew || return 1
 
 # Install skhd if not installed
-if command -v skhd &> /dev/null; then
-    log_success "skhd is already installed."
-else
-    log_user "skhd not found. Proceeding with installation."
-    log_user "Installing skhd..."
-    if brew install koekeishiya/formulae/skhd 2>&1 | output_stream; then
-        log_success "skhd installed successfully!"
-    else
-        log_fatal "skhd installation failed!"
-        return 1
-    fi
-fi
-# Verify skhd installation
-if ! command -v skhd &> /dev/null; then
-    log_fatal "skhd installation verification failed!"
-    return 1
-fi
+brew_install_if_missing "skhd" "asmvik/formulae/skhd" || return 1
 
-# Stop skhd service if it's running using skhd command
-if skhd --restart-service &> /dev/null; then
+# Try and stop skhd service if it's running using skhd command
+log_user "Checking if skhd service is running..."
+run_cmd="skhd --restart-service"
+log_verbose "Running command: $run_cmd"
+output=$(eval $run_cmd 2>&1)
+exit_code=$?  # Capture exit status
+if [ $exit_code -eq 0 ]; then
+    echo "$output" | output_stream
     log_user "skhd service is currently running. Stopping it first..."
-    if skhd --stop-service 2>&1 | output_stream; then
+    run_cmd="skhd --stop-service"
+    log_verbose "Running command: $run_cmd"
+    output=$(eval $run_cmd 2>&1)
+    exit_code=$?  # Capture exit status
+    if [ $exit_code -eq 0 ]; then
+        echo "$output" | output_stream
         log_success "skhd service stopped successfully."
     else
+        echo "$output" | output_stream FATAL
         log_fatal "Failed to stop skhd service."
         return 1
     fi
 else
+    echo "$output" | output_stream VERBOSE
     log_skip "skhd service is not running. Proceeding..."
 fi
 
 # Try and update skhd to the latest version
 log_user "Updating skhd to the latest version..."
-output=$(brew upgrade koekeishiya/formulae/skhd 2>&1)
+run_cmd="brew upgrade asmvik/formulae/skhd"
+log_verbose "Running command: $run_cmd"
+output=$(eval $run_cmd 2>&1)
 exit_code=$?  # Capture exit status
 # Filter output but maintain original exit code
-echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
 if [ $exit_code -eq 0 ]; then
+    echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
     log_success "skhd update successful"
 else
+    echo "$output" | output_stream FATAL
     log_fatal "skhd update failed"
+    return 1
 fi
 
-# Start skhd service
+# Try and start skhd service
 log_user "Starting skhd service..."
-if skhd --start-service 2>&1 | output_stream; then
+run_cmd="skhd --start-service"
+log_verbose "Running command: $run_cmd"
+output=$(eval $run_cmd 2>&1)
+exit_code=$?  # Capture exit status
+if [ $exit_code -eq 0 ]; then
+    echo "$output" | output_stream
     log_success "Started skhd service."
 else
+    echo "$output" | output_stream FATAL
     log_fatal "Failed to start skhd service."
     return 1
 fi

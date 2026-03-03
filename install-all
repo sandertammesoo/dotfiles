@@ -58,7 +58,7 @@ if (( ${+opts[-T]} )) || (( ${+opts[--trace]} )); then
     typeset -gx LOG_LEVEL="TRACE"
     typeset -gx LOG_ENABLED=true
 elif (( ${+opts[-V]} )) || (( ${+opts[--verbose]} )); then
-    typeset -gx LOG_LEVEL="VERB"
+    typeset -gx LOG_LEVEL="VERBOSE"
     typeset -gx LOG_ENABLED=true
 elif (( ${+opts[-D]} )) || (( ${+opts[--debug]} )); then
     typeset -gx LOG_LEVEL="DEBUG"
@@ -152,7 +152,7 @@ fi
 #then
 #  log_success "Git config setup done"
 #else
-#  log_fail "Error setting up git config"
+#  log_failure "Error setting up git config"
 #fi
 
 # Check if DotBot installation should be skipped
@@ -181,7 +181,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 #   #  log_success "OS X defaults set"
 #   #  log_info "NOTE that some of these changes require a logout/restart to take effect."
 #   #else
-#   #  log_fail "Error setting OS X defaults"
+#   #  log_failure "Error setting OS X defaults"
 #   #fi
 
   log_user "Install dependencies next..."
@@ -252,7 +252,7 @@ else
   if zsh zsh-setup-scripts/yabai/bootstrap.sh; then
     log_success "Yabai setup completed successfully!"
   else
-    log_fail "Yabai setup failed!"
+    log_failure "Yabai setup failed!"
     exit_code=1
   fi
 
@@ -260,7 +260,7 @@ else
   if zsh zsh-setup-scripts/skhd/bootstrap.sh; then
     log_success "skhd setup completed successfully!"
   else
-    log_fail "skhd setup failed!"
+    log_failure "skhd setup failed!"
     exit_code=1
   fi
 
@@ -268,7 +268,7 @@ else
   if zsh zsh-setup-scripts/sketchybar/bootstrap.sh; then
     log_success "sketchybar setup completed successfully!"
   else
-    log_fail "sketchybar setup failed!"
+    log_failure "sketchybar setup failed!"
     exit_code=1
   fi
 fi

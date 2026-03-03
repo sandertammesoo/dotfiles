@@ -61,7 +61,7 @@ else
 
   # Doctor
   log_user "Running Homebrew doctor..."
-  if brew doctor 2>&1 | output_stream; then
+  if brew doctor 2>&1 | output_stream WARN; then
     log_success "Homebrew doctor complete."
   else
     log_warn "Homebrew doctor found issues (this is often non-critical)."

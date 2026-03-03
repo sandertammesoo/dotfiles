@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 # Add custom completions directory
-log_verbose "Add custom completions directory $XDG_CONFIG_HOME/zsh/completions to fpath"
+log_trace "Add custom completions directory $XDG_CONFIG_HOME/zsh/completions to fpath"
 export fpath=("$XDG_CONFIG_HOME/zsh/completions" $fpath)
 
 # Add Homebrew completions early (before compinit)
@@ -26,7 +26,7 @@ if [[ "$homebrew_found" == true ]]; then
     local completion_path="$brew_prefix/share/zsh/site-functions"
     if [[ -d "$completion_path" ]]; then
         export fpath=("$completion_path" $fpath)
-        log_verbose "Added Homebrew completions to fpath early: $completion_path"
+        log_trace "Added Homebrew completions to fpath early: $completion_path"
     else
         log_warn "Homebrew completion directory not found: $completion_path"
     fi
@@ -34,7 +34,7 @@ else
     log_warn "Homebrew not found, skipping Homebrew completions fpath setup"
 fi
 
-log_verbose "Add each topic folder to fpath so that they can add functions and completion scripts"
+log_trace "Add each topic folder to fpath so that they can add functions and completion scripts"
 for topic_folder in "$ZSH"/*; do
   if [[ -d "$topic_folder" ]]; then
     log_trace "$(color_text ${LOG_COLORS[TRACE]} bold "Adding to fpath:") $topic_folder"

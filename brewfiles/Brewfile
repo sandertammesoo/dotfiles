@@ -8,7 +8,7 @@ cask_args appdir: '/Applications'
 # Homebrew Taps
 # Custom repositories for specialized tools and utilities
 tap "felixkratz/formulae"       # macOS window management and status bar tools (Sketchybar)
-tap "koekeishiya/formulae"      # macOS tiling window manager and hotkey daemon (Yabai, SKHD)
+tap "asmvik/formulae"      # macOS tiling window manager and hotkey daemon (Yabai, SKHD)
 tap "sandertammesoo/formulae"   # Personal formulae repository
 tap "buo/cask-upgrade"          # Enhanced cask management - upgrade all apps: brew cu
 
@@ -184,8 +184,8 @@ cask "sf-symbols"               # Tool that provides consistent, highly configur
 
 # Window Management & System Control
 # Advanced macOS window management and system customization tools
-brew "koekeishiya/formulae/yabai"       # A tiling window manager for macOS based on binary space partitioning https://github.com/koekeishiya/yabai
-brew "koekeishiya/formulae/skhd"        # Simple hotkey-daemon for macOS https://github.com/koekeishiya/skhd
+brew "asmvik/formulae/yabai"       # A tiling window manager for macOS based on binary space partitioning https://github.com/asmvik/yabai
+brew "asmvik/formulae/skhd"        # Simple hotkey-daemon for macOS https://github.com/asmvik/skhd
 brew "felixkratz/formulae/sketchybar"   # Custom macOS statusbar with shell plugin, interaction and graph support https://github.com/FelixKratz/SketchyBar
 
 ######################

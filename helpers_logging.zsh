@@ -742,6 +742,7 @@ function log_stream() {
 
 function error_stream() { log_stream ERROR; }
 function info_stream() { log_stream INFO; }
+function verbose_stream() { output_stream VERBOSE; }
 
 function output_stream() {
   local level="${1:-OUTPUT}"

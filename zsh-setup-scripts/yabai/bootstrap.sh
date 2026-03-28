@@ -4,14 +4,14 @@
 require_brew || return 1
 
 # Install yabai if not installed
-brew_install_if_missing "yabai" "local/yabai/yabai" || return 1
+brew_install_if_missing "yabai" "yabai" || return 1
 
 # Install borders if not installed
-brew_install_if_missing "borders" "felixkratz/formulae/borders" || return 1
+brew_install_if_missing "borders" "borders" || return 1
 
 # Stop yabai service if it's running using yabai command
 log_user "Checking if yabai service is running..."
-run_cmd="yabai -m rule --list"
+run_cmd="pgrep -x yabai"
 log_verbose "Running command: $run_cmd"
 output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
@@ -69,21 +69,21 @@ fi
 
 # Try and update yabai to the latest version
 log_user "Updating yabai to the latest version..."
-log_skip "Skipping upgrade to 7.1.17 to avoid installing a broken version."
-log_warn "See: https://github.com/asmvik/yabai/issues/2747"
-# run_cmd="brew upgrade asmvik/formulae/yabai"
-# log_verbose "Running command: $run_cmd"
-# output=$(eval "$run_cmd" 2>&1)
-# exit_code=$?  # Capture exit status
-# if [ $exit_code -eq 0 ]; then
-#     # Filter output but maintain original exit code
-#     echo "Output: $output" | verbose_stream
-#     echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
-#     log_success "yabai update successful"
-# else
-#     echo "$output" | output_stream FATAL
-#     log_fatal "yabai update failed"
-# fi
+# log_skip "Skipping upgrade to 7.1.17 to avoid installing a broken version."
+# log_warn "See: https://github.com/asmvik/yabai/issues/2747"
+run_cmd="brew upgrade yabai"
+log_verbose "Running command: $run_cmd"
+output=$(eval "$run_cmd" 2>&1)
+exit_code=$?  # Capture exit status
+if [ $exit_code -eq 0 ]; then
+    # Filter output but maintain original exit code
+    echo "Output: $output" | verbose_stream
+    echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
+    log_success "yabai update successful"
+else
+    echo "$output" | output_stream FATAL
+    log_fatal "yabai update failed"
+fi
 
 # Get the hash of yabai
 YABAI_HASH=$(shasum -a 256 $(which yabai) | awk '{print $1}')
@@ -180,65 +180,125 @@ if [ $exit_code -eq 0 ]; then
     echo "$output" | output_stream
     log_success "yabai scripting addition loaded successfully."
 else
-    echo "$output" | output_stream FATAL
-    log_fatal "Failed to load yabai scripting addition."
+    echo "$output" | output_stream ERROR
+    log_warn "Initial --load-sa attempt failed. Checking for known issues..."
 
-    log_debug "Checking if the failure is due to SIP being enabled..."
-    run_cmd="csrutil status"
-    log_verbose "Running command: $run_cmd"
-    output=$(eval "$run_cmd" 2>&1)
-    exit_code=$?  # Capture exit status
-    echo "Output: $output" | output_stream VERBOSE
-    if [[ "$output" == *"System Integrity Protection status: enabled"* ]]; then
-        log_fatal "SIP is enabled, which is likely causing the failure to load the scripting addition. Please disable SIP and try again."
-    else
-        log_fatal "SIP does not appear to be enabled. Please investigate the error message above to determine the cause of the failure to load the scripting addition."
+    # Check for PAC ABI version mismatch (Apple Silicon only).
+    # Newer Clang builds the loader binary with PAC ABI v1 (caps 0x81), but system processes
+    # like Dock.app use PAC ABI v0 (caps 0x80). The kernel blocks injection of v1 binaries into
+    # v0 processes, causing --load-sa to fail. The fix is to patch the Fat/Mach-O headers from
+    # 0x81 → 0x80 and re-sign. Safe because there are no assembly-level differences between the
+    # two ABI versions — it is purely a header declaration.
+    # Note: The loader binary only exists after the first (failed) --load-sa attempt copies the
+    # osax into /Library/ScriptingAdditions/, which is why we patch reactively here.
+    # Reference: https://github.com/asmvik/yabai/issues/2686
+    LOADER_PATH="/Library/ScriptingAdditions/yabai.osax/Contents/MacOS/loader"
+    if [[ "$(uname -m)" == "arm64" ]] && [[ -f "$LOADER_PATH" ]]; then
+        log_debug "Checking for PAC ABI v1 mismatch in loader binary..."
+        read PAC_ARCH_IDX PAC_OFFSET <<< $(otool -f "$LOADER_PATH" 2>/dev/null \
+            | awk '/architecture/{i=$2} /capabilities 0x81/{f=1} f&&/offset/{print i, $2; exit}')
+
+        if [[ -n "$PAC_OFFSET" ]]; then
+            log_warn "PAC ABI v1 (caps 0x81) detected in loader binary. Patching to v0 (caps 0x80)..."
+            log_debug "Loader: arch index=$PAC_ARCH_IDX, slice offset=$PAC_OFFSET"
+
+            PAC_FAT_SEEK=$((8 + PAC_ARCH_IDX*20 + 4))
+            PAC_MACH_SEEK=$((PAC_OFFSET + 11))
+            printf '\x80' | sudo dd of="$LOADER_PATH" bs=1 seek=$PAC_FAT_SEEK count=1 conv=notrunc 2>/dev/null
+            printf '\x80' | sudo dd of="$LOADER_PATH" bs=1 seek=$PAC_MACH_SEEK count=1 conv=notrunc 2>/dev/null
+
+            log_info "Re-signing patched loader binary..."
+            sudo codesign -f -s - "$LOADER_PATH" 2>/dev/null
+            log_success "Loader binary patched and re-signed. Retrying --load-sa..."
+
+            run_cmd="sudo yabai --load-sa --verbose"
+            log_verbose "Running command: $run_cmd"
+            output=$(eval "$run_cmd" 2>&1)
+            exit_code=$?  # Capture exit status
+            if [ $exit_code -eq 0 ]; then
+                echo "$output" | output_stream
+                log_success "yabai scripting addition loaded successfully after PAC ABI patch."
+            else
+                echo "$output" | output_stream ERROR
+                log_warn "Still failed after PAC ABI patch."
+            fi
+        else
+            log_debug "No PAC ABI v1 mismatch detected in loader binary."
+        fi
     fi
 
-    log_debug "Checking boot-args for amfi_get_out_of_my_way=1..."
-    run_cmd="nvram -p | grep boot-args"
-    log_verbose "Running command: $run_cmd"
-    output=$(eval "$run_cmd" 2>&1)
-    exit_code=$?  # Capture exit status
-    if [ $exit_code -eq 0 ]; then
-        echo "Output: $output" | output_stream VERBOSE
-    else
-        log_warn "Failed to retrieve boot-args value."
-    fi
-
-    log_debug "Checking nvram variables..."
-    run_cmd="nvram -p"
-    log_verbose "Running command: $run_cmd"
-    output=$(eval "$run_cmd" 2>&1)
-    exit_code=$?  # Capture exit status
-    if [ $exit_code -eq 0 ]; then
-        echo "Output: $output" | output_stream VERBOSE
-    else
-        log_warn "Failed to retrieve nvram variables."
-    fi
-
-    log_debug "Checking sysctl kern.bootargs for amfi_get_out_of_my_way=1..."
-    run_cmd="sysctl kern.bootargs"
-    log_verbose "Running command: $run_cmd"
-    output=$(eval "$run_cmd" 2>&1)
-    exit_code=$?  # Capture exit status
-    if [ $exit_code -eq 0 ]; then
-        echo "Output: $output" | output_stream VERBOSE
-    else
-        log_warn "Failed to retrieve kern.bootargs value."
-    fi
-
-    log_debug "Getting system information for further debugging..."
-    run_cmd="system_profiler SPHardwareDataType SPSoftwareDataType"
-    log_verbose "Running command: $run_cmd"
-    output=$(eval "$run_cmd" 2>&1)
-    exit_code=$?  # Capture exit status
-    echo "Output: $output" | output_stream VERBOSE
     if [ $exit_code -ne 0 ]; then
-        log_warn "Failed to retrieve system information."
-    fi
+        # On macOS 26+, --load-sa exits 1 even when the SA loads successfully.
+        # The SA notification is still delivered and yabai works normally.
+        # Reference: https://github.com/asmvik/yabai/issues/2764
+        MACOS_MAJOR=$(sw_vers -productVersion 2>/dev/null | cut -d. -f1)
+        OSAX_PATH="/Library/ScriptingAdditions/yabai.osax"
+        if [[ "$MACOS_MAJOR" -ge 26 ]] && [[ -d "$OSAX_PATH" ]] && [[ -z "$output" ]]; then
+            log_warn "Known macOS 26+ issue: --load-sa exits 1 even when the scripting addition loads successfully."
+            log_warn "See: https://github.com/asmvik/yabai/issues/2764"
+            log_success "osax is present at $OSAX_PATH — treating as success and continuing."
+            exit_code=0
+        else
+            log_fatal "Failed to load yabai scripting addition."
 
-    return 1
+            log_debug "Checking if the failure is due to SIP being enabled..."
+            run_cmd="csrutil status"
+            log_verbose "Running command: $run_cmd"
+            output=$(eval "$run_cmd" 2>&1)
+            exit_code=$?  # Capture exit status
+            echo "Output: $output" | output_stream VERBOSE
+            if [[ "$output" == *"System Integrity Protection status: enabled"* ]]; then
+                log_fatal "SIP is enabled, which is likely causing the failure to load the scripting addition. Please disable SIP and try again."
+            else
+                log_fatal "SIP does not appear to be enabled. Please investigate the error message above to determine the cause of the failure to load the scripting addition."
+            fi
+
+            log_debug "Checking boot-args for amfi_get_out_of_my_way=1..."
+            run_cmd="nvram -p | grep boot-args"
+            log_verbose "Running command: $run_cmd"
+            output=$(eval "$run_cmd" 2>&1)
+            exit_code=$?  # Capture exit status
+            if [ $exit_code -eq 0 ]; then
+                echo "Output: $output" | output_stream VERBOSE
+            else
+                log_warn "Failed to retrieve boot-args value."
+            fi
+
+            log_debug "Checking nvram variables..."
+            run_cmd="nvram -p"
+            log_verbose "Running command: $run_cmd"
+            output=$(eval "$run_cmd" 2>&1)
+            exit_code=$?  # Capture exit status
+            if [ $exit_code -eq 0 ]; then
+                echo "Output: $output" | output_stream VERBOSE
+            else
+                log_warn "Failed to retrieve nvram variables."
+            fi
+
+            log_debug "Checking sysctl kern.bootargs for amfi_get_out_of_my_way=1..."
+            run_cmd="sysctl kern.bootargs"
+            log_verbose "Running command: $run_cmd"
+            output=$(eval "$run_cmd" 2>&1)
+            exit_code=$?  # Capture exit status
+            if [ $exit_code -eq 0 ]; then
+                echo "Output: $output" | output_stream VERBOSE
+            else
+                log_warn "Failed to retrieve kern.bootargs value."
+            fi
+
+            log_debug "Getting system information for further debugging..."
+            run_cmd="system_profiler SPHardwareDataType SPSoftwareDataType"
+            log_verbose "Running command: $run_cmd"
+            output=$(eval "$run_cmd" 2>&1)
+            exit_code=$?  # Capture exit status
+            echo "Output: $output" | output_stream VERBOSE
+            if [ $exit_code -ne 0 ]; then
+                log_warn "Failed to retrieve system information."
+            fi
+
+            return 1
+        fi
+    fi
 fi
 
 log_debug "Configuring macOS system settings for optimal yabai performance..."

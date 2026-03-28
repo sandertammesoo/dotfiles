@@ -5,3 +5,6 @@
 [submodule "xdg_config/cheat/cheatsheets/community"]
 	path = xdg_config/cheat/cheatsheets/community
 	url = https://github.com/cheat/cheatsheets.git
+[submodule "git-submodules/atuin-tokyo-night"]
+	path = git-submodules/atuin-tokyo-night
+	url = https://github.com/esoterick/atuin-tokyo-night

@@ -4,19 +4,33 @@
 # Reads /tmp/claude_rate_limits.json written by ~/.claude/statusline-command.sh
 
 CACHE_FILE="/tmp/claude_rate_limits.json"
-
-[[ ! -f "$CACHE_FILE" ]] && exit 0
-
-five_pct=$(jq -r '.five_pct // empty' "$CACHE_FILE" 2>/dev/null)
-five_reset=$(jq -r '.five_reset // empty' "$CACHE_FILE" 2>/dev/null)
-week_pct=$(jq -r '.week_pct // empty' "$CACHE_FILE" 2>/dev/null)
-week_reset=$(jq -r '.week_reset // empty' "$CACHE_FILE" 2>/dev/null)
+STALE_AFTER=300  # seconds (5 minutes)
 
 # Catppuccin Mocha colours (ARGB)
 COLOR_DIM=0xff7f849c
 COLOR_PEACH=0xfffab387
 COLOR_RED=0xfff38ba8
 COLOR_WHITE=0xffffffff
+
+# Blank items and exit if cache is missing or stale
+if [[ ! -f "$CACHE_FILE" ]]; then
+  sketchybar --set claude_5h label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE \
+             --set claude_7d label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE
+  exit 0
+fi
+
+updated_at=$(jq -r '.updated_at // 0' "$CACHE_FILE" 2>/dev/null)
+now=$(date +%s)
+if (( now - updated_at > STALE_AFTER )); then
+  sketchybar --set claude_5h label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE \
+             --set claude_7d label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE
+  exit 0
+fi
+
+five_pct=$(jq -r '.five_pct // empty' "$CACHE_FILE" 2>/dev/null)
+five_reset=$(jq -r '.five_reset // empty' "$CACHE_FILE" 2>/dev/null)
+week_pct=$(jq -r '.week_pct // empty' "$CACHE_FILE" 2>/dev/null)
+week_reset=$(jq -r '.week_reset // empty' "$CACHE_FILE" 2>/dev/null)
 
 format_duration() {
   local secs="$1"

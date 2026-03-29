@@ -30,6 +30,12 @@ yabai -m signal --add event=application_front_switched action='echo "[$(date "+%
 # yabai -m signal --add event=window_created action="zsh ~/.config/yabai/window-created.zsh"
 
 # float system preferences. Most of these just diable Yabai form resizing them.
+# Exclude problematic apps from being managed:
+# yabai -m rule --add app="^(LuLu|Calculator|Software Update|Dictionary|VLC|System Preferences|System Settings|zoom.us|Photo Booth|Archive Utility|Python|LibreOffice|App Store|Steam|Alfred|Activity Monitor)$" manage=off
+# yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+# yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
+# yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
+# yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
 # Do not manage these apps
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
@@ -66,6 +72,7 @@ yabai -m rule --add app="^Inkscape$" manage=off
 yabai -m rule --add app="^Sweet Home 3D$" manage=off
 yabai -m rule --add app="^Fusion$" manage=off
 yabai -m rule --add app="^Notion Calendar$" manage=off
+yabai -m rule --add app="^DraftSight$" manage=off
 
 # float system preferences
 yabai -m rule --add app="^System Information$" manage=off
@@ -77,33 +84,33 @@ yabai -m rule --add title='^Archive Utility$' manage=off
 yabai -m rule --add title='Settings$' manage=off
 
 # global settings
-yabai -m config \
-  mouse_follows_focus off \
-  focus_follows_mouse off \
-  window_origin_display default \
-  window_placement second_child \
-  window_zoom_persist on \
-  window_shadow on \
-  window_animation_duration 0.0 \
-  window_opacity_duration 0.2 \
-  active_window_opacity 1.0 \
-  normal_window_opacity 0.60 \
-  window_opacity off \
-  insert_feedback_color 0xffd75f5f \
-  split_ratio 0.5 \
-  split_type auto \
-  auto_balance off \
-  layout bsp \
-  mouse_modifier fn \
-  mouse_action1 move \
-  mouse_action2 resize \
-  mouse_drop_action swap \
-  external_bar all:0:37 \
-  top_padding 4 \
-  bottom_padding 4 \
-  left_padding 4 \
-  right_padding 4 \
-  window_gap 8
+yabai -m config mouse_follows_focus off \
+                focus_follows_mouse off \
+                window_origin_display default \
+                window_placement second_child \
+                window_zoom_persist on \
+                window_shadow off \
+                window_animation_duration 0.2 \
+                window_animation_easing ease_in_out_cubic \
+                window_opacity_duration 0.2 \
+                active_window_opacity 0.97 \
+                normal_window_opacity 0.90 \
+                window_opacity on \
+                insert_feedback_color 0xffd75f5f \
+                split_ratio 0.5 \
+                split_type auto \
+                auto_balance off \
+                layout bsp \
+                mouse_modifier fn \
+                mouse_action1 move \
+                mouse_action2 resize \
+                mouse_drop_action swap \
+                external_bar all:0:37 \
+                top_padding 6 \
+                bottom_padding 6 \
+                left_padding 6 \
+                right_padding 6 \
+                window_gap 8
 #split_ratio 0.64
 
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[0]') left_padding 0
@@ -113,4 +120,16 @@ yabai -m config \
 
 echo "yabai configuration loaded.."
 
-borders style=round active_color="glow(0xbd3a99fc)"  width=8.0 hidpi=on blacklist="Loom" &
+# options=(
+#   style=round 
+#   width=8.0 
+#   hidpi=on 
+#   active_color="glow(0xbd3a99fc)"
+#   # inactive_color=0xc02c2e34
+# 	# background_color=0x302c2e34
+# 	# blur_radius=25
+#   blacklist="Loom,DraftSight"
+# )
+# borders "${options[@]}" &
+
+borders style=round active_color="glow(0xbd3a99fc)"  width=8.0 hidpi=on blacklist="Loom,DraftSight" &

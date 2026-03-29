@@ -54,6 +54,21 @@
     ${XDG_CONFIG_HOME}/.inputrc:
       relink: true
       path: "xdg_config/.inputrc"
+    ${XDG_CONFIG_HOME}/worktrunk:
+      relink: true
+      path: "xdg_config/worktrunk"
+    ${XDG_CONFIG_HOME}/tmux:
+      relink: true
+      path: "xdg_config/tmux"
+    ${XDG_CONFIG_HOME}/wezterm:
+      relink: true
+      path: "xdg_config/wezterm"
+    ${XDG_CONFIG_HOME}/atuin:
+      relink: true
+      path: "xdg_config/atuin"
+    ${XDG_CONFIG_HOME}/atuin/themes/tokyo-night.toml:
+      relink: true
+      path: "git-submodules/atuin-tokyo-night/tokyo-night.toml"
     ${XDG_CONFIG_HOME}/.warp:
       relink: true
       path: "xdg_config/warp"

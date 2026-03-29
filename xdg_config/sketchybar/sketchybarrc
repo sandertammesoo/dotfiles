@@ -7,6 +7,7 @@ source "$CONFIG_DIR/colors.sh" # Loads all defined colors
 # For a more advanced configuration example see my dotfiles:
 # https://github.com/FelixKratz/dotfiles
 
+FONT_FACE="JetBrainsMono Nerd Font"
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 ITEM_DIR="$CONFIG_DIR/items"
 
@@ -17,44 +18,55 @@ ITEM_DIR="$CONFIG_DIR/items"
 # If you are looking for other colors, see the color picker:
 # https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
 
-sketchybar --bar height=37        \
-                 blur_radius=30   \
-                 position=bottom     \
-                 sticky=off       \
-                 padding_left=10  \
-                 padding_right=10 \
-                 color=$BAR_COLOR_SEC
-                 #color=#15ffffff
+bar=(
+  height=37
+  blur_radius=30
+  position=bottom
+  sticky=off
+  padding_left=10
+  padding_right=10
+  color=$BAR_COLOR_SEC
+  #color=#15ffffff
+)
+
+sketchybar --bar "${bar[@]}"
 
 ##### Changing Defaults #####
 # We now change some default values that are applied to all further items
 # For a full list of all available item properties see:
 # https://felixkratz.github.io/SketchyBar/config/items
 
-#sketchybar --default icon.font="Hack Nerd Font:Bold:17.0"  \
-                     #label.font="Hack Nerd Font:Bold:14.0" \
-sketchybar --default icon.font="SF Pro:Semibold:15.0"      \
-                     icon.color=$WHITE                     \
-                     label.font="SF Pro:Semibold:15.0"     \
-                     label.color=$WHITE                    \
-                     background.color=$ITEM_BG_COLOR_SEC       \
-                     background.corner_radius=5            \
-                     background.height=24                  \
-                     padding_left=5                        \
-                     padding_right=5                       \
-                     label.padding_left=4                  \
-                     label.padding_right=10                \
-                     icon.padding_left=10                  \
-                     icon.padding_right=4
+# icon.font="Hack Nerd Font:Bold:17.0"
+# label.font="Hack Nerd Font:Bold:14.0"
+# icon.font="SF Pro:Semibold:15.0"
+# label.font="SF Pro:Semibold:15.0"
+
+default=(
+  icon.color=$WHITE
+  label.color=$WHITE
+  icon.font="$FONT_FACE:Bold:16.0"
+  label.font="$FONT_FACE:Semibold:15.0"
+  background.color=$ITEM_BG_COLOR_SEC
+  background.corner_radius=5
+  background.height=24
+  padding_left=5
+  padding_right=5
+  label.padding_left=4
+  label.padding_right=10
+  icon.padding_left=10
+  icon.padding_right=4
+)
+
+sketchybar --default "${default[@]}"
 
 ##### Adding Left Items #####
 # We add some regular items to the left side of the bar
 # only the properties deviating from the current defaults need to be set
 source $ITEM_DIR/spaces.sh
-source $ITEM_DIR/front_app.sh
 
 # -- Center Items --
 #source $ITEM_DIR/media.sh
+source $ITEM_DIR/front_app.sh
 
 ##### Adding Right Items #####
 # In the same way as the left items we can add items to the right side.
@@ -67,10 +79,10 @@ source $ITEM_DIR/front_app.sh
 # volume is registered. More info about the event system can be found here:
 # https://felixkratz.github.io/SketchyBar/config/events
 #source $ITEM_DIR/calendar.sh
-source $ITEM_DIR/displays.sh
+#source $ITEM_DIR/displays.sh
 source $ITEM_DIR/volume.sh
-source $ITEM_DIR/battery.sh
-source $ITEM_DIR/cpu.sh
+#source $ITEM_DIR/battery.sh
+#source $ITEM_DIR/cpu.sh
 source $ITEM_DIR/space_yabai_mode.sh
 source $ITEM_DIR/skhd_mode.sh
 

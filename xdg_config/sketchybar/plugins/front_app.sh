@@ -5,40 +5,24 @@
 # focused application in the $INFO variable:
 # https://felixkratz.github.io/SketchyBar/config/events#events-and-scripting
 
+if [ "$SENDER" != "front_app_switched" ] && [ "$SENDER" != "title_change" ]; then
+  exit 0
+fi
+
+WINDOW_INFO=$(yabai -m query --windows --window)
+APP=$(echo "$WINDOW_INFO" | jq -r '.app')
+WINDOW_TITLE=$(echo "$WINDOW_INFO" | jq -r '.title')
+
+if [[ $WINDOW_TITLE = "" ]]; then
+  LABEL="$APP"
+elif [[ ${#WINDOW_TITLE} -gt 50 ]]; then
+  LABEL="${WINDOW_TITLE:0:50}..."
+else
+  LABEL="$WINDOW_TITLE"
+fi
+
 if [ "$SENDER" = "front_app_switched" ]; then
-  # W I N D O W  T I T L E
-  APP=$(yabai -m query --windows --window | jq -r '.app') 
-  WINDOW_TITLE=$(yabai -m query --windows --window | jq -r '.title')
-
-  if [[ $WINDOW_TITLE = "" ]]; then
-  sketchybar --set $NAME label="$APP" icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
-  exit 0
-  fi
-
-  if [[ ${#WINDOW_TITLE} -gt 50 ]]; then
-  WINDOW_TITLE=$(echo "$WINDOW_TITLE" | cut -c 1-50)
-  sketchybar --set $NAME label="$APP │ $WINDOW_TITLE..." icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
-  exit 0
-  fi
-
-  sketchybar --set $NAME label="$APP │ $WINDOW_TITLE" icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
-
-elif [ "$SENDER" = "title_change" ]; then
-  # W I N D O W  T I T L E 
-  APP=$(yabai -m query --windows --window | jq -r '.app') 
-  WINDOW_TITLE=$(yabai -m query --windows --window | jq -r '.title')
-
-  if [[ $WINDOW_TITLE = "" ]]; then
-  sketchybar --set $NAME label="$APP"
-  exit 0
-  fi
-
-  if [[ ${#WINDOW_TITLE} -gt 50 ]]; then
-  WINDOW_TITLE=$(echo "$WINDOW_TITLE" | cut -c 1-50)
-  sketchybar --set $NAME label="$APP │ $WINDOW_TITLE..."
-  exit 0
-  fi
-
-  sketchybar --set $NAME label="$APP │ $WINDOW_TITLE"
-
+  sketchybar --set $NAME label="$LABEL" icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
+else
+  sketchybar --set $NAME label="$LABEL"
 fi

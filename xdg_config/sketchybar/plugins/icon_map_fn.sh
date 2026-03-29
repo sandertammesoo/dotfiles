@@ -8,6 +8,47 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### START-OF-ICON-MAP
 function __icon_map() {
     case "$1" in
@@ -239,6 +280,9 @@ function __icon_map() {
    "ClickUp")
         icon_result=":click_up:"
         ;;
+   "CLion")
+        icon_result=":clion:"
+        ;;
    "Clock")
         icon_result=":clock:"
         ;;
@@ -386,7 +430,7 @@ function __icon_map() {
    "FaceTime" | "FaceTime 通话")
         icon_result=":face_time:"
         ;;
-   "Feishu")
+   "Feishu" | "飞书" | "飞书会议")
         icon_result=":feishu:"
         ;;
    "Figma")
@@ -419,11 +463,17 @@ function __icon_map() {
    "FL Studio")
         icon_result=":flstudio:"
         ;;
+   "Fluxer")
+        icon_result=":fluxer:"
+        ;;
    "FMOD Studio")
         icon_result=":fmod:"
         ;;
    "Folx")
         icon_result=":folx:"
+        ;;
+   "Font Book")
+        icon_result=":font_book:"
         ;;
    "foobar2000")
         icon_result=":foobar2000:"
@@ -1151,6 +1201,9 @@ function __icon_map() {
    "Stickies")
         icon_result=":stickies:"
         ;;
+   "Stremio")
+        icon_result=":stremio:"
+        ;;
    "Studio 3T")
         icon_result=":studio_3t:"
         ;;
@@ -1222,6 +1275,9 @@ function __icon_map() {
         ;;
    "TIDAL")
         icon_result=":tidal:"
+        ;;
+   "TigerVNC")
+        icon_result=":tigervnc:"
         ;;
    "Timery")
         icon_result=":timery:"
@@ -1367,7 +1423,7 @@ function __icon_map() {
    "Zed")
         icon_result=":zed:"
         ;;
-   "Zen" | "Zen Browser")
+   "Zen" | "Zen Browser" | "Twilight")
         icon_result=":zen_browser:"
         ;;
    "Zeplin")

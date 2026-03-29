@@ -68,12 +68,20 @@ update_item() {
 
   local label="${pct_int}%"
 
-  if (( pct_int >= 50 )) && [[ -n "$resets_at" && "$resets_at" != "null" ]]; then
+  # if (( pct_int >= 50 )) && [[ -n "$resets_at" && "$resets_at" != "null" ]]; then
+  if [[ -n "$resets_at" && "$resets_at" != "null" ]]; then
     local now remaining timer
     now=$(date +%s)
     remaining=$(( resets_at - now ))
-    timer=$(format_duration "$remaining")
-    label="${pct_int}% ${timer}"
+    if (( remaining <= 0 )); then
+      # Reset window has passed — usage is back to 0%
+      pct_int=0
+      color=$COLOR_WHITE
+      label="0%"
+    else
+      timer=$(format_duration "$remaining")
+      label="${pct_int}% ${timer}"
+    fi
   fi
 
   sketchybar --set "$item" label="$label" label.color=$color icon.color=$color

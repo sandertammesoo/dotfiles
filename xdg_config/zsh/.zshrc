@@ -5,6 +5,7 @@
 
 # Track reload start time for summary
 local ZSHRC_START_TIME=$SECONDS
+FUNCNEST=100
 
 # Homebrew must be sourced first
 try_source "$ZSH/homebrew/env.zsh" error
@@ -28,6 +29,12 @@ get_zsh_files env && {
     log_debug "Sourcing ${#matched_files} environment setup files"
     for file in $matched_files; do try_source "$file" warn; done
 } || log_warn "No environment setup files found to source"
+
+# ZLE hook order matters: starship must init before atuin
+# Atuin wraps starship's keymap hook — reversing this causes FUNCNEST errors
+try_source "$ZSH/starship/env.zsh" warn
+try_source "$ZSH/atuin/env.zsh" warn
+try_source "$ZSH/navi/env.zsh" warn
 
 get_zsh_files other && {
     log_debug "Sourcing ${#matched_files} other setup files"

@@ -60,7 +60,7 @@ function get_zsh_files() {
     # Categorize files without output
     for file in $config_files; do
         case "$file" in
-            */homebrew/env.zsh|*/zoxide/env.zsh|*/zsh/config.zsh|*/zsh/fpath.zsh) continue ;;
+            */homebrew/env.zsh|*/zoxide/env.zsh|*/zsh/config.zsh|*/zsh/fpath.zsh|*/atuin/env.zsh|*/starship/env.zsh|*/navi/env.zsh) continue ;;
             */env.zsh) [[ "$category" == "env" || -z "$category" ]] && matched_files+=($file) ;;
             */aliases.zsh) [[ "$category" == "alias" || -z "$category" ]] && matched_files+=($file) ;;
             */functions.zsh) [[ "$category" == "func" || -z "$category" ]] && matched_files+=($file) ;;

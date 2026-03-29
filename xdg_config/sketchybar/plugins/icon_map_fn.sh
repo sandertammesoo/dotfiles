@@ -3,52 +3,6 @@
 #https://github.com/kvndrsslr/sketchybar-app-font/releases
 #curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v1.0.21/sketchybar-app-font.ttf -o $HOME/Library/Fonts/sketchybar-app-font.ttf
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### START-OF-ICON-MAP
 function __icon_map() {
     case "$1" in

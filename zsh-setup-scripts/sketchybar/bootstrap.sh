@@ -119,6 +119,11 @@ else
     
     if [ $exit_code -eq 0 ]; then
         echo "$output" | output_stream VERBOSE
+        # build:install prepends a newline to the START-OF-ICON-MAP marker each run,
+        # causing blank lines to accumulate. Squash multiple consecutive blank lines to one.
+        local cleaned
+        cleaned=$(awk '/^$/{blank++; if(blank<=1)print; next} {blank=0; print}' "$TARGET_SCRIPT")
+        printf '%s\n' "$cleaned" > "$TARGET_SCRIPT"
         log_success "sketchybar app font built and installed successfully!"
         log_info "Installed sketchybar app font to $TARGET_SCRIPT"
         log_info "You can use this font in your sketchybar configuration to display app icons in your bar."

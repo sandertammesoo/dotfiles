@@ -11,16 +11,16 @@ brew_install_if_missing "font-sketchybar-app-font" "font-sketchybar-app-font" ||
 
 # Stop sketchybar service if it's running using sketchybar command
 log_user "Checking if sketchybar service is running..."
-run_cmd="brew services list"
+run_cmd="pgrep -x sketchybar"
 log_verbose "Running command: $run_cmd"
-output=$(eval $run_cmd 2>&1)
+output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
 echo "$output" | output_stream VERBOSE
-if echo "$output" | grep -q '^sketchybar.*started'; then
+if [ $exit_code -eq 0 ]; then
     log_user "sketchybar service is currently running. Stopping it first..."
     run_cmd="brew services stop sketchybar"
     log_verbose "Running command: $run_cmd"
-    output=$(eval $run_cmd 2>&1)
+    output=$(eval "$run_cmd" 2>&1)
     exit_code=$?
     if [ $exit_code -eq 0 ]; then
         echo "$output" | output_stream
@@ -38,7 +38,7 @@ fi
 log_user "Updating sketchybar to the latest version..."
 run_cmd="brew upgrade FelixKratz/formulae/sketchybar"
 log_verbose "Running command: $run_cmd"
-output=$(eval $run_cmd 2>&1)
+output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
 # Filter output but maintain original exit code
 if [ $exit_code -eq 0 ]; then
@@ -55,7 +55,7 @@ log_user "Setting up sketchybar app font..."
 TEMP_DIR=$(mktemp -d)
 run_cmd="git clone https://github.com/kvndrsslr/sketchybar-app-font.git \"$TEMP_DIR\""
 log_verbose "Running command: $run_cmd"
-output=$(eval $run_cmd 2>&1)
+output=$(eval "$run_cmd" 2>&1)
 exit_code=$?
 if [ $exit_code -ne 0 ]; then
     echo "$output" | output_stream FATAL
@@ -70,7 +70,7 @@ else
     log_verbose "Checking if pnpm is installed..."
     run_cmd="command -v pnpm"
     log_verbose "Running command: $run_cmd"
-    output=$(eval $run_cmd 2>&1)
+    output=$(eval "$run_cmd" 2>&1)
     exit_code=$?  # Capture exit status
     echo "Output: $output" | output_stream VERBOSE
     if [ $exit_code -ne 0 ]; then
@@ -79,7 +79,7 @@ else
         # log_verbose "Checking if npm is installed..."
         # run_cmd="command -v npm"
         # log_verbose "Running command: $run_cmd"
-        # output=$(eval $run_cmd 2>&1)
+        # output=$(eval "$run_cmd" 2>&1)
         # exit_code=$?  # Capture exit status
         # if [ $exit_code -ne 0 ]; then
         #     echo "$output" | output_stream FATAL
@@ -94,7 +94,7 @@ else
 
         run_cmd="brew install pnpm"
         log_verbose "Running command: $run_cmd"
-        output=$(eval $run_cmd 2>&1)
+        output=$(eval "$run_cmd" 2>&1)
         exit_code=$?
         
         if [ $exit_code -eq 0 ]; then
@@ -114,7 +114,7 @@ else
     TARGET_SCRIPT="$XDG_CONFIG_HOME/sketchybar/plugins/icon_map_fn.sh"
     run_cmd="pnpm install && pnpm run build:install \"$TARGET_SCRIPT\""
     log_verbose "Running command: $run_cmd"
-    output=$(eval $run_cmd 2>&1)
+    output=$(eval "$run_cmd" 2>&1)
     exit_code=$?
     
     if [ $exit_code -eq 0 ]; then
@@ -139,7 +139,7 @@ fi
 log_user "Starting sketchybar service..."
 run_cmd="brew services start sketchybar"
 log_verbose "Running command: $run_cmd"
-output=$(eval $run_cmd 2>&1)
+output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
 if [ $exit_code -eq 0 ]; then
     echo "$output" | output_stream VERBOSE

@@ -8,16 +8,16 @@ brew_install_if_missing "skhd" "asmvik/formulae/skhd" || return 1
 
 # Try and stop skhd service if it's running using skhd command
 log_user "Checking if skhd service is running..."
-run_cmd="skhd --restart-service"
+run_cmd="pgrep -x skhd"
 log_verbose "Running command: $run_cmd"
-output=$(eval $run_cmd 2>&1)
+output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
 if [ $exit_code -eq 0 ]; then
     echo "$output" | output_stream
     log_user "skhd service is currently running. Stopping it first..."
     run_cmd="skhd --stop-service"
     log_verbose "Running command: $run_cmd"
-    output=$(eval $run_cmd 2>&1)
+    output=$(eval "$run_cmd" 2>&1)
     exit_code=$?  # Capture exit status
     if [ $exit_code -eq 0 ]; then
         echo "$output" | output_stream
@@ -36,7 +36,7 @@ fi
 log_user "Updating skhd to the latest version..."
 run_cmd="brew upgrade asmvik/formulae/skhd"
 log_verbose "Running command: $run_cmd"
-output=$(eval $run_cmd 2>&1)
+output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
 # Filter output but maintain original exit code
 if [ $exit_code -eq 0 ]; then
@@ -52,7 +52,7 @@ fi
 log_user "Starting skhd service..."
 run_cmd="skhd --start-service"
 log_verbose "Running command: $run_cmd"
-output=$(eval $run_cmd 2>&1)
+output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
 if [ $exit_code -eq 0 ]; then
     echo "$output" | output_stream

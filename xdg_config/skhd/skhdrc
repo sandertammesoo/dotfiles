@@ -1,13 +1,13 @@
-:: default : sketchybar -m --set modal label="NO MODE"
-:: normal : sketchybar -m --set modal label="NORMAL"
-:: moonlander : sketchybar -m --set modal label="MOONLANDER"
+:: default : sketchybar -m --set modal icon="󰹋"
+:: normal : sketchybar -m --set modal icon="󰌌"
+:: moonlander : sketchybar -m --set modal icon=""
 
 # from 'default' mode, activate other mode
 # moonlander, normal < escape ; default
 default, normal < lcmd - escape ; moonlander
 default, moonlander < lalt - escape ; normal
 
-# from 'test' mode, activate mode 'default'
+# from 'active' mode, activate mode 'default'
 moonlander < lcmd - escape ; default
 normal < lalt - escape ; default
 

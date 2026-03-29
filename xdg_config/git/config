@@ -194,9 +194,9 @@
 [pull]
 	rebase = false
 [commit]
-	gpgsign = true
+	gpgsign = false
 [tag]
-	gpgsign = true
+	gpgsign = false
 [interactive]
 	diffFilter = delta --color-only
 

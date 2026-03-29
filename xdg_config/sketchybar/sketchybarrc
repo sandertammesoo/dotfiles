@@ -83,9 +83,9 @@ source $ITEM_DIR/front_app.sh
 source $ITEM_DIR/volume.sh
 #source $ITEM_DIR/battery.sh
 #source $ITEM_DIR/cpu.sh
-source $ITEM_DIR/claude_limits.sh
 source $ITEM_DIR/space_yabai_mode.sh
 source $ITEM_DIR/skhd_mode.sh
+source $ITEM_DIR/claude_limits.sh
 
 ##### Finalizing Setup #####
 # The below command is only needed at the end of the initial configuration to

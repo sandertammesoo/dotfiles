@@ -36,7 +36,7 @@ update_item() {
   local resets_at="$3"
 
   if [[ -z "$pct" ]]; then
-    sketchybar --set "$item" label="--" label.color=$COLOR_DIM icon.color=$COLOR_DIM
+    sketchybar --set "$item" label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE
     return
   fi
 
@@ -49,7 +49,7 @@ update_item() {
   elif (( pct_int >= 50 )); then
     color=$COLOR_PEACH
   else
-    color=$COLOR_DIM
+    color=$COLOR_WHITE
   fi
 
   local label="${pct_int}%"

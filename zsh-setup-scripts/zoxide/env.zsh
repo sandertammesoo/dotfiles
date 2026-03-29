@@ -4,6 +4,11 @@ if command -v zoxide &> /dev/null; then
     log_success "zoxide is installed, setting up zoxide environment"
     if eval "$(zoxide init zsh)"; then
         log_success "zoxide initialized successfully"
+
+        # Add hook to list directory contents after changing directory
+        chpwd() {
+            la
+        }
     else
         log_error " ✗  Failed to initialize zoxide"
     fi

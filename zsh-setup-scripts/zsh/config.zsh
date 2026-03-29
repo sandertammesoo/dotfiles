@@ -58,12 +58,25 @@ export SAVEHIST=50000       # Number of commands to save in history file
 #   like: git comm-[tab]
 # setopt complete_aliases # expand aliases in completion
 
-bindkey '^[^[[D' backward-word
-bindkey '^[^[[C' forward-word
-bindkey '^[[5D' beginning-of-line
-bindkey '^[[5C' end-of-line
+bindkey '^[[1;3D' backward-word
+bindkey '^[[1;3C' forward-word
+bindkey '^[[D' backward-char
+bindkey '^[[C' forward-char
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
 bindkey '^[[3~' delete-char
 bindkey '^?' backward-delete-char
+
+# Better history to use instead of:
+# bindkey '^[[A' history-search-backward
+# bindkey '^[[B' history-search-forward
+# Credits to https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
 
 # Set up the session directory/file.
 export SHELL_SESSION_DIR="${XDG_STATE_HOME}/zsh/sessions" # TODO: use XDG_DATA_HOME

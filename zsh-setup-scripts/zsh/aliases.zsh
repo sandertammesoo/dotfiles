@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 
 # Reload the shell (i.e. invoke as a login shell)
-alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
+alias reload!="exec zsh"
+# alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
 alias reload="reload!"
 alias s=reload
 
@@ -30,18 +31,7 @@ else
 fi
 
 # grc overides for ls
-#   Made possible through contributions from generous benefactors like
-#   `brew install coreutils`
-if $(gls &>/dev/null)
-then
-  alias ls="gls -F --color --group-directories-first"
-  alias l="gls -lAh --color --group-directories-first"
-  alias ll="gls -l --color --group-directories-first"
-  alias la='gls -A --color --group-directories-first'
-
-  # List only directories
-  alias lsd="gls -lF --color | grep --color=never '^d'"
-elif $(eza &>/dev/null)
+if $(eza &>/dev/null)
 then
   alias ls="eza --color=always --icons=always --group-directories-first --git"
   alias la="eza --color=always --icons=always --group-directories-first --git --all"
@@ -50,6 +40,17 @@ then
 
   # List only directories
   alias lsd="eza --color=always --icons=always --group-directories-first --git --long --no-time --no-user --header --all --dirs-only"
+#   Made possible through contributions from generous benefactors like
+#   `brew install coreutils`
+elif $(gls &>/dev/null)
+then
+  alias ls="gls -F --color --group-directories-first"
+  alias l="gls -lAh --color --group-directories-first"
+  alias ll="gls -l --color --group-directories-first"
+  alias la='gls -A --color --group-directories-first'
+
+  # List only directories
+  alias lsd="gls -lF --color | grep --color=never '^d'"
 else
   alias l="ls -lAh"
   alias ll="ls -l"
@@ -86,7 +87,7 @@ alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && k
 alias update='brew update; brew upgrade; brew cleanup; brew doctor;'
 
 alias cls='clear' # Good 'ol Clear Screen command
-alias cat='bat'
+# alias cat='bat'
 alias grep='grep --color=auto'
 export_n_log GREP_COLOR='1;32'
 

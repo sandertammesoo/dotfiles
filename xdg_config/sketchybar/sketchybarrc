@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 source "$CONFIG_DIR/colors.sh" # Loads all defined colors
 
@@ -58,6 +58,17 @@ default=(
 )
 
 sketchybar --default "${default[@]}"
+
+##### Display Orientation Detection #####
+# Build LANDSCAPE_DISPLAYS: array of sketchybar arrangement-ids for non-portrait displays.
+# Items too wide for portrait are added once per landscape display using display=N.
+LANDSCAPE_DISPLAYS=()
+while IFS= read -r _d; do
+  _arr=$(printf '%s' "$_d" | jq -r '."arrangement-id"')
+  _portrait=$(printf '%s' "$_d" | jq '(.frame.w < .frame.h)')
+  [[ "$_portrait" == "true" ]] && continue
+  LANDSCAPE_DISPLAYS+=("$_arr")
+done < <(sketchybar --query displays | jq -c '.[]')
 
 ##### Adding Left Items #####
 # We add some regular items to the left side of the bar

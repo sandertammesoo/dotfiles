@@ -28,10 +28,9 @@ if [[ "$_needs_fetch" == true ]]; then
   bash "$FETCH_SCRIPT" &
 fi
 
-# If cache still missing after kicking off fetch, show blanks and wait
+# If cache still missing after kicking off fetch, show blank and wait
 if [[ ! -f "$CACHE_FILE" ]]; then
-  sketchybar --set claude_5h label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE \
-             --set claude_7d label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE
+  sketchybar --set "$NAME" label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE
   exit 0
 fi
 
@@ -95,5 +94,8 @@ update_item() {
   sketchybar --set "$item" label="$label" label.color=$color icon.color=$color
 }
 
-update_item "claude_5h"  "$five_pct"  "$five_reset"
-update_item "claude_7d"  "$week_pct"  "$week_reset"
+# Each item updates only itself — NAME is e.g. claude_5h_d1 or claude_7d_d1
+case "$NAME" in
+  claude_5h*) update_item "$NAME" "$five_pct"  "$five_reset" ;;
+  claude_7d*) update_item "$NAME" "$week_pct"  "$week_reset" ;;
+esac

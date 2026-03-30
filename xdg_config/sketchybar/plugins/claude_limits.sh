@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # Claude Code rate limit indicator plugin
-# Reads /tmp/claude_rate_limits.json written by ~/.claude/statusline-command.sh
+# Reads /tmp/claude_rate_limits.json — written by claude_fetch_usage.sh,
+# which fetches directly from the Anthropic OAuth API (no CC session required).
 
 CACHE_FILE="/tmp/claude_rate_limits.json"
+FETCH_SCRIPT="$(dirname "$0")/claude_fetch_usage.sh"
 STALE_AFTER=300  # seconds (5 minutes)
 
 # Catppuccin Mocha colours (ARGB)
@@ -12,16 +14,22 @@ COLOR_PEACH=0xfffab387
 COLOR_RED=0xfff38ba8
 COLOR_WHITE=0xffffffff
 
-# Blank items and exit if cache is missing or stale
+# Trigger a background fetch if cache is missing or stale
+_needs_fetch=false
 if [[ ! -f "$CACHE_FILE" ]]; then
-  sketchybar --set claude_5h label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE \
-             --set claude_7d label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE
-  exit 0
+  _needs_fetch=true
+else
+  updated_at=$(jq -r '.updated_at // 0' "$CACHE_FILE" 2>/dev/null)
+  now=$(date +%s)
+  (( now - updated_at > STALE_AFTER )) && _needs_fetch=true
 fi
 
-updated_at=$(jq -r '.updated_at // 0' "$CACHE_FILE" 2>/dev/null)
-now=$(date +%s)
-if (( now - updated_at > STALE_AFTER )); then
+if [[ "$_needs_fetch" == true ]]; then
+  bash "$FETCH_SCRIPT" &
+fi
+
+# If cache still missing after kicking off fetch, show blanks and wait
+if [[ ! -f "$CACHE_FILE" ]]; then
   sketchybar --set claude_5h label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE \
              --set claude_7d label="--" label.color=$COLOR_WHITE icon.color=$COLOR_WHITE
   exit 0

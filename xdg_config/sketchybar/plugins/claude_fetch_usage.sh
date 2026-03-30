@@ -26,12 +26,8 @@ if ! flock -n 9; then
 fi
 
 # ---- Read OAuth token from macOS keychain ---------------------------------
-credentials=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null)
-if [[ -z "$credentials" ]]; then
-  exit 1
-fi
-
-access_token=$(printf '%s' "$credentials" | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null)
+access_token=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null \
+  | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null)
 if [[ -z "$access_token" ]]; then
   exit 1
 fi

@@ -231,11 +231,19 @@ else
         # On macOS 26+, --load-sa exits 1 even when the SA loads successfully.
         # The SA notification is still delivered and yabai works normally.
         # Reference: https://github.com/asmvik/yabai/issues/2764
+        # Also on macOS 26 Tahoe, --load-sa may fail with "could not locate Dock.app pid"
+        # even when yabai is otherwise functional. Treat both as non-fatal on macOS 26+.
         MACOS_MAJOR=$(sw_vers -productVersion 2>/dev/null | cut -d. -f1)
         OSAX_PATH="/Library/ScriptingAdditions/yabai.osax"
-        if [[ "$MACOS_MAJOR" -ge 26 ]] && [[ -d "$OSAX_PATH" ]] && [[ -z "$output" ]]; then
-            log_warn "Known macOS 26+ issue: --load-sa exits 1 even when the scripting addition loads successfully."
-            log_warn "See: https://github.com/asmvik/yabai/issues/2764"
+        if [[ "$MACOS_MAJOR" -ge 26 ]] && [[ -d "$OSAX_PATH" ]] && \
+           ([[ -z "$output" ]] || [[ "$output" == *"could not locate Dock.app pid"* ]]); then
+            if [[ -z "$output" ]]; then
+                log_warn "Known macOS 26+ issue: --load-sa exits 1 even when the scripting addition loads successfully."
+                log_warn "See: https://github.com/asmvik/yabai/issues/2764"
+            else
+                log_warn "--load-sa reported 'could not locate Dock.app pid' but osax is present at $OSAX_PATH."
+                log_warn "This may be a transient state (Dock.app not yet reachable). Continuing with service start."
+            fi
             log_success "osax is present at $OSAX_PATH — treating as success and continuing."
             exit_code=0
         else

@@ -20,68 +20,46 @@ yabai -m signal --add event=window_deminimized action='date "+[%Y-%m-%d %H:%M:%S
 yabai -m signal --add event=window_focused action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] FOCUSED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP) - is-minimized=$(yabai -m query --windows --window $YABAI_WINDOW_ID 2>/dev/null | jq -r '."is-minimized"')" >> /tmp/yabai_minimize_debug.log'
 yabai -m signal --add event=application_front_switched action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] APP SWITCHED: $YABAI_PROCESS_ID - $(ps -p $YABAI_PROCESS_ID -o comm= 2>/dev/null)" >> /tmp/yabai_minimize_debug.log'
 
-# Optional signals - disabled by default
-# Uncomment if you want automatic window stacking/positioning based on application events
-# RATE-LIMITED: Now includes cascade prevention to avoid minimize bug
-# TEMP DISABLED: application_activated script IS the actual root cause of minimize bug
-# The window queries in this script disturb minimized windows system-wide
+## Optional signals - disabled by default
+## Uncomment if you want automatic window stacking/positioning based on application events
+## RATE-LIMITED: Now includes cascade prevention to avoid minimize bug
+## TEMP DISABLED: application_activated script IS the actual root cause of minimize bug
+## The window queries in this script disturb minimized windows system-wide
 # yabai -m signal --add event=application_activated action="zsh ~/.config/yabai/application-activated.zsh"
-# TEMP DISABLED: window_created signal IS the root cause of minimize bug cascade
+## TEMP DISABLED: window_created signal IS the root cause of minimize bug cascade
 # yabai -m signal --add event=window_created action="zsh ~/.config/yabai/window-created.zsh"
 
-# float system preferences. Most of these just diable Yabai form resizing them.
-# Exclude problematic apps from being managed:
-# yabai -m rule --add app="^(LuLu|Calculator|Software Update|Dictionary|VLC|System Preferences|System Settings|zoom.us|Photo Booth|Archive Utility|Python|LibreOffice|App Store|Steam|Alfred|Activity Monitor)$" manage=off
-# yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
-# yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
-# yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
+# Exclude apps from being managed:
+# ── macOS system ──────────────────────────────────────────────────────────────
+yabai -m rule --add label="macOS system" app="^(System (Settings|Information|Preferences)|Disk Utility|Activity Monitor|Archive Utility|App Store|Keychain)$" manage=off
+yabai -m rule --add label="Apple first-party apps" app="^(Facetime|Numbers|Pages|Notes|Reminders|Stocks|Find My|Messages|Passwords|Phone|Weather|Shortcuts)$" manage=off
+yabai -m rule --add label="Preferences" title="(Preferences|Settings)$" manage=off
+yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
+
+# ── Apple first-party ─────────────────────────────────────────────────────────
+yabai -m rule --add app="^(Calculator|(Notion )?Calendar|Facetime|Numbers)$" manage=off
+yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
+
+# ── Media ─────────────────────────────────────────────────────────────────────
+yabai -m rule --add app="^(Music|Podcasts|Preview|TV|VLC|IINA)$" manage=off
+
+# ── Home ──────────────────────────────────────────────────────────────────────
+yabai -m rule --add app="^(Home( Assistant)?)$" manage=off
+
+# ── Hardware control ──────────────────────────────────────────────────────────
+yabai -m rule --add app="^((Elgato )?(Wave Link|Stream Deck))$" manage=off
+
+# ── Dev tools ─────────────────────────────────────────────────────────────────
+yabai -m rule --add app="^(DBeaver|Docker Desktop|Postman)$" manage=off
+
+# ── Utilities & menu bar ──────────────────────────────────────────────────────
+yabai -m rule --add app="^(1Password|DigiDoc4 Client|Hidden Bar|NordVPN|Shottr|Spotify|Timer RH|zoom.us|calibre|Keymapp|Logi Options+|Loom|PS Remote Play|Steam|Transmission|UTM)$" manage=off
+
+# ── Design & CAD ──────────────────────────────────────────────────────────────
+yabai -m rule --add app="^(DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity)$" manage=off
 # yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
-# Do not manage these apps
-yabai -m rule --add app="^System Settings$" manage=off
-yabai -m rule --add app="^Calculator$" manage=off
-yabai -m rule --add app="^Timer RH$" manage=off
-yabai -m rule --add app="^Wave Link$" manage=off
-yabai -m rule --add app="^Spotify$" manage=off
-yabai -m rule --add app="^Immersed$" manage=off
-yabai -m rule --add app="^NordVPN$" manage=off
-yabai -m rule --add app="^1Password$" manage=off
-yabai -m rule --add app="^Docker Desktop$" manage=off
-yabai -m rule --add app="^Shotter$" manage=off
-yabai -m rule --add app="^Shottr$" manage=off
-yabai -m rule --add app="^Hidden Bar$" manage=off
-yabai -m rule --add app="^Postman$" manage=off
-yabai -m rule --add app="^zoom.us$" manage=off
-yabai -m rule --add app="^Finder$" manage=off
-yabai -m rule --add app="^Disk Utility$" manage=off
-yabai -m rule --add app="^Activity Monitor$" manage=off
-yabai -m rule --add app="^Calendar$" manage=off
-yabai -m rule --add app="^Podcasts$" manage=off
-yabai -m rule --add app="^Music$" manage=off
-yabai -m rule --add app="^Home Assistant$" manage=off
-yabai -m rule --add app="^Home$" manage=off
-yabai -m rule --add app="^TV$" manage=off
-yabai -m rule --add app="^Facetime$" manage=off
-yabai -m rule --add app="^Stream Deck$" manage=off
-yabai -m rule --add app="^DigiDoc4 Client$" manage=off
-yabai -m rule --add app="^Preview$" manage=off
-yabai -m rule --add app="^DBeaver$" manage=off
-yabai -m rule --add app="^Numbers$" manage=off
-yabai -m rule --add app="^Wave Link$" manage=off
-yabai -m rule --add app="^Elgato Wave Link$" manage=off
-yabai -m rule --add app="^Inkscape$" manage=off
-yabai -m rule --add app="^Sweet Home 3D$" manage=off
-yabai -m rule --add app="^Fusion$" manage=off
-yabai -m rule --add app="^Notion Calendar$" manage=off
-yabai -m rule --add app="^DraftSight$" manage=off
 
-# float system preferences
-yabai -m rule --add app="^System Information$" manage=off
-yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add title='Preferences$' manage=off
-yabai -m rule --add title='^Archive Utility$' manage=off
-
-# float settings windows
-yabai -m rule --add title='Settings$' manage=off
 
 # global settings
 yabai -m config mouse_follows_focus off \
@@ -93,8 +71,8 @@ yabai -m config mouse_follows_focus off \
                 window_animation_duration 0.2 \
                 window_animation_easing ease_in_out_cubic \
                 window_opacity_duration 0.2 \
-                active_window_opacity 0.97 \
-                normal_window_opacity 0.90 \
+                active_window_opacity 0.87 \
+                normal_window_opacity 0.70 \
                 window_opacity on \
                 insert_feedback_color 0xffd75f5f \
                 split_ratio 0.5 \
@@ -106,8 +84,8 @@ yabai -m config mouse_follows_focus off \
                 mouse_action2 resize \
                 mouse_drop_action swap \
                 external_bar all:0:37 \
-                top_padding 6 \
-                bottom_padding 6 \
+                top_padding 2 \
+                bottom_padding 0 \
                 left_padding 6 \
                 right_padding 6 \
                 window_gap 8
@@ -117,6 +95,78 @@ yabai -m config mouse_follows_focus off \
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[0]') right_padding 0
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') left_padding 0
 #yabai -m config --space $(yabai -m query --displays | jq 'map(select(.index==2)) | .[0].spaces[1]') right_padding 0
+
+# O P A C I T Y  O V E R R I D E S
+# Per-app and per-title opacity via window_focused signals.
+# Global defaults above: active=0.97, normal=0.90
+# Set --opacity 0.0 on a window to reset it back to global defaults.
+#
+# Note: per-window --opacity overrides persist until explicitly reset.
+# Yabai applies active/normal_window_opacity automatically for windows
+# that haven't been given a per-window override.
+
+# Example: Make WezTerm slightly more transparent when focused
+# yabai -m signal --add label="opacity_wezterm" event=window_focused \
+#   action='[ "$YABAI_WINDOW_APP" = "WezTerm" ] && yabai -m window "$YABAI_WINDOW_ID" --opacity 0.88'
+
+# Example: Force full opacity for video/screen-share apps (override global)
+# yabai -m signal --add label="opacity_opaque_apps" event=window_focused \
+#   action='case "$YABAI_WINDOW_APP" in
+#     "zoom.us"|"Loom"|"PS Remote Play") yabai -m window "$YABAI_WINDOW_ID" --opacity 1.0 ;;
+#   esac'
+
+# Example: Dim windows whose title contains reference/doc keywords
+# yabai -m signal --add label="opacity_docs_titles" event=window_focused \
+#   action='title=$(yabai -m query --windows --window "$YABAI_WINDOW_ID" 2>/dev/null | jq -r ".title // empty")
+#   case "$title" in
+#     *README*|*CHANGELOG*|*" — docs"*) yabai -m window "$YABAI_WINDOW_ID" --opacity 0.85 ;;
+#     *) yabai -m window "$YABAI_WINDOW_ID" --opacity 0.0 ;;  # reset others to global
+#   esac'
+
+# Always-opaque Brave pages: 1.0 regardless of focus (video, meetings, PDFs, design tools)
+# Non-zero per-window opacity persists until explicitly reset, so setting once on focus/title is enough.
+_brave_always_pages="Fractory|YouTube|Netflix|Disney\\+|Google Meet|Figma|\\.pdf"
+_brave_focus_pages="Reddit"
+_brave_app_name="Brave Browser"
+
+_opacity_brave_always=$(cat <<EOACTION
+title=\$(yabai -m query --windows --window "\$YABAI_WINDOW_ID" 2>/dev/null | jq -r ".title // empty")
+if printf "%s" "\$title" | grep -qE "${_brave_always_pages}"; then
+  yabai -m window "\$YABAI_WINDOW_ID" --opacity 1.0
+fi
+EOACTION
+)
+
+# Focus-opaque Brave pages: 1.0 when focused, global active/normal opacity otherwise
+# The else guards against resetting always-opaque pages that don't match focus-opaque list
+_opacity_brave_focus=$(cat <<EOACTION
+title=\$(yabai -m query --windows --window "\$YABAI_WINDOW_ID" 2>/dev/null | jq -r ".title // empty")
+if printf "%s" "\$title" | grep -qE "${_brave_focus_pages}"; then
+  yabai -m window "\$YABAI_WINDOW_ID" --opacity 1.0
+elif ! printf "%s" "\$title" | grep -qE "${_brave_always_pages}"; then
+  yabai -m window "\$YABAI_WINDOW_ID" --opacity 0.0
+fi
+EOACTION
+)
+# Reset focus-opaque Brave windows when a non-Brave app gains focus
+_opacity_brave_focus_reset=$(cat <<EOACTION
+[ "\$YABAI_WINDOW_APP" = "${_brave_app_name}" ] && exit 0
+yabai -m query --windows 2>/dev/null | jq -c ".[]" | while IFS= read -r win; do
+  wid=\$(printf "%s" "\$win" | jq -r ".id")
+  wtitle=\$(printf "%s" "\$win" | jq -r ".title // empty")
+  if printf "%s" "\$wtitle" | grep -qE "${_brave_focus_pages}"; then
+    yabai -m window "\$wid" --opacity 0.0
+  fi
+done
+EOACTION
+)
+
+yabai -m signal --add label="opacity_brave_always_focused"       event=window_focused       app="^${_brave_app_name}$" action="$_opacity_brave_always"
+yabai -m signal --add label="opacity_brave_always_title_changed" event=window_title_changed app="^${_brave_app_name}$" action="$_opacity_brave_always"
+yabai -m signal --add label="opacity_brave_focus_focused"        event=window_focused       app="^${_brave_app_name}$" action="$_opacity_brave_focus"
+yabai -m signal --add label="opacity_brave_focus_title_changed"  event=window_title_changed app="^${_brave_app_name}$" action="$_opacity_brave_focus"
+yabai -m signal --add label="opacity_brave_focus_reset"          event=window_focused                                  action="$_opacity_brave_focus_reset"
+unset _opacity_brave_always _opacity_brave_focus _opacity_brave_focus_reset _brave_always_pages _brave_focus_pages _brave_app_name
 
 echo "yabai configuration loaded.."
 

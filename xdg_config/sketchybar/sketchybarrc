@@ -20,13 +20,13 @@ ITEM_DIR="$CONFIG_DIR/items"
 
 bar=(
   height=37
-  blur_radius=30
+  blur_radius=0
   position=bottom
   sticky=off
   padding_left=10
   padding_right=10
-  color=$BAR_COLOR_SEC
-  #color=#15ffffff
+  color=$NO_COLOR
+  topmost=true
 )
 
 sketchybar --bar "${bar[@]}"

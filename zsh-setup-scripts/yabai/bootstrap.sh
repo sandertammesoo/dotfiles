@@ -6,22 +6,6 @@ require_brew || return 1
 # Install yabai if not installed
 brew_install_if_missing "yabai" "yabai" || return 1
 
-# Install borders if not installed
-brew_install_if_missing "borders" "borders" || return 1
-
-# Start borders as a brew service (managed by launchd, restarts on crash)
-log_user "Starting borders service..."
-run_cmd="brew services start borders"
-log_verbose "Running command: $run_cmd"
-output=$(eval "$run_cmd" 2>&1)
-exit_code=$?
-if [ $exit_code -eq 0 ]; then
-    echo "$output" | output_stream
-    log_success "borders service started."
-else
-    echo "$output" | output_stream ERROR
-    log_warn "Failed to start borders service. It may already be running."
-fi
 
 # Stop yabai service if it's running using yabai command
 log_user "Checking if yabai service is running..."

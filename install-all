@@ -271,6 +271,14 @@ else
     log_failure "sketchybar setup failed!"
     exit_code=1
   fi
+
+  log_user "Running borders bootstrap..."
+  if zsh zsh-setup-scripts/borders/bootstrap.sh; then
+    log_success "borders setup completed successfully!"
+  else
+    log_failure "borders setup failed!"
+    exit_code=1
+  fi
 fi
 
 # Final completion message

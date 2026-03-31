@@ -181,5 +181,4 @@ echo "yabai configuration loaded.."
 # )
 # borders "${options[@]}" &
 
-# borders is managed as a brew service (brew services start borders)
-# Configuration lives in ~/.config/borders/bordersrc
+# borders is managed as a brew service — see zsh-setup-scripts/borders/bootstrap.sh

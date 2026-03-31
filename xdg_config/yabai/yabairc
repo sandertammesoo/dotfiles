@@ -32,12 +32,12 @@ yabai -m signal --add event=application_front_switched action='echo "[$(date "+%
 # Exclude apps from being managed:
 # ── macOS system ──────────────────────────────────────────────────────────────
 yabai -m rule --add label="macOS system" app="^(System (Settings|Information|Preferences)|Disk Utility|Activity Monitor|Archive Utility|App Store|Keychain)$" manage=off
-yabai -m rule --add label="Apple first-party apps" app="^(Facetime|Numbers|Pages|Notes|Reminders|Stocks|Find My|Messages|Passwords|Phone|Weather|Shortcuts)$" manage=off
+yabai -m rule --add label="Apple first-party apps" app="^(FaceTime|Numbers|Pages|Notes|Reminders|Stocks|Find My|Messages|Passwords|Phone|Weather|Shortcuts)$" manage=off
 yabai -m rule --add label="Preferences" title="(Preferences|Settings)$" manage=off
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 
 # ── Apple first-party ─────────────────────────────────────────────────────────
-yabai -m rule --add app="^(Calculator|(Notion )?Calendar|Facetime|Numbers)$" manage=off
+yabai -m rule --add app="^(Calculator|(Notion )?Calendar|FaceTime|Numbers)$" manage=off
 yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
 yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
 
@@ -110,10 +110,9 @@ yabai -m config mouse_follows_focus off \
 #   action='[ "$YABAI_WINDOW_APP" = "WezTerm" ] && yabai -m window "$YABAI_WINDOW_ID" --opacity 0.88'
 
 # Example: Force full opacity for video/screen-share apps (override global)
-# yabai -m signal --add label="opacity_opaque_apps" event=window_focused \
-#   action='case "$YABAI_WINDOW_APP" in
-#     "zoom.us"|"Loom"|"PS Remote Play") yabai -m window "$YABAI_WINDOW_ID" --opacity 1.0 ;;
-#   esac'
+_force_opacity_apps="zoom\.us|Loom|PS Remote Play|FaceTime|System (Settings|Information|Preferences)|Disk Utility|Activity Monitor|Archive Utility|App Store|Keychain|Find My|Finder|Preview|VLC|IINA|Shottr|DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity"
+yabai -m signal --add label="opacity_opaque_apps" event=window_focused app="^(${_force_opacity_apps})$" action='yabai -m window "$YABAI_WINDOW_ID" --opacity 1.0'
+unset _force_opacity_apps
 
 # Example: Dim windows whose title contains reference/doc keywords
 # yabai -m signal --add label="opacity_docs_titles" event=window_focused \

@@ -1,5 +1,2 @@
-style=round
-active_color="glow(0xbd3a99fc)"
-width=8.0
-hidpi=on
-blacklist="Loom,DraftSight"
+#!/usr/bin/env sh
+borders style=round active_color="glow(0xbd3a99fc)" width=8.0 hidpi=on blacklist="Loom,DraftSight"

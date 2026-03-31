@@ -14,7 +14,14 @@ if [ "$SENDER" = "space_windows_change" ]; then
   if [ "${apps}" != "" ]; then
     while read -r app
     do
-      icon_strip+=" $($CONFIG_DIR/plugins/icon_map_fn.sh "$app")"
+      if [ "$app" = "Brave Browser" ]; then
+        while IFS= read -r title; do
+          icon_strip+=" $($CONFIG_DIR/plugins/brave_page_icon.sh "$title")"
+        done <<< "$(yabai -m query --windows --space "$space" 2>/dev/null \
+          | jq -r '.[] | select(.app == "Brave Browser") | .title')"
+      else
+        icon_strip+=" $($CONFIG_DIR/plugins/icon_map_fn.sh "$app")"
+      fi
     done <<< "${apps}"
   else
     icon_strip+=" —"

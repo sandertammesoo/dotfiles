@@ -21,7 +21,9 @@ else
   LABEL="$WINDOW_TITLE"
 fi
 
-if [ "$SENDER" = "front_app_switched" ]; then
+if [ "$APP" = "Brave Browser" ]; then
+  sketchybar --set $NAME label="$LABEL" icon="$($CONFIG_DIR/plugins/brave_page_icon.sh "$WINDOW_TITLE")"
+elif [ "$SENDER" = "front_app_switched" ]; then
   sketchybar --set $NAME label="$LABEL" icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
 else
   sketchybar --set $NAME label="$LABEL"

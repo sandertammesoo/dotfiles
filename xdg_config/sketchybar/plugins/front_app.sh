@@ -5,7 +5,7 @@
 # focused application in the $INFO variable:
 # https://felixkratz.github.io/SketchyBar/config/events#events-and-scripting
 
-if [ "$SENDER" != "front_app_switched" ] && [ "$SENDER" != "title_change" ]; then
+if [ "$SENDER" != "front_app_switched" ] && [ "$SENDER" != "title_change" ] && [ "$SENDER" != "window_focus" ]; then
   exit 0
 fi
 
@@ -23,8 +23,8 @@ fi
 
 if [ "$APP" = "Brave Browser" ]; then
   sketchybar --set $NAME label="$LABEL" icon="$($CONFIG_DIR/plugins/brave_page_icon.sh "$WINDOW_TITLE")"
-elif [ "$SENDER" = "front_app_switched" ]; then
-  sketchybar --set $NAME label="$LABEL" icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$INFO")"
+elif [ "$SENDER" = "front_app_switched" ] || [ "$SENDER" = "window_focus" ]; then
+  sketchybar --set $NAME label="$LABEL" icon="$($CONFIG_DIR/plugins/icon_map_fn.sh "$APP")"
 else
   sketchybar --set $NAME label="$LABEL"
 fi

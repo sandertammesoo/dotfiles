@@ -12,6 +12,14 @@ sudo yabai --load-sa
 # S K E T C H Y B A R  E V E N T S
 yabai -m signal --add event="window_focused" action="sketchybar -m --trigger window_focus &> /dev/null"
 yabai -m signal --add event="window_title_changed" action="sketchybar -m --trigger title_change &> /dev/null"
+
+# B O R D E R S  (JankyBorders)
+# Drive borders explicitly from yabai focus events so the border follows the
+# actually-focused window rather than the macOS accessibility API's view of
+# "frontmost" — which gets confused when managed and floating windows coexist
+# on the same display (floating windows sit at a higher window level).
+yabai -m signal --add label="borders_focus" event="window_focused" \
+  action="borders window_id=\$YABAI_WINDOW_ID"
 # yabai -m signal --add label="flash_focus" event="window_focused" action="yabai -m window \$YABAI_WINDOW_ID --opacity 0.3 && sleep 0.2 && yabai -m window \$YABAI_WINDOW_ID --opacity 0.0"
 
 # D E B U G  L O G G I N G  F O R  M I N I M I Z E  B U G
@@ -125,7 +133,7 @@ unset _force_opacity_apps
 
 # Always-opaque Brave pages: 1.0 regardless of focus (video, meetings, PDFs, design tools)
 # Non-zero per-window opacity persists until explicitly reset, so setting once on focus/title is enough.
-_brave_always_pages="Fractory -|YouTube|Netflix|Disney\\+|Google Meet|Figma|\\.pdf"
+_brave_always_pages="Fractory -|YouTube|Netflix|Disney\\+|Meet|Figma|\\.pdf"
 _brave_focus_pages="Reddit"
 _brave_app_name="Brave Browser"
 

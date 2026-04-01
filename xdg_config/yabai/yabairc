@@ -63,6 +63,7 @@ yabai -m rule --add app="^(DBeaver|Docker Desktop|Postman)$" manage=off
 # ── Utilities & menu bar ──────────────────────────────────────────────────────
 yabai -m rule --add app="^(1Password|DigiDoc4 Client|Hidden Bar|NordVPN|Shottr|Spotify|Timer RH|zoom.us|calibre|Keymapp|Logi Options+|Loom|PS Remote Play|Steam|Transmission|UTM)$" manage=off
 yabai -m rule --add label="Brave" app="^Brave Browser$" title="(Who\'s using Brave\?)" manage=off
+yabai -m rule --add label="Slack Huddle" app="^Slack$" title="(Huddle)" manage=off
 
 # ── Design & CAD ──────────────────────────────────────────────────────────────
 yabai -m rule --add app="^(DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity)$" manage=off

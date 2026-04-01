@@ -317,14 +317,15 @@ moonlander < hyper - m : [[ $(yabai -m config focus_follows_mouse) = "disabled" 
 # Services
 # normal < shift + lalt - q : yabai --stop-service;
 # normal < shift + lalt - s : yabai --start-service;
-normal < alt - z : yabai --restart-service;
-normal < alt - x : $(skhd --restart-service; sketchybar --reload;)
+normal < alt - z : $(yabai --restart-service; brew services restart borders; brew services restart sketchybar)
+normal < alt - b : $(brew services restart borders;)
+normal < alt - x : $(skhd --restart-service;)
 normal < alt - r : sketchybar --reload;
 normal < alt - c : brew services restart sketchybar
 # moonlander < hyper - q : yabai --stop-service;
 # moonlander < hyper - s : yabai --start-service;
-moonlander < meh - z : yabai --restart-service;
-moonlander < meh - x : $(skhd --restart-service; sketchybar --reload;)
+moonlander < meh - z : $(yabai --restart-service; brew services restart borders; brew services restart sketchybar)
+moonlander < meh - x : $(skhd --restart-service;)
 moonlander < meh - r : sketchybar --reload;
 moonlander < meh - c : brew services restart sketchybar
 

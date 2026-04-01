@@ -19,6 +19,8 @@ elif [[ "$title" == *"GitHub"* ]] || [[ "$title" =~ $_github_suffix ]] || [[ "$t
   echo ":git_hub:"
 elif [[ "$title" == *"Figma"* ]]; then
   echo ":figma:"
+elif [[ "$title" == *"Claude"* ]]; then
+  echo ":claude:"
 else
   echo ":brave_browser:"
 fi

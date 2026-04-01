@@ -12,7 +12,7 @@ if [ "$SENDER" = "title_change" ]; then
   while IFS= read -r title; do
     icon_strip+=" $($CONFIG_DIR/plugins/brave_page_icon.sh "$title")"
   done <<< "$(yabai -m query --windows --space "$space" 2>/dev/null \
-    | jq -r '.[] | select(.app == "Brave Browser") | .title')"
+    | jq -r '.[] | select(.app == "Brave Browser" and (."is-minimized" == false)) | .title')"
 
   sketchybar --set space.$space label="$icon_strip"
 
@@ -34,7 +34,7 @@ elif [ "$SENDER" = "space_windows_change" ]; then
         while IFS= read -r title; do
           icon_strip+=" $($CONFIG_DIR/plugins/brave_page_icon.sh "$title")"
         done <<< "$(yabai -m query --windows --space "$space" 2>/dev/null \
-          | jq -r '.[] | select(.app == "Brave Browser") | .title')"
+          | jq -r '.[] | select(.app == "Brave Browser" and (."is-minimized" == false)) | .title')"
       else
         icon_strip+=" $($CONFIG_DIR/plugins/icon_map_fn.sh "$app")"
       fi

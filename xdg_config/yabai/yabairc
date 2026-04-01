@@ -12,6 +12,13 @@ sudo yabai --load-sa
 # S K E T C H Y B A R  E V E N T S
 yabai -m signal --add event="window_focused" action="sketchybar -m --trigger window_focus &> /dev/null"
 yabai -m signal --add event="window_title_changed" action="sketchybar -m --trigger title_change &> /dev/null"
+
+# B O R D E R S  (JankyBorders)
+# Workaround for macOS 26 Tahoe: borders' accessibility observer gets stuck on
+# floating windows after a few focus transitions. Sending any config update
+# forces it to re-query the active window after yabai resolves focus correctly.
+yabai -m signal --add label="borders_focus_refresh" event="window_focused" \
+  action="borders ax_focus=on &>/dev/null"
 # yabai -m signal --add label="flash_focus" event="window_focused" action="yabai -m window \$YABAI_WINDOW_ID --opacity 0.3 && sleep 0.2 && yabai -m window \$YABAI_WINDOW_ID --opacity 0.0"
 
 # D E B U G  L O G G I N G  F O R  M I N I M I Z E  B U G

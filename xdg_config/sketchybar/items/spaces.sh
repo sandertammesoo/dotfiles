@@ -48,6 +48,8 @@ space_separator=(
   script="$PLUGIN_DIR/space_windows.sh"
 )
 
+sketchybar --add event title_change 2>/dev/null
+
 sketchybar --add item space_separator left \
            --set space_separator "${space_separator[@]}" \
-           --subscribe space_separator space_windows_change
+           --subscribe space_separator space_windows_change title_change

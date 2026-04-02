@@ -63,7 +63,12 @@ yabai -m rule --add app="^(DBeaver|Docker Desktop|Postman)$" manage=off
 # ── Utilities & menu bar ──────────────────────────────────────────────────────
 yabai -m rule --add app="^(1Password|DigiDoc4 Client|Hidden Bar|NordVPN|Shottr|Spotify|Timer RH|zoom.us|calibre|Keymapp|Logi Options+|Loom|PS Remote Play|Steam|Transmission|UTM)$" manage=off
 yabai -m rule --add label="Brave" app="^Brave Browser$" title="(Who\'s using Brave\?)" manage=off
-yabai -m rule --add label="Slack Huddle" app="^Slack$" title="(Huddle)" manage=off
+yabai -m rule --add label="Slack huddle" app="^Slack$" title="(Huddle)" manage=off
+yabai -m rule --add label="Slack help" app="^Slack$" title="^(Help)" manage=off
+# The rule above doesn't catch the help window because yabai evaluates the rule
+# before Slack sets the window title. This signal floats it once the title is set.
+yabai -m signal --add label="slack_help_float" event=window_title_changed app="^Slack$" \
+  action='win=$(yabai -m query --windows --window "$YABAI_WINDOW_ID"); [[ "$(echo "$win" | jq -r ".title")" =~ ^Help ]] && [[ "$(echo "$win" | jq -r ".\"is-floating\"")" == "false" ]] && yabai -m window "$YABAI_WINDOW_ID" --toggle float'
 
 # ── Design & CAD ──────────────────────────────────────────────────────────────
 yabai -m rule --add app="^(DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity)$" manage=off
@@ -80,8 +85,8 @@ yabai -m config mouse_follows_focus off \
                 window_animation_duration 0.2 \
                 window_animation_easing ease_in_out_cubic \
                 window_opacity_duration 0.2 \
-                active_window_opacity 0.97 \
-                normal_window_opacity 0.85 \
+                active_window_opacity 1 \
+                normal_window_opacity 0.90 \
                 window_opacity on \
                 insert_feedback_color 0xffd75f5f \
                 split_ratio 0.5 \

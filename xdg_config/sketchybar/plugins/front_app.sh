@@ -15,8 +15,8 @@ WINDOW_TITLE=$(echo "$WINDOW_INFO" | jq -r '.title')
 
 if [[ $WINDOW_TITLE = "" ]]; then
   LABEL="$APP"
-elif [[ ${#WINDOW_TITLE} -gt 50 ]]; then
-  LABEL="${WINDOW_TITLE:0:50}..."
+elif [[ ${#WINDOW_TITLE} -gt 80 ]]; then
+  LABEL="${WINDOW_TITLE:0:80}..."
 else
   LABEL="$WINDOW_TITLE"
 fi

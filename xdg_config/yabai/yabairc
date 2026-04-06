@@ -181,6 +181,10 @@ yabai -m signal --add label="opacity_brave_focus_title_changed"  event=window_ti
 yabai -m signal --add label="opacity_brave_focus_reset"          event=window_focused                                  action="$_opacity_brave_focus_reset"
 unset _opacity_brave_always _opacity_brave_focus _opacity_brave_focus_reset _brave_always_pages _brave_focus_pages _brave_app_name
 
+# Apply all rules to already-open windows (rules only fire on window_created by
+# default, so existing windows are not managed correctly after a restart).
+yabai -m rule --apply
+
 echo "yabai configuration loaded.."
 
 # options=(

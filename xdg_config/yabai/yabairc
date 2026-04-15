@@ -41,11 +41,12 @@ yabai -m signal --add event=application_front_switched action='echo "[$(date "+%
 yabai -m rule --add label="macOS system" app="^(System (Settings|Information|Preferences)|Disk Utility|Activity Monitor|Archive Utility|App Store|Keychain)$" manage=off
 yabai -m rule --add label="Apple first-party apps" app="^(FaceTime|Numbers|Pages|Notes|Reminders|Stocks|Find My|Messages|Passwords|Phone|Weather|Shortcuts)$" manage=off
 yabai -m rule --add label="Preferences" title="(Preferences|Settings)$" manage=off
+yabai -m rule --add label="YT-Pip" title="(Picture in Picture)$" manage=off
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 
 # ── Apple first-party ─────────────────────────────────────────────────────────
 yabai -m rule --add app="^(Calculator|(Notion )?Calendar|FaceTime|Numbers)$" manage=off
-yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref|Downloads)" manage=off
 yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
 
 # ── Media ─────────────────────────────────────────────────────────────────────
@@ -61,7 +62,7 @@ yabai -m rule --add app="^((Elgato )?(Wave Link|Stream Deck))$" manage=off
 yabai -m rule --add app="^(DBeaver|Docker Desktop|Postman)$" manage=off
 
 # ── Utilities & menu bar ──────────────────────────────────────────────────────
-yabai -m rule --add app="^(1Password|DigiDoc4 Client|Hidden Bar|NordVPN|Shottr|Spotify|Timer RH|zoom.us|calibre|Keymapp|Logi Options+|Loom|PS Remote Play|Steam|Transmission|UTM)$" manage=off
+yabai -m rule --add app="^(1Password|DigiDoc4 Client|DockDoor|Hidden Bar|NordVPN|Shottr|Spotify|Timer RH|zoom.us|calibre|Keymapp|Logi Options+|Loom|Openscreen|PS Remote Play|Steam|Transmission|UTM|Antinote)$" manage=off
 yabai -m rule --add label="Brave" app="^Brave Browser$" title="(Who\'s using Brave\?)" manage=off
 yabai -m rule --add label="Slack huddle" app="^Slack$" title="(Huddle)" manage=off
 yabai -m rule --add label="Slack help" app="^Slack$" title="^(Help)" manage=off
@@ -124,7 +125,7 @@ yabai -m config mouse_follows_focus off \
 #   action='[ "$YABAI_WINDOW_APP" = "WezTerm" ] && yabai -m window "$YABAI_WINDOW_ID" --opacity 0.88'
 
 # Example: Force full opacity for video/screen-share apps (override global)
-_force_opacity_apps="zoom\.us|Loom|PS Remote Play|FaceTime|System (Settings|Information|Preferences)|Disk Utility|Activity Monitor|Archive Utility|App Store|Keychain|Find My|Finder|Preview|VLC|IINA|Shottr|DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity"
+_force_opacity_apps="zoom\.us|Loom|Openscreen|PS Remote Play|FaceTime|System (Settings|Information|Preferences)|Disk Utility|Activity Monitor|Archive Utility|App Store|Keychain|Find My|Finder|Preview|VLC|IINA|Shottr|DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity"
 yabai -m signal --add label="opacity_opaque_apps" event=window_focused app="^(${_force_opacity_apps})$" action='yabai -m window "$YABAI_WINDOW_ID" --opacity 1.0'
 unset _force_opacity_apps
 
@@ -136,50 +137,56 @@ unset _force_opacity_apps
 #     *) yabai -m window "$YABAI_WINDOW_ID" --opacity 0.0 ;;  # reset others to global
 #   esac'
 
-# Always-opaque Brave pages: 1.0 regardless of focus (video, meetings, PDFs, design tools)
+# Browser opacity overrides: title-based rules shared across Brave and Safari.
 # Non-zero per-window opacity persists until explicitly reset, so setting once on focus/title is enough.
-_brave_always_pages="Fractory -|YouTube|Netflix|Disney\\+|Meet|Figma|\\.pdf"
-_brave_focus_pages="Reddit"
-_brave_app_name="Brave Browser"
+_browser_always_pages="Fractory -|YouTube|Netflix|Disney\\+|Meet|Figma|\\.pdf|Picture in Picture"
+_browser_focus_pages="Reddit"
+_browser_app_pattern="Brave Browser|Safari"
 
-_opacity_brave_always=$(cat <<EOACTION
+# Always-opaque: 1.0 regardless of focus (video, meetings, PDFs, design tools)
+_opacity_browser_always=$(cat <<EOACTION
 title=\$(yabai -m query --windows --window "\$YABAI_WINDOW_ID" 2>/dev/null | jq -r ".title // empty")
-if printf "%s" "\$title" | grep -qE "${_brave_always_pages}"; then
+if printf "%s" "\$title" | grep -qE "${_browser_always_pages}"; then
   yabai -m window "\$YABAI_WINDOW_ID" --opacity 1.0
 fi
 EOACTION
 )
 
-# Focus-opaque Brave pages: 1.0 when focused, global active/normal opacity otherwise
-# The else guards against resetting always-opaque pages that don't match focus-opaque list
-_opacity_brave_focus=$(cat <<EOACTION
+# Focus-opaque: 1.0 when focused, global active/normal opacity otherwise.
+# The elif guards against resetting always-opaque pages that don't match focus-opaque list.
+_opacity_browser_focus=$(cat <<EOACTION
 title=\$(yabai -m query --windows --window "\$YABAI_WINDOW_ID" 2>/dev/null | jq -r ".title // empty")
-if printf "%s" "\$title" | grep -qE "${_brave_focus_pages}"; then
+if printf "%s" "\$title" | grep -qE "${_browser_focus_pages}"; then
   yabai -m window "\$YABAI_WINDOW_ID" --opacity 1.0
-elif ! printf "%s" "\$title" | grep -qE "${_brave_always_pages}"; then
+elif ! printf "%s" "\$title" | grep -qE "${_browser_always_pages}"; then
   yabai -m window "\$YABAI_WINDOW_ID" --opacity 0.0
 fi
 EOACTION
 )
-# Reset focus-opaque Brave windows when a non-Brave app gains focus
-_opacity_brave_focus_reset=$(cat <<EOACTION
-[ "\$YABAI_WINDOW_APP" = "${_brave_app_name}" ] && exit 0
+
+# Reset focus-opaque browser windows when a non-browser app gains focus
+_opacity_browser_focus_reset=$(cat <<EOACTION
+printf "%s" "\$YABAI_WINDOW_APP" | grep -qE "^(${_browser_app_pattern})$" && exit 0
 yabai -m query --windows 2>/dev/null | jq -c ".[]" | while IFS= read -r win; do
   wid=\$(printf "%s" "\$win" | jq -r ".id")
   wtitle=\$(printf "%s" "\$win" | jq -r ".title // empty")
-  if printf "%s" "\$wtitle" | grep -qE "${_brave_focus_pages}"; then
+  if printf "%s" "\$wtitle" | grep -qE "${_browser_focus_pages}"; then
     yabai -m window "\$wid" --opacity 0.0
   fi
 done
 EOACTION
 )
 
-yabai -m signal --add label="opacity_brave_always_focused"       event=window_focused       app="^${_brave_app_name}$" action="$_opacity_brave_always"
-yabai -m signal --add label="opacity_brave_always_title_changed" event=window_title_changed app="^${_brave_app_name}$" action="$_opacity_brave_always"
-yabai -m signal --add label="opacity_brave_focus_focused"        event=window_focused       app="^${_brave_app_name}$" action="$_opacity_brave_focus"
-yabai -m signal --add label="opacity_brave_focus_title_changed"  event=window_title_changed app="^${_brave_app_name}$" action="$_opacity_brave_focus"
-yabai -m signal --add label="opacity_brave_focus_reset"          event=window_focused                                  action="$_opacity_brave_focus_reset"
-unset _opacity_brave_always _opacity_brave_focus _opacity_brave_focus_reset _brave_always_pages _brave_focus_pages _brave_app_name
+yabai -m signal --add label="opacity_brave_always_focused"        event=window_focused       app="^Brave Browser$" action="$_opacity_browser_always"
+yabai -m signal --add label="opacity_brave_always_title_changed"  event=window_title_changed app="^Brave Browser$" action="$_opacity_browser_always"
+yabai -m signal --add label="opacity_brave_focus_focused"         event=window_focused       app="^Brave Browser$" action="$_opacity_browser_focus"
+yabai -m signal --add label="opacity_brave_focus_title_changed"   event=window_title_changed app="^Brave Browser$" action="$_opacity_browser_focus"
+yabai -m signal --add label="opacity_safari_always_focused"       event=window_focused       app="^Safari$"        action="$_opacity_browser_always"
+yabai -m signal --add label="opacity_safari_always_title_changed" event=window_title_changed app="^Safari$"        action="$_opacity_browser_always"
+yabai -m signal --add label="opacity_safari_focus_focused"        event=window_focused       app="^Safari$"        action="$_opacity_browser_focus"
+yabai -m signal --add label="opacity_safari_focus_title_changed"  event=window_title_changed app="^Safari$"        action="$_opacity_browser_focus"
+yabai -m signal --add label="opacity_browser_focus_reset"         event=window_focused                             action="$_opacity_browser_focus_reset"
+unset _opacity_browser_always _opacity_browser_focus _opacity_browser_focus_reset _browser_always_pages _browser_focus_pages _browser_app_pattern
 
 # Apply all rules to already-open windows (rules only fire on window_created by
 # default, so existing windows are not managed correctly after a restart).

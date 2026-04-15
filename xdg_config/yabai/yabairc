@@ -139,7 +139,7 @@ unset _force_opacity_apps
 
 # Browser opacity overrides: title-based rules shared across Brave and Safari.
 # Non-zero per-window opacity persists until explicitly reset, so setting once on focus/title is enough.
-_browser_always_pages="Fractory -|YouTube|Netflix|Disney\\+|Meet|Figma|\\.pdf|Picture in Picture"
+_browser_always_pages="Fractory -|- Fractory|YouTube|Netflix|Disney\\+|Meet|Figma|\\.pdf|Picture in Picture"
 _browser_focus_pages="Reddit"
 _browser_app_pattern="Brave Browser|Safari"
 

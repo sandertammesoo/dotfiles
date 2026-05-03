@@ -180,6 +180,12 @@ brew "lazyssh"                  # Terminal-based SSH manager https://github.com/
 
 # Typography and design assets for development and system use
 cask "font-hack-nerd-font"      # Developer targeted fonts with a high number of glyphs https://github.com/ryanoasis/nerd-fonts
+cask "font-jetbrains-mono-nerd-font" # JetBrains Mono font with Nerd Font glyphs https://www.jetbrains.com/lp/mono/
+cask "font-blex-mono-nerd-font" # Blex Mono font with Nerd Font glyphs
+cask "font-meslo-lg-nerd-font" # Meslo LG font with Nerd Font glyphs
+cask "font-symbols-only-nerd-font" # Nerd Font with only symbols and icons
+cask "font-terminess-ttf-nerd-font" # Terminess Mono TTF font with Nerd Font glyphs
+cask "font-3270-nerd-font"     # 3270 font with Nerd Font glyphs
 cask "font-sf-pro"              # San Francisco Pro font family https://developer.apple.com/fonts/
 cask "sf-symbols"               # Tool that provides consistent, highly configurable symbols for apps https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/
 

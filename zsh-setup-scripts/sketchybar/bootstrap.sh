@@ -110,34 +110,55 @@ else
         fi
     fi
     
-    # Build and install
+    # pnpm 10+ blocks postinstall scripts by default; pre-approve ttf2woff2 via
+    # pnpm-workspace.yaml so its native binding builds without prompting.
     TARGET_SCRIPT="$XDG_CONFIG_HOME/sketchybar/plugins/icon_map_fn.sh"
-    run_cmd="pnpm install && pnpm run build:install \"$TARGET_SCRIPT\""
+    font_build_ok=true
+    printf 'allowBuilds:\n  ttf2woff2: true\n' > pnpm-workspace.yaml
+
+    run_cmd="pnpm install"
     log_verbose "Running command: $run_cmd"
     output=$(eval "$run_cmd" 2>&1)
     exit_code=$?
-    
     if [ $exit_code -eq 0 ]; then
         echo "$output" | output_stream VERBOSE
-        # build:install prepends a newline to the START-OF-ICON-MAP marker each run,
-        # causing blank lines to accumulate. Squash multiple consecutive blank lines to one.
-        local cleaned
-        cleaned=$(awk '/^$/{blank++; if(blank<=1)print; next} {blank=0; print}' "$TARGET_SCRIPT")
-        printf '%s\n' "$cleaned" > "$TARGET_SCRIPT"
-        log_success "sketchybar app font built and installed successfully!"
-        log_info "Installed sketchybar app font to $TARGET_SCRIPT"
-        log_info "You can use this font in your sketchybar configuration to display app icons in your bar."
-        log_info "Example usage in sketchybar config: sketchybar --set \$NAME icon.font=\"$TARGET_SCRIPT:Regular:16.0\""
     else
-        echo "$output" | output_stream FATAL
-        log_fatal "Failed to build and install sketchybar app font"
-        rm -rf "$TEMP_DIR"
-        return 1
+        echo "$output" | output_stream ERROR
+        log_error "pnpm install failed for sketchybar-app-font"
+        font_build_ok=false
     fi
-    
+
+    # Build and install — only if pnpm install succeeded.
+    if [ "$font_build_ok" = "true" ]; then
+        run_cmd="pnpm run build:install \"$TARGET_SCRIPT\""
+        log_verbose "Running command: $run_cmd"
+        output=$(eval "$run_cmd" 2>&1)
+        exit_code=$?
+        if [ $exit_code -eq 0 ]; then
+            echo "$output" | output_stream VERBOSE
+            # build:install prepends a newline to the START-OF-ICON-MAP marker each run,
+            # causing blank lines to accumulate. Squash multiple consecutive blank lines to one.
+            local cleaned
+            cleaned=$(awk '/^$/{blank++; if(blank<=1)print; next} {blank=0; print}' "$TARGET_SCRIPT")
+            printf '%s\n' "$cleaned" > "$TARGET_SCRIPT"
+            log_success "sketchybar app font built and installed successfully!"
+            log_info "Installed sketchybar app font to $TARGET_SCRIPT"
+        else
+            echo "$output" | output_stream ERROR
+            log_error "pnpm run build:install failed for sketchybar-app-font"
+            font_build_ok=false
+        fi
+    fi
+
     # Cleanup
     cd - > /dev/null 2>&1 || true  # Don't fail if cd - doesn't work
     rm -rf "$TEMP_DIR"
+
+    # Font regeneration is non-critical: the existing icon_map_fn.sh on disk
+    # remains valid, so we continue and still start the service.
+    if [ "$font_build_ok" != "true" ]; then
+        log_warn "Continuing without regenerating sketchybar app font; existing $TARGET_SCRIPT will be used."
+    fi
 fi
 
 # Start sketchybar service

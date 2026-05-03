@@ -92,7 +92,7 @@ source $ITEM_DIR/front_app.sh
 #source $ITEM_DIR/calendar.sh
 #source $ITEM_DIR/displays.sh
 source $ITEM_DIR/volume.sh
-#source $ITEM_DIR/battery.sh
+source $ITEM_DIR/battery.sh
 #source $ITEM_DIR/cpu.sh
 source $ITEM_DIR/space_yabai_mode.sh
 source $ITEM_DIR/skhd_mode.sh

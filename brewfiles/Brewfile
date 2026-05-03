@@ -217,7 +217,6 @@ cask "slack"                    # Team communication and collaboration software 
 cask "discord"                  # Voice and text chat software https://discord.com/
 cask "zoom"                     # Video communication and virtual meeting platform https://www.zoom.us/
 cask "mattermost"               # Open-source, self-hosted Slack-alternative https://mattermost.com/
-cask "messenger"                # Native desktop app for Messenger (formerly Facebook Messenger) https://www.messenger.com/desktop
 cask "signal"                   # Instant messaging application focusing on security https://signal.org/
 
 # Media & Entertainment
@@ -251,8 +250,11 @@ cask "loom"                     # Screen and video recording software https://ww
 cask "warp"                     # Rust-based terminal https://www.warp.dev/
 cask "shottr"                   # Screenshot measurement and annotation tool https://shottr.cc/
 cask "hiddenbar"                # Utility to hide menu bar items https://github.com/dwarvesf/hidden/
-cask "alt-tab"                  # Enable Windows-like alt-tab https://alt-tab-macos.netlify.app/
+# cask "alt-tab"                  # Enable Windows-like alt-tab https://alt-tab-macos.netlify.app/ NOTE: Alt-tab is currently disabled. New DockDoor app (https://dockdoor.net/) looks promising as a replacement, but is currently in early access and has some stability issues.
+cask "dockdoor"                 # DockDoor is a new app that provides a customizable app switcher and window management experience for macOS https://dockdoor.net/
 cask "hyperkey"                 # Convert your caps lock key or any of your modifier keys to the hyper key https://hyperkey.app/
+cask "middleclick"                # MiddleClick is a tiny app that allows you to middle-click on your Macbook trackpad
+cask "xykong/tap/flux-markdown"  # Markdown previewer for macOS
 
 # Hardware & Peripherals
 # Hardware control and peripheral management software for specialized devices

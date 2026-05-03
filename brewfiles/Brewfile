@@ -115,7 +115,9 @@ brew "jqp"                      # JSON query tool https://github.com/noahgorstei
 # brew "go"                     # Open source programming language to build simple/reliable/efficient software https://go.dev/
 
 # Python Development
-# brew "pyenv"                  # Python version management https://github.com/pyenv/pyenv
+brew "pyenv"                  # Python version management https://github.com/pyenv/pyenv
+brew "pipx"                    # Install and run Python applications in isolated environments https://pypa.github.io/pipx/
+brew "pyenv-virtualenv"          # pyenv plugin to manage virtual environments  https://github.com/pyenv/pyenv-virtualenv
 
 # JavaScript/Node.js Development
 # brew "node"                   # Platform built on V8 to build network applications https://nodejs.org/

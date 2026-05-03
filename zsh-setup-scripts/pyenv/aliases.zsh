@@ -14,8 +14,8 @@ if command -v pyenv &> /dev/null; then
     alias py-rehash='pyenv rehash'
     alias py-which='pyenv which'
     alias py-shims='pyenv shims'
-    #alias pip=pip3
-    #alias python=python3
+    # alias pip=pip3
+    # alias python=python3
 else
     log_skip "pyenv not found, skipping pyenv aliases"
     return

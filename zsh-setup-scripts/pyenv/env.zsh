@@ -23,6 +23,13 @@ if command -v python3 &> /dev/null || command -v pyenv &> /dev/null; then
         if eval "$(pyenv init - zsh)"; then
             log_success "pyenv init successful"
             export_n_log PYENV_VIRTUALENV_CACHE_PATH="$XDG_CACHE_HOME/pyenv/pyenv-virtualenv" # Set pyenv-virtualenv cache location
+            if command -v pyenv-virtualenv &> /dev/null && eval "$(pyenv virtualenv-init -)"; then
+                log_success "pyenv-virtualenv init successful"
+            elif command -v pyenv-virtualenv &> /dev/null; then
+                log_fatal "pyenv-virtualenv init failed"
+            else
+                log_skip "pyenv-virtualenv not found, skipping pyenv-virtualenv environment setup"
+            fi
         else
             log_fatal "pyenv init failed"
         fi

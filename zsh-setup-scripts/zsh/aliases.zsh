@@ -2,7 +2,7 @@
 
 # Reload the shell (i.e. invoke as a login shell)
 alias reload!="exec zsh"
-# alias reload!=". $XDG_CONFIG_HOME/.zsh/.zshrc"
+alias resource=". $XDG_CONFIG_HOME/.zsh/.zshrc"
 alias reload="reload!"
 alias s=reload
 

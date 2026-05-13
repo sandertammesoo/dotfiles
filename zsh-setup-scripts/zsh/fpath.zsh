@@ -16,6 +16,9 @@ if [[ -x "/opt/homebrew/bin/brew" ]]; then
 elif [[ -x "/usr/local/bin/brew" ]]; then
     brew_prefix="/usr/local"
     homebrew_found=true
+elif [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+    brew_prefix="/home/linuxbrew/.linuxbrew"
+    homebrew_found=true
 elif command -v brew &> /dev/null; then
     # Fallback: try to get prefix from brew command if it's already in PATH
     brew_prefix="$(brew --prefix 2>/dev/null)"

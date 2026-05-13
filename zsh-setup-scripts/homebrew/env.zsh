@@ -12,6 +12,9 @@ elif [[ -x "/opt/homebrew/bin/brew" ]]; then
 elif [[ -x "/usr/local/bin/brew" ]]; then
     # Intel Mac
     BREW_PATH="/usr/local/bin/brew"
+elif [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+    # Linux with Homebrew installed in the default location
+    BREW_PATH="/home/linuxbrew/.linuxbrew/bin/brew"
 else
     log_skip "Homebrew not found, skipping Homebrew shell integration"
     return

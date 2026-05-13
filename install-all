@@ -1,5 +1,24 @@
 #!/usr/bin/env zsh
 
+usage() {
+    echo "Usage: ./install-all [options]"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help                    Show this help message"
+    echo "  -d, --skip-dotbot             Skip DotBot installation"
+    echo "  -u, --skip-updates            Skip updates (OSX, Homebrew updates and installs)"
+    echo "  -o, --skip-osx-updates        Skip macOS updates"
+    echo "  -i, --skip-app-installation   Skip application installation (Homebrew/mas)"
+    echo "  -b, --skip-brew-upgrades      Skip Homebrew updates"
+    echo "  -s, --skip-services           Skip Homebrew services setup"
+    echo "  -l, --setup-lazyman           Setup Lazyman setup"
+    echo "  -T, --trace                   Show trace output"
+    echo "  -V, --verbose                 Show verbose output"
+    echo "  -D, --debug                   Show debug output"
+    echo "  -Q, --quiet                   Suppress output except for errors"
+    echo "  -S, --silent                  Suppress all output"
+}
+
 # Parse options using zparseopts
 local -A opts
 
@@ -24,28 +43,13 @@ zparseopts -D -E -F -A opts -- \
   Q -quiet \
   S -silent || {
     echo "Error parsing options"
-    echo "Usage: ./install-all [options] [--help]"
+    usage
     return 1
   }
 
 # Check for help flag
 if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
-    echo "Usage: ./install-all [options]"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help                    Show this help message"
-    echo "  -d, --skip-dotbot             Skip DotBot installation"
-    echo "  -u, --skip-updates            Skip updates (OSX, Homebrew updates and installs)"
-    echo "  -o, --skip-osx-updates        Skip macOS updates"
-    echo "  -i, --skip-app-installation   Skip application installation (Homebrew/mas)"
-    echo "  -b, --skip-brew-upgrades      Skip Homebrew updates"
-    echo "  -s, --skip-services           Skip Homebrew services setup"
-    echo "  -l, --setup-lazyman           Setup Lazyman setup"
-    echo "  -T, --trace                   Show trace output"
-    echo "  -V, --verbose                 Show verbose output"
-    echo "  -D, --debug                   Show debug output"
-    echo "  -Q, --quiet                   Suppress output except for errors"
-    echo "  -S, --silent                  Suppress all output"
+    usage
     return 0
 fi
 
@@ -170,6 +174,8 @@ else
 fi
 
 # macOS-specific setup
+# TODO: Consider moving this to a separate script (e.g. setup-macos.sh) and calling it from here for better modularity
+# TODO: Some of this may also be relevant for Linux (e.g. Homebrew setup), so consider how to structure it for cross-platform compatibility
 if [[ "$(uname -s)" == "Darwin" ]]; then
   log_trace "Detected macOS, proceeding with additional setup..."
   local DOTS="$XDG_CONFIG_HOME/.dotfiles"
@@ -243,8 +249,8 @@ fi
 # Completion message
 log_success "Installation complete!"
 
-
 # Check if services setup should be skipped
+# TODO: Consider adding OS check and only run if on macOS, or move to separate script (e.g. setup-services.sh) for better modularity
 if [[ "$SKIP_SERVICES" == "true" ]]; then
   log_skip "Skipping Homebrew services setup."
 else

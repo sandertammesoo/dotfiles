@@ -8,7 +8,7 @@ local config = wezterm.config_builder()
  
 -- Change the font and the font size.
 config.line_height = 1.2
-config.font_size = 18
+config.font_size = 16
 config.font = wezterm.font("MesloLGS Nerd Font Mono", {weight="Regular"})
 config.font = wezterm.font_with_fallback {
   "MesloLGS Nerd Font Mono",

@@ -3,9 +3,18 @@ if command -v starship &> /dev/null; then
     log_success "starship is installed, setting up starship shell integration"
 
     # Detect the current OS / distribution
-    LFILE="/etc/*-release"
+    LFILE="/etc/os-release"
     MFILE="/System/Library/CoreServices/SystemVersion.plist"
 
+    # Ubuntu and Debian-based distros use /etc/os-release, which contains an ID field with the distro name
+    # Fedora and Red Hat-based distros use /etc/os-release, which contains an ID field with the distro name
+    # Arch-based distros use /etc/os-release, which contains an ID field with the distro name
+    # Alpine uses /etc/os-release with ID=alpine
+    # macOS can be detected by the presence of /System/Library/CoreServices/SystemVersion.plist
+    # WSL can be detected by the presence of the WSL_DISTRO_NAME environment variable
+    # FreeBSD and OpenBSD can be detected by the output of uname -s, which will be "FreeBSD" or "OpenBSD"
+
+    # Use a series of checks to determine the distribution, with fallbacks for unknown cases  
     if [[ -f $LFILE ]]; then
         _distro=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }')
     elif [[ -f $MFILE ]]; then

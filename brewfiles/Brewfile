@@ -7,17 +7,18 @@ cask_args appdir: '/Applications'
 
 # Homebrew Taps
 # Custom repositories for specialized tools and utilities
-tap "felixkratz/formulae"       # macOS window management and status bar tools (Sketchybar)
-tap "asmvik/formulae"      # macOS tiling window manager and hotkey daemon (Yabai, SKHD)
+# tap "felixkratz/formulae"       # macOS window management and status bar tools (Sketchybar)
+# tap "asmvik/formulae"      # macOS tiling window manager and hotkey daemon (Yabai, SKHD)
 tap "sandertammesoo/formulae"   # Personal formulae repository
 tap "buo/cask-upgrade"          # Enhanced cask management - upgrade all apps: brew cu
 tap "gromgit/brewtils"          # Homebrew tap management utilities
 
 # Essential System Tools
 # Core system utilities required for basic functionality
-brew "mas"                      # Mac App Store command-line interface https://github.com/mas-cli/mas
+# brew "mas"                      # Mac App Store command-line interface https://github.com/mas-cli/mas
 
 brew "gromgit/brewtils/taproom"      # Homebrew tap management utilities
+brew "cask"
 
 ################################
 ##### COMMAND LINE TOOLS ######
@@ -25,6 +26,7 @@ brew "gromgit/brewtils/taproom"      # Homebrew tap management utilities
 
 # Core System Utilities
 # Essential GNU/Linux tools for macOS - replaces BSD versions with GNU equivalents
+brew "gcc"                      # GNU Compiler Collection https://gcc.gnu.org/
 brew "coreutils"                # GNU File, Shell, and Text utilities https://www.gnu.org/software/coreutils
 brew "moreutils"                # Collection of tools that nobody wrote when UNIX was young https://joeyh.name/code/moreutils/
 brew "findutils"                # Collection of GNU find, xargs, and locate https://www.gnu.org/software/findutils/
@@ -46,7 +48,7 @@ brew "zoxide"                   # Shell extension to navigate your filesystem fa
 # Enhanced file manipulation and viewing tools - modern replacements for cat, ls, etc.
 brew "bat"                      # Clone of cat(1) with syntax highlighting and Git integration https://github.com/sharkdp/bat
 brew "eza"                      # Modern, maintained replacement for ls https://github.com/eza-community/eza
-brew "superfile"                # Modern and pretty fancy file manager for the terminal https://superfile.netlify.app/
+# brew "superfile"                # Modern and pretty fancy file manager for the terminal https://superfile.netlify.app/
 brew "stow"                     # Organize software neatly under a single directory tree (e.g. /usr/local) https://www.gnu.org/software/stow/
 brew "unp"                      # Unpack everything with one command https://tracker.debian.org/pkg/unp
 # brew "ranger"                   # Console file manager with VI key bindings https://ranger.github.io/
@@ -70,8 +72,9 @@ brew "magic-wormhole"           # Securely send files and directories from one c
 
 # System Monitoring & Performance
 # System monitoring and performance analysis tools
+brew "btop"                     # Resource monitor that shows usage and stats for processor, memory, disks, network and processes https://github.com/aristocratos/btop
 brew "htop"                     # Improved top (interactive process viewer) https://htop.dev/
-brew "macmon"                   # Sudoless performance monitoring for Apple Silicon processors https://github.com/vladkens/macmon
+# brew "macmon"                   # Sudoless performance monitoring for Apple Silicon processors https://github.com/vladkens/macmon
 brew "glances"                  # Cross-platform system monitoring tool https://nicolargo.github.io/glances/
 brew "ncdu"                     # NCurses Disk Usage https://dev.yorhel.nl/ncdu
 brew "duf"                      # Disk Usage/Free Utility https://github.com/muesli/duf
@@ -96,9 +99,9 @@ brew "tlrc"                     # Official tldr client written in Rust https://t
 # Version Control & Code Management
 # Git and version control tools - essential for software development
 brew "git"                      # Distributed revision control system https://git-scm.com
-brew "git-flow"                 # Extensions to follow Vincent Driessen's branching model https://github.com/nvie/gitflow
-brew "lazygit"                  # Simple terminal UI for git commands https://github.com/jesseduffield/lazygit/
-brew "delta"                    # Syntax-highlighting pager for git, diff, and grep output https://github.com/dandavison/delta
+# brew "git-flow"                 # Extensions to follow Vincent Driessen's branching model https://github.com/nvie/gitflow
+# brew "lazygit"                  # Simple terminal UI for git commands https://github.com/jesseduffield/lazygit/
+# brew "delta"                    # Syntax-highlighting pager for git, diff, and grep output https://github.com/dandavison/delta
 # brew "gh"                     # GitHub command-line tool https://cli.github.com/
 
 # Data Processing & DevOps Tools
@@ -131,15 +134,15 @@ brew "jqp"                      # JSON query tool https://github.com/noahgorstei
 
 # Code Editors & IDEs
 # Text editors and integrated development environments
-cask "visual-studio-code"       # Open-source code editor https://code.visualstudio.com/
+# cask "visual-studio-code"       # Open-source code editor https://code.visualstudio.com/
 # Additional editors (uncomment as needed)
 # cask "sublime-text"           # Sophisticated text editor for code, markup and prose https://www.sublimetext.com/
 # cask "neovim"                 # Vim-based text editor https://neovim.io/
 
 # Development Utilities & Tools
 # Development utilities, API testing, and code formatting tools  
-cask "insomnia"                 # HTTP and GraphQL Client https://insomnia.rest/
-cask "devtoys"                  # Utilities designed to make common development tasks easier https://github.com/DevToys-app/DevToys
+# cask "insomnia"                 # HTTP and GraphQL Client https://insomnia.rest/
+# cask "devtoys"                  # Utilities designed to make common development tasks easier https://github.com/DevToys-app/DevToys
 # brew "uncrustify"             # Source code beautifier https://uncrustify.sourceforge.net/
 # cask "ngrok"                  # Secure introspectable tunnels to localhost https://ngrok.com/
 # brew "asciinema"              # Record and share terminal sessions https://asciinema.org/
@@ -153,7 +156,7 @@ cask "devtoys"                  # Utilities designed to make common development 
 
 # Database & Data Tools
 # Database management, clients, and data storage tools
-cask "dbeaver-community"        # Universal database tool and SQL client https://dbeaver.io/
+# cask "dbeaver-community"        # Universal database tool and SQL client https://dbeaver.io/
 # brew "postgresql"             # Object-relational database system https://www.postgresql.org/
 
 # System Libraries & Infrastructure
@@ -187,9 +190,9 @@ cask "sf-symbols"               # Tool that provides consistent, highly configur
 
 # Window Management & System Control
 # Advanced macOS window management and system customization tools
-brew "asmvik/formulae/yabai"       # A tiling window manager for macOS based on binary space partitioning https://github.com/asmvik/yabai
-brew "asmvik/formulae/skhd"        # Simple hotkey-daemon for macOS https://github.com/asmvik/skhd
-brew "felixkratz/formulae/sketchybar"   # Custom macOS statusbar with shell plugin, interaction and graph support https://github.com/FelixKratz/SketchyBar
+# brew "asmvik/formulae/yabai"       # A tiling window manager for macOS based on binary space partitioning https://github.com/asmvik/yabai
+# brew "asmvik/formulae/skhd"        # Simple hotkey-daemon for macOS https://github.com/asmvik/skhd
+# brew "felixkratz/formulae/sketchybar"   # Custom macOS statusbar with shell plugin, interaction and graph support https://github.com/FelixKratz/SketchyBar
 
 ######################
 ###### GUI Apps ######
@@ -205,58 +208,58 @@ cask "brave-browser"            # Web browser focusing on privacy https://brave.
 
 # Communication & Collaboration
 # Team communication, messaging, and video conferencing tools
-cask "slack"                    # Team communication and collaboration software https://slack.com/
-cask "discord"                  # Voice and text chat software https://discord.com/
-cask "zoom"                     # Video communication and virtual meeting platform https://www.zoom.us/
+# cask "slack"                    # Team communication and collaboration software https://slack.com/
+# cask "discord"                  # Voice and text chat software https://discord.com/
+# cask "zoom"                     # Video communication and virtual meeting platform https://www.zoom.us/
 cask "mattermost"               # Open-source, self-hosted Slack-alternative https://mattermost.com/
-cask "messenger"                # Native desktop app for Messenger (formerly Facebook Messenger) https://www.messenger.com/desktop
+# cask "messenger"                # Native desktop app for Messenger (formerly Facebook Messenger) https://www.messenger.com/desktop
 cask "signal"                   # Instant messaging application focusing on security https://signal.org/
 
 # Media & Entertainment
 # Video players, music streaming, and entertainment applications
-cask "spotify"                  # Music streaming service https://www.spotify.com/
-cask "iina"                     # Free and open-source media player https://iina.io/
+# cask "spotify"                  # Music streaming service https://www.spotify.com/
+# cask "iina"                     # Free and open-source media player https://iina.io/
 # Alternative media & gaming applications
 # cask "vlc"                    # Multimedia player https://www.videolan.org/vlc/
 # cask "steam"                  # Video game digital distribution service https://store.steampowered.com/
 
 # Security & Privacy
 # Password management and VPN tools for enhanced security
-cask "1password"                # Password manager that keeps all passwords secure behind one password https://1password.com/
-cask "nordvpn"                  # VPN client for secure internet access and private browsing https://nordvpn.com/
+# cask "1password"                # Password manager that keeps all passwords secure behind one password https://1password.com/
+# cask "nordvpn"                  # VPN client for secure internet access and private browsing https://nordvpn.com/
 # Alternative VPN solutions (uncomment as needed)
 # cask "tunnelbear"             # VPN client for secure internet access and private browsing https://www.tunnelbear.com/
 # cask "mullvadvpn"             # Privacy-focused VPN service https://mullvad.net/
 
 # Productivity & Organization
 # Task management, note-taking, and productivity enhancement tools
-cask "alfred"                   # Application launcher and productivity software https://www.alfredapp.com/
-cask "notion"                   # App to write, plan, collaborate, and get organised https://www.notion.com/
-cask "airtable"                 # Spreadsheet-database hybrid cloud collaboration https://airtable.com/
-cask "loom"                     # Screen and video recording software https://www.loom.com/
+# cask "alfred"                   # Application launcher and productivity software https://www.alfredapp.com/
+# cask "notion"                   # App to write, plan, collaborate, and get organised https://www.notion.com/
+# cask "airtable"                 # Spreadsheet-database hybrid cloud collaboration https://airtable.com/
+# cask "loom"                     # Screen and video recording software https://www.loom.com/
 # Focus & specialized utility tools
 # cask "freedom"                # App and website blocker https://freedom.to/
 # cask "tempbox"                # Disposable email client https://tempbox.waseem.works/
 
 # System Enhancement & Utilities
 # macOS system enhancements and utility applications for improved workflow
-cask "warp"                     # Rust-based terminal https://www.warp.dev/
-cask "shottr"                   # Screenshot measurement and annotation tool https://shottr.cc/
-cask "hiddenbar"                # Utility to hide menu bar items https://github.com/dwarvesf/hidden/
-cask "alt-tab"                  # Enable Windows-like alt-tab https://alt-tab-macos.netlify.app/
-cask "hyperkey"                 # Convert your caps lock key or any of your modifier keys to the hyper key https://hyperkey.app/
+# cask "warp"                     # Rust-based terminal https://www.warp.dev/
+# cask "shottr"                   # Screenshot measurement and annotation tool https://shottr.cc/
+# cask "hiddenbar"                # Utility to hide menu bar items https://github.com/dwarvesf/hidden/
+# cask "alt-tab"                  # Enable Windows-like alt-tab https://alt-tab-macos.netlify.app/
+# cask "hyperkey"                 # Convert your caps lock key or any of your modifier keys to the hyper key https://hyperkey.app/
 
 # Hardware & Peripherals
 # Hardware control and peripheral management software for specialized devices
-cask "elgato-stream-deck"       # Assign keys, and then decorate and label them https://www.elgato.com/ww/en/s/downloads
-cask "elgato-wave-link"         # Software custom-built for content creation https://www.elgato.com/ww/en/s/downloads
-cask "keymapp"                  # ZSA keyboard firmware flasher https://www.zsa.io/flash
-cask "logi-options+"            # Software for Logitech devices https://www.logitech.com/en-us/software/logi-options-plus.html
+# cask "elgato-stream-deck"       # Assign keys, and then decorate and label them https://www.elgato.com/ww/en/s/downloads
+# cask "elgato-wave-link"         # Software custom-built for content creation https://www.elgato.com/ww/en/s/downloads
+# cask "keymapp"                  # ZSA keyboard firmware flasher https://www.zsa.io/flash
+# cask "logi-options+"            # Software for Logitech devices https://www.logitech.com/en-us/software/logi-options-plus.html
 
 # Cloud Storage & Home Automation
 # Cloud services and smart home management applications
-cask "google-drive"             # Client for the Google Drive storage service https://www.google.com/drive/
-cask "home-assistant"           # Companion app for Home Assistant home automation software https://companion.home-assistant.io/
+# cask "google-drive"             # Client for the Google Drive storage service https://www.google.com/drive/
+# cask "home-assistant"           # Companion app for Home Assistant home automation software https://companion.home-assistant.io/
 
 # Design & Creative Tools
 # Design, prototyping, and creative applications for visual work
@@ -276,10 +279,10 @@ cask "home-assistant"           # Companion app for Home Assistant home automati
 #########################
 
 # Essential Mac App Store applications - requires Apple ID sign-in
-mas "DigiDoc4 Client", id: 1370791134           # Digital signing and encryption client
-mas "Web eID", id: 1576665083                   # Electronic ID authentication
-mas "1Password for Safari", id: 1569813296      # Safari browser extension for 1Password
-mas "Timer RH", id: 929960914                   # Simple and elegant timer application
+# mas "DigiDoc4 Client", id: 1370791134           # Digital signing and encryption client
+# mas "Web eID", id: 1576665083                   # Electronic ID authentication
+# mas "1Password for Safari", id: 1569813296      # Safari browser extension for 1Password
+# mas "Timer RH", id: 929960914                   # Simple and elegant timer application
 # mas "Numbers", id: 409203825                    # Apple's spreadsheet application
 # mas "Parcel", id: 639968404                     # Package tracking application
 # Additional MAS applications
@@ -295,8 +298,8 @@ mas "Timer RH", id: 929960914                   # Simple and elegant timer appli
 # AI Assistant Tools
 cask "claude"                   # Anthropic's Claude AI assistant desktop application
 cask "claude-code"              # Claude AI for coding and development tasks
-cask "codex"                    # AI-powered code completion and generation tool
-brew "gemini-cli"               # Command-line interface for Google Gemini AI
+# cask "codex"                    # AI-powered code completion and generation tool
+# brew "gemini-cli"               # Command-line interface for Google Gemini AI
 brew "opencode"                 # AI-powered code analysis and generation tool
 # brew "ata"                    # ChatGPT in the terminal https://github.com/transformrs/ata
 
@@ -308,3 +311,9 @@ brew "opencode"                 # AI-powered code analysis and generation tool
 
 # Media Tools
 # brew "youtubedr"              # Download Youtube Video in Golang https://github.com/kkdai/youtube
+
+brew "atuin"
+brew "navi"
+brew "television"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"

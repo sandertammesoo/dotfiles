@@ -3,6 +3,9 @@
 # Check if Homebrew is installed
 require_brew || return 1
 
+# Homebrew 6.0+ won't load a non-official tap until it's trusted (HOMEBREW_REQUIRE_TAP_TRUST).
+brew_trust_tap "asmvik/formulae"
+
 # Install yabai if not installed
 brew_install_if_missing "yabai" "yabai" || return 1
 

@@ -3,6 +3,9 @@
 # Check if Homebrew is installed
 require_brew || return 1
 
+# Homebrew 6.0+ won't load a non-official tap until it's trusted (HOMEBREW_REQUIRE_TAP_TRUST).
+brew_trust_tap "felixkratz/formulae"
+
 # Install sketchybar if not installed
 brew_install_if_missing "sketchybar" "FelixKratz/formulae/sketchybar" || return 1
 
@@ -45,9 +48,11 @@ if [ $exit_code -eq 0 ]; then
     echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
     log_success "sketchybar update successful"
 else
-    echo "$output" | output_stream FATAL
-    log_fatal "sketchybar update failed"
-    return 1
+    # Non-fatal: a working version is already installed (brew_install_if_missing passed
+    # above), so a failed upgrade — e.g. no bottle yet for a beta macOS, forcing a source
+    # build that fails — shouldn't abort setup. Mirrors the yabai bootstrap's behaviour.
+    echo "$output" | output_stream WARN
+    log_warn "sketchybar upgrade failed; keeping the installed version and continuing."
 fi
 
 # Clone and build sketchybar-app-font

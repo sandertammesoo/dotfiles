@@ -176,3 +176,92 @@ brew_install_if_missing() {
         return 1
     fi
 }
+
+###############################################################################
+# brew_trust_tap: Trust a non-official Homebrew tap so its formulae/casks load.
+# Homebrew 6.0+ refuses to load third-party taps until trusted
+# (HOMEBREW_REQUIRE_TAP_TRUST became the default). This is a no-op on older
+# Homebrew without `brew trust`, idempotent (skips already-trusted taps), and
+# tolerant (warns and returns 0 on failure so callers are not aborted).
+# Usage: brew_trust_tap TAP            (e.g. "felixkratz/formulae")
+###############################################################################
+brew_trust_tap() {
+    local tap="$1"
+    local output
+    local exit_code
+
+    if [[ -z "$tap" ]]; then
+        _log VERBOSE "brew_trust_tap: no tap given; skipping."
+        return 0
+    fi
+
+    # Official Homebrew taps (homebrew/core, homebrew/cask, ...) are always trusted.
+    if [[ "$tap" == homebrew/* ]]; then
+        _log VERBOSE "Official tap needs no trust: $tap"
+        return 0
+    fi
+
+    # `brew trust` only exists on Homebrew 6.0+; nothing to do on older versions.
+    if ! brew trust --help &>/dev/null; then
+        _log VERBOSE "brew trust unavailable (Homebrew < 6.0?); skipping trust for $tap"
+        return 0
+    fi
+
+    # Already trusted? trust.json lists trusted taps under "taps".
+    if brew trust --json v1 2>/dev/null | grep -qF "\"$tap\""; then
+        _log VERBOSE "Tap already trusted: $tap"
+        return 0
+    fi
+
+    _log USER "Trusting non-official tap: $tap"
+    output=$(brew trust --tap "$tap" 2>&1)
+    exit_code=$?
+    if [ $exit_code -eq 0 ]; then
+        echo "$output" | output_stream VERBOSE
+        _log SUCCESS "Trusted tap: $tap"
+    else
+        echo "$output" | output_stream WARN
+        _log WARN "Failed to trust tap: $tap (continuing)."
+    fi
+    return 0
+}
+
+###############################################################################
+# brew_trust_brewfile_taps: Trust every non-official tap declared in a Brewfile.
+# Reads `tap "owner/name"` directives and trusts each via brew_trust_tap, so
+# `brew bundle` and the service bootstraps can load their formulae/casks under
+# Homebrew 6.0+'s mandatory tap-trust. No-op on older Homebrew.
+# Usage: brew_trust_brewfile_taps [BREWFILE]   (default: ./brewfiles/Brewfile)
+###############################################################################
+brew_trust_brewfile_taps() {
+    local brewfile="${1:-./brewfiles/Brewfile}"
+    local tap
+
+    if [[ ! -f "$brewfile" ]]; then
+        _log WARN "Brewfile not found at $brewfile; skipping tap trust."
+        return 0
+    fi
+
+    # `brew trust` only exists on Homebrew 6.0+; nothing to do on older versions.
+    if ! brew trust --help &>/dev/null; then
+        _log VERBOSE "brew trust unavailable (Homebrew < 6.0?); skipping Brewfile tap trust."
+        return 0
+    fi
+
+    _log VERBOSE "Trusting non-official taps declared in $brewfile..."
+    # Collect taps from two sources (deduped), skipping commented-out lines:
+    #   1. Explicit `tap "owner/repo"` directives.
+    #   2. Tapped formulae/casks referenced by full path, e.g. `cask "owner/repo/name"`,
+    #      which `brew bundle` auto-taps even without a matching `tap` line.
+    while IFS= read -r tap; do
+        [[ -z "$tap" ]] && continue
+        brew_trust_tap "$tap"
+    done < <(
+        {
+            grep -E '^[[:space:]]*tap[[:space:]]+"[^"]+"' "$brewfile" 2>/dev/null \
+                | sed -E 's/^[[:space:]]*tap[[:space:]]+"([^"]+)".*/\1/'
+            grep -E '^[[:space:]]*(brew|cask)[[:space:]]+"[^"/]+/[^"/]+/[^"]+"' "$brewfile" 2>/dev/null \
+                | sed -E 's#^[[:space:]]*(brew|cask)[[:space:]]+"([^"/]+/[^"/]+)/[^"]+".*#\2#'
+        } | sort -u
+    )
+}

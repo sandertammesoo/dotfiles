@@ -10,6 +10,13 @@ else
   return 1
 fi
 
+# Homebrew 6.0+ refuses to load formulae/casks from untrusted non-official taps
+# (HOMEBREW_REQUIRE_TAP_TRUST became the default). Pre-trust the taps declared in the
+# Brewfile so the upgrade, bundle, and service-bootstrap steps below can load them —
+# keeping the security model intact (explicit allowlist) instead of disabling it.
+# Runs unconditionally (even with --skip-app-installation) since the bootstraps still run.
+brew_trust_brewfile_taps "./brewfiles/Brewfile"
+
 # If SKIP_BREW_UPGRADES or SKIP_UPDATES is set, skip updates and upgrades
 if [[ "${SKIP_BREW_UPGRADES:-false}" == "true" ]] || [[ "${SKIP_UPDATES:-false}" == "true" ]]; then
   log_skip "Skipping Homebrew updates and upgrades."

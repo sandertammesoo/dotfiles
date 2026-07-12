@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""List Claude Code sessions from history.jsonl for television channel.
+Output: timestamp\tproject\tmessage
+Sorted newest first. Deduplicates by (project, display).
+"""
+import json
+import signal
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+history_file = Path.home() / ".claude" / "history.jsonl"
+if not history_file.exists():
+    sys.exit(0)
+
+seen = set()
+sessions = []
+home = str(Path.home())
+
+with open(history_file) as f:
+    for line in f:
+        try:
+            d = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        display = d.get("display", "").strip()
+        if not display:
+            continue
+        ts_ms = d.get("timestamp", 0)
+        project = d.get("project", "")
+
+        # Shorten project path
+        if project:
+            project = project.replace(home + "/", "")
+        else:
+            project = "~"
+
+        # Deduplicate
+        key = (project, display[:80])
+        if key in seen:
+            continue
+        seen.add(key)
+
+        ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+        msg = display.replace("\n", " ")[:250]
+        sessions.append((ts_ms, ts, project, msg))
+
+sessions.sort(key=lambda x: x[0], reverse=True)
+for ts_ms, ts, proj, msg in sessions:
+    print(f"{ts}\t{proj}\t{ts_ms}\t{msg}")

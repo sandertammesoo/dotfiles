@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""Preview a Claude Code session for television channel.
+Usage: tv-claude-session-preview <session_id>
+Shows conversation flow: user messages and assistant text responses.
+"""
+import json
+import sys
+from pathlib import Path
+
+if len(sys.argv) < 2:
+    sys.exit(1)
+
+session_id = sys.argv[1]
+projects_dir = Path.home() / ".claude" / "projects"
+
+# Find the session file
+jsonl_file = None
+for f in projects_dir.rglob(f"{session_id}.jsonl"):
+    jsonl_file = f
+    break
+
+if not jsonl_file:
+    print(f"Session not found: {session_id}")
+    sys.exit(1)
+
+lines_printed = 0
+max_lines = 100
+
+with open(jsonl_file) as f:
+    for line in f:
+        if lines_printed >= max_lines:
+            break
+        try:
+            d = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+
+        if d.get("type") == "user":
+            msg = d.get("message", {})
+            if isinstance(msg, dict):
+                content = msg.get("content", "")
+            else:
+                content = str(msg)
+            if isinstance(content, str) and content.strip() and not content.startswith("[{"):
+                text = content.strip()[:300]
+                print(f"\033[1;32m▶ USER:\033[0m {text}")
+                lines_printed += 1
+
+        elif d.get("type") == "assistant":
+            msg = d.get("message", {})
+            if isinstance(msg, dict):
+                content = msg.get("content", [])
+                if isinstance(content, list):
+                    for block in content:
+                        if lines_printed >= max_lines:
+                            break
+                        if isinstance(block, dict) and block.get("type") == "text":
+                            text = block["text"].strip()[:300]
+                            for l in text.split("\n")[:3]:
+                                print(f"\033[1;34m◀ AI:\033[0m {l}")
+                                lines_printed += 1
+                elif isinstance(content, str) and content.strip():
+                    text = content.strip()[:300]
+                    print(f"\033[1;34m◀ AI:\033[0m {text}")
+                    lines_printed += 1

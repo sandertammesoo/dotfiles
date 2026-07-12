@@ -1,0 +1,25 @@
+[metadata]
+name = "videos"
+description = "Browse and preview videos"
+requirements = ["fd", "chafa", "ffmpegthumbnailer"]
+
+[source]
+command = ["fd -t f -e mp4 -e mov -e avi -e mkv -e webm -e m4v -e flv -e wmv -e ts", "fd -t f -e mp4 -e mov -e avi -e mkv -e webm -e m4v -e flv -e wmv -e ts -H"]
+
+[preview]
+command = "ffmpegthumbnailer -i '{}' -o /tmp/tv-thumb.png -s 0 -q 10 2>/dev/null && chafa --probe=off -f symbols -c full --color-space din99d --dither diffusion -p on --symbols vhalf -w 9 -s 80x40 /tmp/tv-thumb.png || file '{}'"
+
+[keybindings]
+enter = "actions:play"
+ctrl-o = "actions:info"
+
+[actions.play]
+description = "Play video with default player"
+command = "open '{}'"
+mode = "execute"
+
+[actions.info]
+description = "Show video info via ffprobe"
+command = "ffprobe -hide_banner '{}' 2>&1 | less"
+shell = "bash"
+mode = "execute"

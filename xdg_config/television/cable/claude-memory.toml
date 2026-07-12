@@ -1,0 +1,29 @@
+[metadata]
+name = "claude-memory"
+description = "Search all Claude Code memory: CLAUDE.md, auto-memory, rules"
+requirements = ["bat", "glow"]
+
+[source]
+command = "tv-claude-memory"
+display = "{split:\t:0}  {split:\t:2}"
+output = "{split:\t:1}"
+
+[preview]
+# command = "bat -n --color=always '{split:\t:1}'"
+# env = { BAT_THEME = "ansi" }
+# `script -q /dev/null` allocates a pty so glow's `auto` style detects a TTY
+# and emits its full 256-color palette (cyan headings etc.) instead of bold-only.
+# `tr -d '\r'` strips the CRs that the pty inserts.
+command = "script -q /dev/null glow '{split:\t:1}' | tr -d '\\r'"
+
+[ui]
+preview_panel = { header = "{split:\t:0}" }
+
+[keybindings]
+enter = "actions:edit"
+
+[actions.edit]
+description = "Open file in editor"
+command = "${EDITOR:-vim} '{split:\t:1}'"
+shell = "bash"
+mode = "execute"

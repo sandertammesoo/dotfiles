@@ -1,0 +1,26 @@
+[metadata]
+name = "claude-sessions"
+description = "Recent Claude Code sessions with resume and preview"
+requirements = ["python3"]
+
+[source]
+command = "tv-claude-sessions"
+display = "{split:\t:0}  {split:\t:1}  {split:\t:3}"
+output = "{split:\t:2}"
+no_sort = true
+frecency = false
+
+[preview]
+command = "tv-claude-session-preview '{split:\t:2}'"
+env = {}
+
+[ui]
+preview_panel = { header = "{split:\t:0}  {split:\t:1}" }
+
+[keybindings]
+enter = "actions:resume"
+
+[actions.resume]
+description = "Resume this session with claude --resume"
+command = "claude --resume '{split:\t:2}'"
+mode = "execute"

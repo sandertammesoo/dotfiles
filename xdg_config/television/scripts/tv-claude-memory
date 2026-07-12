@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# List Claude Code memory FILES (not lines) for television channel.
+# Output: short_path\tfull_path\tdescription
+
+set -euo pipefail
+
+HOME_DIR="$HOME"
+declare -a files=()
+
+# 1. User-level
+[[ -f "$HOME_DIR/.claude/CLAUDE.md" ]] && files+=("$HOME_DIR/.claude/CLAUDE.md")
+for f in "$HOME_DIR"/.claude/rules/*.md; do
+    [[ -f "$f" ]] && files+=("$f")
+done
+
+# 2. Auto-memory
+while IFS= read -r -d '' f; do
+    files+=("$f")
+done < <(find "$HOME_DIR/.claude/projects" -path "*/memory/*.md" -type f -print0 2>/dev/null)
+
+# 3. Project CLAUDE.md and rules
+for base in "$HOME_DIR/startups" "$HOME_DIR/projects"; do
+    [[ -d "$base" ]] || continue
+    while IFS= read -r -d '' f; do
+        files+=("$f")
+    done < <(find "$base" -maxdepth 5 -name "CLAUDE.md" -type f -print0 2>/dev/null)
+    while IFS= read -r -d '' f; do
+        files+=("$f")
+    done < <(find "$base" -maxdepth 6 -path "*/.claude/rules/*.md" -type f -print0 2>/dev/null)
+done
+
+for f in "${files[@]}"; do
+    # Shorten path for display
+    short="$f"
+    short="${short/$HOME_DIR\/.claude\/projects\/${HOME_DIR//\//-}-/}"
+    short="${short/$HOME_DIR\/.claude\/projects\/${HOME_DIR//\//-}/~}"
+    short="${short/$HOME_DIR\/.claude\/rules\//[rules] }"
+    short="${short/$HOME_DIR\/.claude\/CLAUDE.md/[global] CLAUDE.md}"
+    short="${short/$HOME_DIR\/startups\//startups/}"
+    short="${short/$HOME_DIR\/projects\//projects/}"
+    short="${short/\/.claude\/rules\// .rules/}"
+    short="${short/\/.claude\/CLAUDE.md/ CLAUDE.md}"
+    short="${short//\/memory\//\/mem\/}"
+
+    # Extract first heading or first non-empty line as description
+    desc=$(grep -m1 "^#" "$f" 2>/dev/null | sed 's/^#* *//' || head -1 "$f" 2>/dev/null)
+    desc="${desc:0:100}"
+
+    printf '%s\t%s\t%s\n' "$short" "$f" "$desc"
+done

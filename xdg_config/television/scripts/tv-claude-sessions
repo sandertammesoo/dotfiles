@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""List Claude Code sessions with session IDs for television channel.
+Reads .jsonl files from ~/.claude/projects/ — only sessions with actual transcripts.
+Output: timestamp\tproject\tsession_id\tfirst_user_message
+"""
+import json
+import signal
+import sys
+from pathlib import Path
+
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+projects_dir = Path.home() / ".claude" / "projects"
+if not projects_dir.exists():
+    sys.exit(0)
+
+home = str(Path.home())
+home_encoded = home.replace("/", "-")  # /Users/sander -> -Users-sander
+sessions = []
+
+for project_dir in projects_dir.iterdir():
+    if not project_dir.is_dir():
+        continue
+    project_name = project_dir.name.replace(home_encoded + "-", "").replace(home_encoded, "~")
+    if not project_name:
+        project_name = "~"
+
+    for jsonl_file in project_dir.glob("*.jsonl"):
+        session_id = jsonl_file.stem
+        first_msg = ""
+        timestamp = ""
+        ts_raw = 0
+        try:
+            with open(jsonl_file) as f:
+                for line in f:
+                    try:
+                        d = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    if not timestamp and d.get("timestamp"):
+                        timestamp = d["timestamp"][:16].replace("T", " ")
+                        # Parse for sorting
+                        try:
+                            from datetime import datetime
+                            ts_raw = datetime.fromisoformat(d["timestamp"].replace("Z", "+00:00")).timestamp()
+                        except Exception:
+                            pass
+                    if d.get("type") == "user":
+                        msg = d.get("message", {})
+                        if isinstance(msg, dict):
+                            content = msg.get("content", "")
+                        else:
+                            content = str(msg)
+                        if isinstance(content, str) and content.strip() and not content.startswith("[{"):
+                            first_msg = content.strip().replace("\n", " ")[:200]
+                            break
+        except Exception:
+            continue
+
+        if first_msg:
+            sessions.append((ts_raw, timestamp, project_name, session_id, first_msg))
+
+sessions.sort(key=lambda x: x[0], reverse=True)
+for _, ts, proj, sid, msg in sessions:
+    print(f"{ts}\t{proj}\t{sid}\t{msg}")

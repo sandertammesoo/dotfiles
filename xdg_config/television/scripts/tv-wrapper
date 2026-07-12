@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Wrapper: switch to English layout, run tv, restore layout
+prev=$(im-select 2>/dev/null)
+im-select com.apple.keylayout.ABC 2>/dev/null
+/opt/homebrew/bin/tv "$@"
+rc=$?
+[ -n "$prev" ] && im-select "$prev" 2>/dev/null
+exit $rc

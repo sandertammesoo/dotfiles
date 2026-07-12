@@ -12,3 +12,5 @@ dotfiles.code-workspace
 xdg_config/zsh/.revolver
 .config
 .vscode
+xdg_config/worktrunk/config.toml.lock
+xdg_config/superfile/*.bak-*

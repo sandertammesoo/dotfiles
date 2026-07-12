@@ -244,9 +244,9 @@ normal < shift + lalt - b : yabai -m space --balance
 moonlander < hyper - b : yabai -m space --balance
 
 # toggle window zoom
-#normal < shift + lalt - t : yabai -m window --toggle zoom-parent
+normal < shift + lalt - z : yabai -m window --toggle zoom-parent
 normal < shift + lalt - f : yabai -m window --toggle zoom-fullscreen
-#moonlander < hyper - t : yabai -m window --toggle zoom-parent
+#moonlander < hyper - z : yabai -m window --toggle zoom-parent
 moonlander < hyper - f : yabai -m window --toggle zoom-fullscreen
 
 # float / unfloat window and center on screen

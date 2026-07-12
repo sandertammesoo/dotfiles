@@ -28,12 +28,12 @@
     ~/:
       force: true
 
-- shell:
-    # - git update-submodules # after linking ~/.gitconfig
-    - command: git submodule update --init --recursive
-      stdin: true
-      stdout: true
-      description: Installing submodules
+# - shell:
+#     # - git update-submodules # after linking ~/.gitconfig
+#     - command: git submodule update --init --recursive
+#       stdin: true
+#       stdout: true
+#       description: Installing submodules
 
 - link:
     ${XDG_CONFIG_HOME}/.dotfiles:
@@ -99,6 +99,29 @@
     ${XDG_CONFIG_HOME}/borders:
       relink: true
       path: "xdg_config/borders"
+    ${XDG_CONFIG_HOME}/television:
+      relink: true
+      path: "xdg_config/television"
+    # herdr: link only config.toml — ~/.config/herdr also holds runtime
+    # sockets/logs/session state that must not live in the repo
+    ${XDG_CONFIG_HOME}/herdr/config.toml:
+      relink: true
+      path: "xdg_config/herdr/config.toml"
+    ${HOME}/.local/bin/tv-claude-history:
+      relink: true
+      path: "xdg_config/television/scripts/tv-claude-history"
+    ${HOME}/.local/bin/tv-claude-history-preview:
+      relink: true
+      path: "xdg_config/television/scripts/tv-claude-history-preview"
+    ${HOME}/.local/bin/tv-claude-sessions:
+      relink: true
+      path: "xdg_config/television/scripts/tv-claude-sessions"
+    ${HOME}/.local/bin/tv-claude-session-preview:
+      relink: true
+      path: "xdg_config/television/scripts/tv-claude-session-preview"
+    ${HOME}/.local/bin/tv-claude-memory:
+      relink: true
+      path: "xdg_config/television/scripts/tv-claude-memory"
     # ${XDG_CONFIG_HOME}/.gitconfig:
     #   relink: true
     #   path: "xdg_config/git/.gitconfig"
@@ -112,30 +135,30 @@
     #   relink: true
     #   path: "$PROJECTS"
 
-- shell:
-    # - git update-submodules # after linking ~/.gitconfig
-    - [git submodule update --init --recursive, Installing submodules]
+# - shell:
+#     # - git update-submodules # after linking ~/.gitconfig
+#     - [git submodule update --init --recursive, Installing submodules]
 
-- shell:
-    - command: |
-        if [ ! -f "$XDG_STATE_HOME/zsh/history" ]; then
-          touch "$XDG_STATE_HOME/zsh/history"
-        fi
-        if [ -f "${HOME}/.zsh_history" ]; then
-          cat "${HOME}/.zsh_history" >> "$XDG_STATE_HOME/zsh/history"
-          rm "${HOME}/.zsh_history"
-        fi
-      stdin: true
-      stdout: true
-      description: Move or create zsh_history file
-    - command: |
-        if [ -d "${HOME}/.zsh_sessions" ]; then
-          if [ ! -d "${XDG_STATE_HOME}/zsh/sessions" ]; then
-            mkdir -p "${XDG_STATE_HOME}/zsh/sessions"
-          fi
-          mv "${HOME}/.zsh_sessions/"* "${XDG_STATE_HOME}/zsh/sessions/"
-          rmdir "${HOME}/.zsh_sessions"
-        fi
-      stdin: true
-      stdout: true
-      description: Move zsh_sessions directory
+# - shell:
+#     - command: |
+#         if [ ! -f "$XDG_STATE_HOME/zsh/history" ]; then
+#           touch "$XDG_STATE_HOME/zsh/history"
+#         fi
+#         if [ -f "${HOME}/.zsh_history" ]; then
+#           cat "${HOME}/.zsh_history" >> "$XDG_STATE_HOME/zsh/history"
+#           rm "${HOME}/.zsh_history"
+#         fi
+#       stdin: true
+#       stdout: true
+#       description: Move or create zsh_history file
+#     - command: |
+#         if [ -d "${HOME}/.zsh_sessions" ]; then
+#           if [ ! -d "${XDG_STATE_HOME}/zsh/sessions" ]; then
+#             mkdir -p "${XDG_STATE_HOME}/zsh/sessions"
+#           fi
+#           mv "${HOME}/.zsh_sessions/"* "${XDG_STATE_HOME}/zsh/sessions/"
+#           rmdir "${HOME}/.zsh_sessions"
+#         fi
+#       stdin: true
+#       stdout: true
+#       description: Move zsh_sessions directory

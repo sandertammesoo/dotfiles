@@ -38,6 +38,7 @@ brew "grep"                     # GNU grep, egrep and fgrep https://www.gnu.org/
 brew "ack"                      # Search tool like grep, but optimized for programmers https://beyondgrep.com/
 brew "ripgrep"                  # Search tool like grep and The Silver Searcher https://github.com/BurntSushi/ripgrep
 brew "fzf"                      # Command-line fuzzy finder written in Go https://github.com/junegunn/fzf
+brew "television"               # General purpose fuzzy finder TUI https://github.com/alexpasmantier/television
 brew "fd"                       # Simple, fast and user-friendly alternative to find https://github.com/sharkdp/fd
 brew "tree"                     # Display directories as trees (with optional color/HTML output) https://oldmanprogrammer.net/source.php?dir=projects/tree
 brew "zoxide"                   # Shell extension to navigate your filesystem faster https://github.com/ajeetdsouza/zoxide
@@ -85,9 +86,13 @@ brew "progress"                 # Coreutils progress viewer https://github.com/X
 brew "starship"                 # Cross-shell prompt for astronauts https://starship.rs/
 brew "grc"                      # Generic Colouriser https://kassiopeia.juls.savba.sk/~garabik/software/grc.html
 
+# Terminal Workspace Management
+brew "herdr"                    # Terminal workspace manager for AI coding agents https://herdr.dev/
+
 # Documentation & Help
 brew "cheat"                    # Create and view interactive cheat sheets for *nix commands https://github.com/cheat/cheat
 brew "tlrc"                     # Official tldr client written in Rust https://tldr.sh/tlrc
+brew "tuxedo"                   # Fast, keyboard-driven terminal UI for todo.txt https://github.com/webstonehq/tuxedo
 
 #########################
 ### Development Tools ###
@@ -113,6 +118,7 @@ brew "jqp"                      # JSON query tool https://github.com/noahgorstei
 
 # Go Development
 # brew "go"                     # Open source programming language to build simple/reliable/efficient software https://go.dev/
+# brew "goenv"                  # Go version management https://github.com/go-nv/goenv
 
 # Python Development
 brew "pyenv"                  # Python version management https://github.com/pyenv/pyenv
@@ -120,6 +126,7 @@ brew "pipx"                    # Install and run Python applications in isolated
 brew "pyenv-virtualenv"          # pyenv plugin to manage virtual environments  https://github.com/pyenv/pyenv-virtualenv
 
 # JavaScript/Node.js Development
+brew "fnm"                      # Fast and simple Node.js version manager https://github.com/Schniz/fnm
 # brew "node"                   # Platform built on V8 to build network applications https://nodejs.org/
 # brew "nvm"                    # Manage multiple Node.js versions https://github.com/nvm-sh/nvm
 # brew "npm"                    # Package manager for Node.js (included with Node.js)

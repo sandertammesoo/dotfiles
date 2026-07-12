@@ -76,6 +76,7 @@ if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]
     "/usr/local/bin"
     "./bin"
     "$HOME/.local/bin"
+    "$CARGO_HOME/bin"
   )
   for p in $paths; do
     add_to PATH "$p"

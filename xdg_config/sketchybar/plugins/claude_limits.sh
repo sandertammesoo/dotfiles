@@ -65,9 +65,9 @@ update_item() {
   pct_int=$(printf '%.0f' "$pct")
   local color
 
-  if (( pct_int >= 80 )); then
+  if (( pct_int >= 95 )); then
     color=$COLOR_RED
-  elif (( pct_int >= 50 )); then
+  elif (( pct_int >= 80 )); then
     color=$COLOR_PEACH
   else
     color=$COLOR_WHITE

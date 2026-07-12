@@ -35,7 +35,12 @@
 #
 # # Bare repository layout
 # # Creates: ~/code/myproject/feature-auth
-worktree-path = "../{{ branch | sanitize }}"
+worktree-path = "../{{ repo }}.{{ branch | sanitize }}"
+
+[projects]
+
+[commit.generation]
+command = "MAX_THINKING_TOKENS=0 claude -p --no-session-persistence --model=haiku --tools='' --disable-slash-commands --setting-sources='' --system-prompt=''"
 #
 # `~` expands to the home directory. Relative paths are relative to the repository root.
 #
@@ -76,9 +81,9 @@ worktree-path = "../{{ branch | sanitize }}"
 #
 # Persistent flag values for `wt list`. Override on command line as needed.
 #
-# [list]
-# summary = false    # Enable LLM branch summaries (requires [commit.generation])
-#
+[list]
+summary = true    # Enable LLM branch summaries (requires [commit.generation])
+
 # full = false       # Show CI, main…± diffstat, and LLM summaries (--full)
 # branches = false   # Include branches without worktrees (--branches)
 # remotes = false    # Include remote-only branches (--remotes)

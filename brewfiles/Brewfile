@@ -104,6 +104,7 @@ brew "git"                      # Distributed revision control system https://gi
 brew "git-flow"                 # Extensions to follow Vincent Driessen's branching model https://github.com/nvie/gitflow
 brew "lazygit"                  # Simple terminal UI for git commands https://github.com/jesseduffield/lazygit/
 brew "delta"                    # Syntax-highlighting pager for git, diff, and grep output https://github.com/dandavison/delta
+brew "hunk"                     # Review-first terminal diff viewer for agent-authored changesets https://github.com/modem-dev/hunk
 # brew "gh"                     # GitHub command-line tool https://cli.github.com/
 
 # Data Processing & DevOps Tools

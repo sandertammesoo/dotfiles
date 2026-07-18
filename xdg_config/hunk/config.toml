@@ -1,0 +1,16 @@
+# Hunk — review-first terminal diff viewer for agent-authored changesets
+# https://github.com/modem-dev/hunk
+# Only this file is symlinked by dotbot; ~/.config/hunk also holds runtime
+# state (state.json) that stays out of the repo.
+
+theme = "tokyo-night"
+mode = "auto"                  # auto, split, stack
+vcs = "git"                    # git, jj, sl
+watch = false                  # auto-reload when the diff input changes
+exclude_untracked = false      # hide untracked files in working-tree reviews
+line_numbers = true
+wrap_lines = false
+hunk_headers = false           # hide hunk metadata rows (@@ headers)
+menu_bar = true
+agent_notes = true             # show inline AI annotations by default
+transparent_background = false

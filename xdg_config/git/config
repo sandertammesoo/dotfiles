@@ -24,6 +24,14 @@
     # `git di $number` shows the diff between the state `$number` revisions ago and the current state
     di = !"d() { git diff --patch-with-stat HEAD~$1; }; git diff-index --quiet HEAD -- || clear; d"
 
+    # Native hunk review UI (richer than pager mode: sidebar, watch, agent notes)
+    # `git hdiff [target]` reviews the working tree or a ref; `git hshow [ref]` reviews a commit
+    hdiff = !hunk diff
+    hshow = !hunk show
+
+    # Blame with delta's syntax-highlighted output (hunk has no blame support)
+    bl = -c core.pager=delta blame
+
     # Pull in remote changes for the current repository and all its submodules
     p = !"git pull; git submodule foreach git pull origin master"
 
@@ -109,7 +117,8 @@
     trustctime = false
 
     editor = vim
-	pager = delta
+    # hunk as the default pager; delta still handles interactive.diffFilter
+	pager = hunk pager
 
 [color]
 

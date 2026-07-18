@@ -107,6 +107,11 @@
     ${XDG_CONFIG_HOME}/herdr/config.toml:
       relink: true
       path: "xdg_config/herdr/config.toml"
+    # hunk: link only config.toml — ~/.config/hunk also holds runtime
+    # state (state.json) that must not live in the repo
+    ${XDG_CONFIG_HOME}/hunk/config.toml:
+      relink: true
+      path: "xdg_config/hunk/config.toml"
     ${HOME}/.local/bin/tv-claude-history:
       relink: true
       path: "xdg_config/television/scripts/tv-claude-history"

@@ -108,12 +108,14 @@ customCommands:
     output: terminal
   - key: H
     description: Review selected commit in hunk
-    command: hunk show {{.SelectedCommit.Hash}}
+    command: hunk show {{.SelectedCommit.Hash | quote}}
     context: commits
     output: terminal
   - key: H
     description: Review working tree vs selected branch in hunk
-    command: hunk diff {{.SelectedLocalBranch.Name}}
+    # `| quote` shell-escapes the value — branch names may legally contain
+    # `;`, `$`, backticks, so bare interpolation is a command injection
+    command: hunk diff {{.SelectedLocalBranch.Name | quote}}
     context: localBranches
     output: terminal
   - key: H

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/refs/tags/v0.55.1/schema/config.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/refs/tags/v0.63.1/schema/config.json
 gui:
   # Fraction of the total screen width to use for the left side section. You may
   # want to pick a small number (e.g. 0.2) if you're using a narrow screen, so
@@ -96,3 +96,30 @@ os:
 # - 'skip': open most recent repo
 # - 'quit': exit Lazygit
 notARepository: prompt
+# H opens hunk (review UI) from the four review panels; output: terminal
+# suspends lazygit while hunk owns the terminal. Shadows global "scroll
+# main panel left" (H) in these contexts only. Delta stays the stream
+# colorizer for the embedded diff pane — see xdg_config/git/config.
+customCommands:
+  - key: H
+    description: Review working tree in hunk
+    command: hunk diff
+    context: files
+    output: terminal
+  - key: H
+    description: Review selected commit in hunk
+    command: hunk show {{.SelectedCommit.Hash}}
+    context: commits
+    output: terminal
+  - key: H
+    description: Review working tree vs selected branch in hunk
+    command: hunk diff {{.SelectedLocalBranch.Name}}
+    context: localBranches
+    output: terminal
+  - key: H
+    description: Review selected stash entry in hunk
+    # renders as `hunk stash show stash@{N}` — hunk rejects a bare index,
+    # and literal braces must be template-escaped next to {{...}}
+    command: 'hunk stash show stash@{{"{"}}{{.SelectedStashEntry.Index}}{{"}"}}'
+    context: stash
+    output: terminal

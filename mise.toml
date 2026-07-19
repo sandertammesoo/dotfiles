@@ -1,0 +1,10 @@
+# Repo tasks — run with `mise run <task>`. install-all is deliberately not
+# wrapped: it is a rare, sudo-requiring operation best invoked directly.
+
+[tasks.test]
+description = "Run the full ShellSpec suite"
+run = "shellspec"
+
+[tasks.link]
+description = "Symlink dotfiles and create XDG dirs via DotBot"
+run = "./run-dotbot"

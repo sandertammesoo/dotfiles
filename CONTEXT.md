@@ -5,6 +5,25 @@ management, and the integrations between them.
 
 ## Language
 
+### Tool provisioning
+
+**Runtime**:
+A language toolchain (Node, Python, Go) whose version is switchable
+per-directory. Owned by mise; never installed as a first-class Homebrew
+formula.
+_Avoid_: interpreter, SDK
+
+**System tool**:
+A CLI installed at a single machine-wide version via Homebrew (ripgrep,
+lazygit, mise itself). Not version-switched per project.
+_Avoid_: package, dependency
+
+**Auto-venv**:
+A project-local Python virtual environment (`.venv`) declared in the
+project's `mise.toml`, activated on directory entry. Replaces named
+pyenv-virtualenv environments.
+_Avoid_: virtualenv, named environment
+
 ### Diff tooling
 
 **Review UI**:

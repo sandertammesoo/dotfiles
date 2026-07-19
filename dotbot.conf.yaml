@@ -102,6 +102,11 @@
     ${XDG_CONFIG_HOME}/television:
       relink: true
       path: "xdg_config/television"
+    # mise: link only config.toml — ~/.config/mise also holds trust
+    # state (trusted-configs) that must not live in the repo
+    ${XDG_CONFIG_HOME}/mise/config.toml:
+      relink: true
+      path: "xdg_config/mise/config.toml"
     # herdr: link only config.toml — ~/.config/herdr also holds runtime
     # sockets/logs/session state that must not live in the repo
     ${XDG_CONFIG_HOME}/herdr/config.toml:

@@ -64,6 +64,7 @@ if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]
   export_n_log NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
   export_n_log NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
   export_n_log DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+  export_n_log MISE_CACHE_DIR="$XDG_CACHE_HOME/mise"  # macOS default is ~/Library/Caches/mise
   export_n_log COMPOSER_HOME="$XDG_DATA_HOME/composer"
   export_n_log COMPOSER_CACHE_DIR="$XDG_CACHE_HOME/composer"
   export_n_log SHELL_SESSION_DIR="${XDG_STATE_HOME}/zsh/sessions"
@@ -77,6 +78,10 @@ if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]
     "./bin"
     "$HOME/.local/bin"
     "$CARGO_HOME/bin"
+    # mise shims: fallback for non-interactive shells and for `command -v`
+    # guards in env modules; interactive shells get real paths from
+    # `mise activate` at first prompt (see zsh-setup-scripts/mise/env.zsh)
+    "$XDG_DATA_HOME/mise/shims"
   )
   for p in $paths; do
     add_to PATH "$p"

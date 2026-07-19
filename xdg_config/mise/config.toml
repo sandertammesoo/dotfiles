@@ -1,0 +1,13 @@
+# Global mise configuration — https://mise.jdx.dev/configuration.html
+# mise owns all runtimes (see CONTEXT.md "Tool provisioning" and ADR 0001);
+# Homebrew provides system tools only.
+
+[tools]
+node = "lts"      # track LTS: projects pin exact versions themselves
+python = "3.14"   # minor-pinned: python minors break packages too often
+go = "latest"     # Go's compatibility promise makes latest safe
+
+[settings]
+# Preserve fnm --use-on-cd / pyenv parity in projects that predate mise:
+# honor .nvmrc/.node-version and .python-version without a mise.toml.
+idiomatic_version_file_enable_tools = ["node", "python"]

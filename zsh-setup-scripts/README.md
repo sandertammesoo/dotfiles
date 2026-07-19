@@ -26,12 +26,13 @@ zsh-setup-scripts/
 ├── homebrew/        # Homebrew environment and path detection
 ├── jupyter/         # Jupyter notebook environment
 ├── lazyman/         # Lazyman neovim manager integration
+├── mise/            # mise runtime manager shell activation
 ├── misc/            # Miscellaneous aliases
 ├── ngrok/           # ngrok completion
 ├── node/            # Node.js environment
 ├── nvim/            # Neovim aliases and helpers
 ├── osx/             # macOS-specific configuration
-├── pyenv/           # Python version management
+├── python/          # Python XDG environment
 ├── script/          # Bootstrap and setup scripts
 ├── sketchybar/      # SketchyBar integration
 ├── skhd/            # Simple hotkey daemon setup

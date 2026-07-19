@@ -115,20 +115,20 @@ brew "jqp"                      # JSON query tool https://github.com/noahgorstei
 # brew "fabric-ai"              # Open-source framework for augmenting humans using AI. It provides a modular system for solving specific problems using a crowdsourced set of AI prompts that can be used anywhere. https://github.com/danielmiessler/fabric
 
 # Programming Languages & Runtime Management
-# Language runtimes and version managers for different programming environments
+# All language runtimes (node, python, go, ...) are owned by mise — see
+# xdg_config/mise/config.toml and docs/adr/0001-mise-for-runtime-management.md.
+# Do not add runtimes here; Homebrew provides system tools only.
+brew "mise"                     # Polyglot runtime version manager, env vars, task runner https://mise.jdx.dev/
 
 # Go Development
-# brew "go"                     # Open source programming language to build simple/reliable/efficient software https://go.dev/
+# brew "go"                     # Owned by mise — do not re-enable https://go.dev/
 # brew "goenv"                  # Go version management https://github.com/go-nv/goenv
 
 # Python Development
-brew "pyenv"                  # Python version management https://github.com/pyenv/pyenv
 brew "pipx"                    # Install and run Python applications in isolated environments https://pypa.github.io/pipx/
-brew "pyenv-virtualenv"          # pyenv plugin to manage virtual environments  https://github.com/pyenv/pyenv-virtualenv
 
 # JavaScript/Node.js Development
-brew "fnm"                      # Fast and simple Node.js version manager https://github.com/Schniz/fnm
-# brew "node"                   # Platform built on V8 to build network applications https://nodejs.org/
+# brew "node"                   # Owned by mise — do not re-enable https://nodejs.org/
 # brew "nvm"                    # Manage multiple Node.js versions https://github.com/nvm-sh/nvm
 # brew "npm"                    # Package manager for Node.js (included with Node.js)
 # brew "yarn"                   # JavaScript package manager https://yarnpkg.com/

@@ -154,8 +154,11 @@ format = 'took [$duration](bold yellow) '
 description = "Output the current git user's configured email address."
 command = "git config user.email"
 format = "\n[│](bold white)[$symbol(  $output)]($style)"
-# Only when inside git repository
-when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+# Only when inside git repository — native check, no shell-out (a `when`
+# command here spawns a subprocess per prompt and can hit command_timeout).
+# `require_repo` alone is not a display condition, hence `when = true`.
+when = true
+require_repo = true
 style = "text"
 
 # You may add additional palettes as desired.

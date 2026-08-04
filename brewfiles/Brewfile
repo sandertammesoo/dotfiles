@@ -11,13 +11,12 @@ tap "felixkratz/formulae"       # macOS window management and status bar tools (
 tap "asmvik/formulae"      # macOS tiling window manager and hotkey daemon (Yabai, SKHD)
 tap "sandertammesoo/formulae"   # Personal formulae repository
 tap "buo/cask-upgrade"          # Enhanced cask management - upgrade all apps: brew cu
-tap "gromgit/brewtils"          # Homebrew tap management utilities
 
 # Essential System Tools
 # Core system utilities required for basic functionality
 brew "mas"                      # Mac App Store command-line interface https://github.com/mas-cli/mas
 
-brew "gromgit/brewtils/taproom"      # Homebrew tap management utilities
+brew "taproom"      # Homebrew tap management utilities
 
 ################################
 ##### COMMAND LINE TOOLS ######

@@ -45,24 +45,24 @@ yabai -m rule --add label="YT-Pip" title="(Picture in Picture)$" manage=off
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 
 # ── Apple first-party ─────────────────────────────────────────────────────────
-yabai -m rule --add app="^(Calculator|(Notion )?Calendar|FaceTime|Numbers)$" manage=off
+yabai -m rule --add label="Apple utility apps" app="^(Calculator|(Notion )?Calendar|FaceTime|Numbers)$" manage=off
 yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref|Downloads)" manage=off
 yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
 
 # ── Media ─────────────────────────────────────────────────────────────────────
-yabai -m rule --add app="^(Music|Podcasts|Preview|TV|VLC|IINA)$" manage=off
+yabai -m rule --add label="Media" app="^(Music|Podcasts|Preview|TV|VLC|IINA)$" manage=off
 
 # ── Home ──────────────────────────────────────────────────────────────────────
-yabai -m rule --add app="^(Home( Assistant)?)$" manage=off
+yabai -m rule --add label="Home" app="^(Home( Assistant)?)$" manage=off
 
 # ── Hardware control ──────────────────────────────────────────────────────────
-yabai -m rule --add app="^((Elgato )?(Wave Link|Stream Deck))$" manage=off
+yabai -m rule --add label="Hardware control" app="^((Elgato )?(Wave Link|Stream Deck))$" manage=off
 
 # ── Dev tools ─────────────────────────────────────────────────────────────────
-yabai -m rule --add app="^(DBeaver|Docker Desktop|Postman)$" manage=off
+yabai -m rule --add label="Dev tools" app="^(DBeaver|Docker Desktop|Postman)$" manage=off
 
 # ── Utilities & menu bar ──────────────────────────────────────────────────────
-yabai -m rule --add app="^(1Password|DigiDoc4 Client|DockDoor|Hidden Bar|NordVPN|Shottr|Spotify|Timer RH|zoom.us|calibre|Keymapp|Logi Options+|Loom|Openscreen|PS Remote Play|Steam|Transmission|UTM|Antinote)$" manage=off
+yabai -m rule --add label="Utilities and menu bar" app="^(1Password|DigiDoc4 Client|DockDoor|Hidden Bar|NordVPN|Shottr|Spotify|Timer RH|zoom.us|calibre|Keymapp|Logi Options+|Loom|Openscreen|PS Remote Play|Steam|Transmission|UTM|Antinote)$" manage=off
 yabai -m rule --add label="Brave" app="^Brave Browser$" title="(Who\'s using Brave\?)" manage=off
 yabai -m rule --add label="Slack huddle" app="^Slack$" title="(Huddle)" manage=off
 yabai -m rule --add label="Slack help" app="^Slack$" title="^(Help)" manage=off
@@ -72,7 +72,7 @@ yabai -m signal --add label="slack_help_float" event=window_title_changed app="^
   action='win=$(yabai -m query --windows --window "$YABAI_WINDOW_ID"); [[ "$(echo "$win" | jq -r ".title")" =~ ^Help ]] && [[ "$(echo "$win" | jq -r ".\"is-floating\"")" == "false" ]] && yabai -m window "$YABAI_WINDOW_ID" --toggle float'
 
 # ── Design & CAD ──────────────────────────────────────────────────────────────
-yabai -m rule --add app="^(DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity)$" manage=off
+yabai -m rule --add label="Design and CAD" app="^(DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity)$" manage=off
 # yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off
 
 

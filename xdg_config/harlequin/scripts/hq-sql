@@ -1,16 +1,18 @@
 #!/usr/bin/env zsh
-# hq-sql — headless read-only SQL against the Fractory API databases.
+# hq-sql — read-only access to the Fractory API databases.
 #
 # Usage:
-#   hq-sql <staging|prod|production> [hsql options...]
+#   hq-sql <staging|prod|production> [hsql options...]     headless SQL
+#   hq-sql --tui <staging|prod|production> [options...]    harlequin TUI
 #   hq-sql staging --json -c "SELECT COUNT(*) FROM orders"
 #   echo "SELECT 1" | hq-sql prod --csv -f -
 #
-# Runs harlequin's hsql with an ephemeral profile built at invocation time:
-# credentials and connection details come from 1Password DATABASE items, so
-# nothing environment-specific lives in this repo. Standalone on purpose —
-# agents and cron jobs run non-interactive shells where the hq-* zsh
-# functions are not loaded.
+# Single owner of the connection machinery — the hq-staging / hq-prod zsh
+# functions delegate here with --tui. An ephemeral profile is built at
+# invocation time: credentials and connection details come from 1Password
+# DATABASE items, so nothing environment-specific lives in this repo.
+# Standalone on purpose — agents and cron jobs run non-interactive shells
+# where zsh functions are not loaded.
 #
 # Auth (in order):
 #   1. If OP_SERVICE_ACCOUNT_TOKEN is set, op uses it — unattended, no
@@ -19,7 +21,7 @@
 #   2. Otherwise the 1Password desktop-app integration — Touch ID once
 #      per terminal per 10-minute sliding session.
 #
-# Security properties shared with the hq-* functions:
+# Security properties:
 #   - the password never appears on a command line (temp 0600 config,
 #     removed on exit via trap)
 #   - the host is resolved through Tailscale MagicDNS (the RDS CNAME
@@ -35,23 +37,35 @@ OP_VAULT="${HQ_SQL_OP_VAULT:-Employee}"
 
 err() { print -u2 "hq-sql: $*"; }
 
+tui=false
+if [[ "${1:-}" == "--tui" ]]; then
+    tui=true
+    shift
+fi
+
 env_name="${1:-}"
 case "$env_name" in
     staging)
         op_item="My API staging READ-ONLY"
+        theme="tokyo-night"
         ;;
     prod|production)
         env_name="production"
         op_item="My API prod READ-ONLY"
+        # monokai's red-pink secondary is the reddest built-in — the TUI's
+        # visual "this is production" signal
+        theme="monokai"
         ;;
     *)
-        err "usage: hq-sql <staging|prod|production> [hsql options...]"
+        err "usage: hq-sql [--tui] <staging|prod|production> [options...]"
         exit 2
         ;;
 esac
 shift
 
-for dep in hsql op jq dig nc; do
+runner="hsql"
+[[ "$tui" == "true" ]] && runner="harlequin"
+for dep in "$runner" op jq dig nc; do
     if ! command -v "$dep" &> /dev/null; then
         err "required command not found: $dep"
         exit 1
@@ -111,12 +125,9 @@ fi
 trap 'rm -f "$tmp_config"' EXIT INT TERM
 chmod 600 "$tmp_config"
 
-# Copy the user config first: hsql always merges it, and its
+# Copy the user config first: harlequin/hsql always merge it, and its
 # default_profile must keep pointing at a profile that exists after this
-# file's profiles table (merged last) replaces the user config's one.
-# Then append the ephemeral profile — no theme/limit: theme is meaningless
-# headless, and omitting limit leaves row caps to hsql's own default (500)
-# and the caller's --limit.
+# file's profiles table (merged last) replaces the user config's one
 user_config="${XDG_CONFIG_HOME:-$HOME/.config}/harlequin/config.toml"
 if [[ -r "$user_config" ]]; then
     cat "$user_config" > "$tmp_config"
@@ -132,4 +143,13 @@ user = '${db_user}'
 password = '${password}'
 EOF
 
-hsql --config-path "$tmp_config" --profile "fractory-${env_name}" "$@"
+# TUI extras; headless leaves theme meaningless and row caps to hsql's
+# own default (500) and the caller's --limit
+if [[ "$tui" == "true" ]]; then
+    cat >> "$tmp_config" <<EOF
+theme = "${theme}"
+limit = 100
+EOF
+fi
+
+"$runner" --config-path "$tmp_config" --profile "fractory-${env_name}" "$@"

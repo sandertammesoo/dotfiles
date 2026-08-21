@@ -1,0 +1,22 @@
+# Harlequin — SQL IDE for the terminal https://harlequin.sh
+# Linked by dotbot: ~/.config/harlequin -> xdg_config/harlequin
+#
+# Harlequin merges this file with any pyproject.toml / .harlequin.toml found
+# in the working directory, so per-project profiles can extend or override it.
+# The `harlequin --config` and `harlequin --keys` wizards edit this file in
+# place (through the symlink), so wizard changes land in the repo.
+#
+# Do not put credentials in profiles here — postgres/mysql profiles should
+# rely on ~/.pgpass or passwordless connection strings.
+
+default_profile = "duckdb"
+
+[profiles.duckdb]
+adapter = "duckdb"
+theme = "tokyo-night"
+limit = 100000
+
+[profiles.sqlite]
+adapter = "sqlite"
+theme = "tokyo-night"
+limit = 100000

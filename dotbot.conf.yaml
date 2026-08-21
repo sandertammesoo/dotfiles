@@ -102,6 +102,11 @@
     ${XDG_CONFIG_HOME}/television:
       relink: true
       path: "xdg_config/television"
+    # harlequin: whole-dir link is safe — caches go to ~/.cache/harlequin
+    # and data to ~/.local/share/harlequin, never into the config dir
+    ${XDG_CONFIG_HOME}/harlequin:
+      relink: true
+      path: "xdg_config/harlequin"
     # mise: link only config.toml — ~/.config/mise also holds trust
     # state (trusted-configs) that must not live in the repo
     ${XDG_CONFIG_HOME}/mise/config.toml:

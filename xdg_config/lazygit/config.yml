@@ -31,9 +31,9 @@ git:
   # for more information.
   # pagers:
   #   - pager: delta --dark --paging=never --line-numbers --side-by-side --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
-  pagers:
+  diffRenderers:
     - # see: delta --help
-      pager: delta --paging=never
+      command: delta --paging=never
       # pager: delta --paging=never --side-by-side --line-numbers --hyperlinks
       # pager: --dark --paging=never --line-numbers --side-by-side --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
       colorArg: always
@@ -75,20 +75,20 @@ os:
   open: "open {{filename}}"
   # Command for opening a link. Should contain "{{link}}".
   # openLink: ""
+# CopyToClipboardCmd is the command for copying to clipboard.
+# See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#custom-command-for-copying-to-and-pasting-from-clipboard
+# copyToClipboardCmd: ""
 
-  # CopyToClipboardCmd is the command for copying to clipboard.
-  # See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#custom-command-for-copying-to-and-pasting-from-clipboard
-  # copyToClipboardCmd: ""
+# ReadFromClipboardCmd is the command for reading the clipboard.
+# See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#custom-command-for-copying-to-and-pasting-from-clipboard
+# readFromClipboardCmd: ""
 
-  # ReadFromClipboardCmd is the command for reading the clipboard.
-  # See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#custom-command-for-copying-to-and-pasting-from-clipboard
-  # readFromClipboardCmd: ""
+# A shell startup file containing shell aliases or shell functions. This will be
+# sourced before running any shell commands, so that shell functions are
+# available in the `:` command prompt or even in custom commands.
+# See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#using-aliases-or-functions-in-shell-commands
+# shellFunctionsFile: ""
 
-  # A shell startup file containing shell aliases or shell functions. This will be
-  # sourced before running any shell commands, so that shell functions are
-  # available in the `:` command prompt or even in custom commands.
-  # See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#using-aliases-or-functions-in-shell-commands
-  # shellFunctionsFile: ""
 # What to do when opening Lazygit outside of a git repo.
 # - 'prompt': (default) ask whether to initialize a new repo or open in the most
 # recent repo

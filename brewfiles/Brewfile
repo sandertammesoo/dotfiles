@@ -238,6 +238,7 @@ cask "iina"                     # Free and open-source media player https://iina
 # Security & Privacy
 # Password management and VPN tools for enhanced security
 cask "1password"                # Password manager that keeps all passwords secure behind one password https://1password.com/
+cask "1password-cli"            # 1Password command-line tool (op) for secret retrieval in scripts https://developer.1password.com/docs/cli
 cask "nordvpn"                  # VPN client for secure internet access and private browsing https://nordvpn.com/
 # Alternative VPN solutions (uncomment as needed)
 # cask "tunnelbear"             # VPN client for secure internet access and private browsing https://www.tunnelbear.com/

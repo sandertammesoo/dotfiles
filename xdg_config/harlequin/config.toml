@@ -14,9 +14,17 @@ default_profile = "duckdb"
 [profiles.duckdb]
 adapter = "duckdb"
 theme = "tokyo-night"
-limit = 100000
+limit = 100
 
 [profiles.sqlite]
 adapter = "sqlite"
 theme = "tokyo-night"
-limit = 100000
+limit = 100
+
+# Fractory API database profiles are intentionally NOT stored here — the
+# hq-staging / hq-prod zsh functions (zsh-setup-scripts/harlequin/
+# functions.zsh) build them at launch from 1Password DATABASE items
+# (host, port, database, user, password) and append them to a 0600 temp
+# copy of this file, passed via --config-path (merged last, so a cwd
+# .harlequin.toml cannot hijack them). Do not re-add profiles with those
+# names here — the appended TOML table would collide and fail to parse.

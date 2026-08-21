@@ -14,3 +14,7 @@ xdg_config/zsh/.revolver
 .vscode
 xdg_config/worktrunk/config.toml.lock
 xdg_config/superfile/*.bak-*
+xdg_config/lazygit/github_pull_requests.json
+xdg_config/worktrunk/approvals.toml
+xdg_config/worktrunk/approvals.toml.lock
+xdg_config/zsh/.zcompdump*

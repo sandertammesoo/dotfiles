@@ -1,0 +1,135 @@
+#!/usr/bin/env zsh
+# hq-sql — headless read-only SQL against the Fractory API databases.
+#
+# Usage:
+#   hq-sql <staging|prod|production> [hsql options...]
+#   hq-sql staging --json -c "SELECT COUNT(*) FROM orders"
+#   echo "SELECT 1" | hq-sql prod --csv -f -
+#
+# Runs harlequin's hsql with an ephemeral profile built at invocation time:
+# credentials and connection details come from 1Password DATABASE items, so
+# nothing environment-specific lives in this repo. Standalone on purpose —
+# agents and cron jobs run non-interactive shells where the hq-* zsh
+# functions are not loaded.
+#
+# Auth (in order):
+#   1. If OP_SERVICE_ACCOUNT_TOKEN is set, op uses it — unattended, no
+#      biometric prompts. Set HQ_SQL_OP_VAULT to the vault the service
+#      account can read (service accounts cannot access Employee vaults).
+#   2. Otherwise the 1Password desktop-app integration — Touch ID once
+#      per terminal per 10-minute sliding session.
+#
+# Security properties shared with the hq-* functions:
+#   - the password never appears on a command line (temp 0600 config,
+#     removed on exit via trap)
+#   - the host is resolved through Tailscale MagicDNS (the RDS CNAME
+#     escapes the tailnet's split-DNS zone via the system resolver and
+#     intermittently yields the firewalled public IP)
+#   - an explicit --config-path merges last, so a cwd .harlequin.toml
+#     cannot hijack the profile
+
+set -u
+
+OP_ACCOUNT="fractorysolutionso.1password.com"
+OP_VAULT="${HQ_SQL_OP_VAULT:-Employee}"
+
+err() { print -u2 "hq-sql: $*"; }
+
+env_name="${1:-}"
+case "$env_name" in
+    staging)
+        op_item="My API staging READ-ONLY"
+        ;;
+    prod|production)
+        env_name="production"
+        op_item="My API prod READ-ONLY"
+        ;;
+    *)
+        err "usage: hq-sql <staging|prod|production> [hsql options...]"
+        exit 2
+        ;;
+esac
+shift
+
+for dep in hsql op jq dig nc; do
+    if ! command -v "$dep" &> /dev/null; then
+        err "required command not found: $dep"
+        exit 1
+    fi
+done
+
+# Service account token switches op to unattended auth; --account is only
+# valid (and only needed) for the desktop-app integration
+op_args=(--vault "$OP_VAULT")
+if [[ -z "${OP_SERVICE_ACCOUNT_TOKEN:-}" ]]; then
+    op_args+=(--account "$OP_ACCOUNT")
+fi
+
+if ! item_json="$(op item get "$op_item" "${op_args[@]}" --format=json)"; then
+    err "failed to read '${op_item}' from 1Password (vault: ${OP_VAULT})"
+    exit 1
+fi
+
+field() { jq -r ".fields[] | select(.id == \"$1\").value // empty" <<< "$item_json"; }
+host="$(field hostname)"
+port="$(field port)"
+database="$(field database)"
+db_user="$(field username)"
+password="$(field password)"
+
+if [[ -z "$host" || -z "$port" || -z "$database" || -z "$db_user" || -z "$password" ]]; then
+    err "1Password item '${op_item}' is missing one of: hostname, port, database, username, password"
+    exit 1
+fi
+if [[ "$port" != <-> ]]; then
+    err "1Password item '${op_item}' has a non-numeric port: ${port}"
+    exit 1
+fi
+# TOML literal strings ('...') have no escape mechanism
+for value in "$host" "$database" "$db_user" "$password"; do
+    if [[ "$value" == *"'"* ]]; then
+        err "a 1Password field of '${op_item}' contains a single quote — cannot write it into the TOML profile"
+        exit 1
+    fi
+done
+
+resolved="$(dig +short +time=2 +tries=1 @100.100.100.100 "$host" 2>/dev/null \
+    | grep -E '^(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.' | head -1)"
+if [[ -n "$resolved" ]]; then
+    host="$resolved"
+fi
+
+if ! nc -z -G 3 "$host" "$port" &> /dev/null; then
+    err "cannot reach ${host}:${port} within 3s — is Tailscale connected?"
+    exit 1
+fi
+
+if ! tmp_config="$(mktemp "${TMPDIR:-/tmp}/harlequin-XXXXXX")"; then
+    err "failed to create a temporary harlequin config"
+    exit 1
+fi
+trap 'rm -f "$tmp_config"' EXIT INT TERM
+chmod 600 "$tmp_config"
+
+# Copy the user config first: hsql always merges it, and its
+# default_profile must keep pointing at a profile that exists after this
+# file's profiles table (merged last) replaces the user config's one.
+# Then append the ephemeral profile — no theme/limit: theme is meaningless
+# headless, and omitting limit leaves row caps to hsql's own default (500)
+# and the caller's --limit.
+user_config="${XDG_CONFIG_HOME:-$HOME/.config}/harlequin/config.toml"
+if [[ -r "$user_config" ]]; then
+    cat "$user_config" > "$tmp_config"
+fi
+cat >> "$tmp_config" <<EOF
+
+[profiles.fractory-${env_name}]
+adapter = "mysql"
+host = '${host}'
+port = ${port}
+database = '${database}'
+user = '${db_user}'
+password = '${password}'
+EOF
+
+hsql --config-path "$tmp_config" --profile "fractory-${env_name}" "$@"

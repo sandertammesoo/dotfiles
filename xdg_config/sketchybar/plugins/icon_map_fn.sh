@@ -291,7 +291,7 @@ function __icon_map() {
    "Clock")
         icon_result=":clock:"
         ;;
-   "cmux")
+   "cmux" | "cmux NIGHTLY")
         icon_result=":cmux:"
         ;;
    "coconutBattery")
@@ -1104,6 +1104,9 @@ function __icon_map() {
    "OpenChamber")
         icon_result=":openchamber:"
         ;;
+   "OpenClaw")
+        icon_result=":openclaw:"
+        ;;
    "opencode" | "OpenCode")
         icon_result=":opencode:"
         ;;
@@ -1452,6 +1455,9 @@ function __icon_map() {
    "Sonarr")
         icon_result=":sonarr:"
         ;;
+   "SourceGit")
+        icon_result=":sourcegit:"
+        ;;
    "Sourcetree")
         icon_result=":sourcetree:"
         ;;
@@ -1767,7 +1773,7 @@ function __icon_map() {
    "Zeplin")
         icon_result=":zeplin:"
         ;;
-   "zoom.us")
+   "zoom.us" | "Zoom")
         icon_result=":zoom:"
         ;;
    "Zotero")

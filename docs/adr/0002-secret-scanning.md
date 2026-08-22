@@ -32,13 +32,14 @@ No single control covers every path a secret takes into the repository.
    generic patterns that push protection misses, and it catches them before
    the secret leaves the machine. A committer who passes `--no-verify` skips
    it.
-3. **The CI workflow** scans the full history on every push, on every pull
-   request, and once a week. It is the backstop for anything the first two
-   layers miss. The weekly run matters because detection rules improve, so
-   history that scans clean today can produce a finding next month.
+3. **The CI workflow** scans the full history on every push and every pull
+   request. It is the backstop for anything the first two layers miss, and
+   nobody can bypass it from a workstation.
 4. **`secrets-audit --verify`** runs trufflehog on demand and reports which
    findings still authenticate. A live secret needs rotation now. A dead one
-   needs a line in `.gitleaksignore`.
+   needs a line in `.gitleaksignore`. This is also the periodic check:
+   detection rules improve, so history that scans clean today can produce a
+   finding next year.
 
 ## The gate is machine-wide, not repository-local
 
@@ -104,6 +105,13 @@ false positives, and nothing else.
   expands the tilde. `git config --global` writes an absolute
   `/Users/<name>` path into this tracked file, so do not set the value that
   way.
+- The CI workflow runs on push and pull request only. A schedule is wrong
+  here for two reasons. GitHub runs a scheduled workflow only from the
+  default branch, and GitHub disables one in a public repository after 60
+  days without activity. This repository records 2 commits in all of 2023.
+  In a quiet year like that one, the scan switches itself off and reports
+  nothing. A control that stops in silence is worse than no control, because
+  the owner still counts on it.
 - GitHub validity checks and non-provider patterns stay off. Both need paid
   Secret Protection, and the API accepts the request to enable them without
   effect. The CI workflow covers the non-provider gap.

@@ -1,0 +1,44 @@
+# Global gitleaks baseline — used by the pre-commit hook in every repository
+# on this machine that does NOT ship its own .gitleaks.toml.
+#
+# Linked to $XDG_CONFIG_HOME/gitleaks/gitleaks.toml by dotbot. The hook passes
+# it with --config only when the repository has no config of its own, because
+# --config and GITLEAKS_CONFIG both outrank a repo-local .gitleaks.toml and
+# would silently replace a project's tuned rules with this file.
+#
+# Keep this file conservative. It applies to work repositories, throwaway
+# clones, and agent worktrees alike, so a noisy rule here trains you to bypass
+# the hook — which is worse than not having the hook.
+
+title = "Global baseline (dotfiles)"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Lockfiles and vendored trees: high-entropy hashes, not secrets"
+paths = [
+  '''(^|/)(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lockb|Cargo\.lock|poetry\.lock|uv\.lock|composer\.lock|Gemfile\.lock|go\.sum|flake\.lock)$''',
+  '''(^|/)(node_modules|vendor|\.venv|venv|target|dist|build)/''',
+]
+
+[[allowlists]]
+description = "Placeholder values used in docs, examples, and test fixtures"
+regexTarget = "secret"
+stopwords = [
+  "example",
+  "changeme",
+  "placeholder",
+  "your-",
+  "xxxxxxxx",
+  "redacted",
+  "dummy",
+  "notasecret",
+]
+
+[[allowlists]]
+description = "GPG/SSH public key fingerprints in git config are public by design"
+condition = "AND"
+regexTarget = "line"
+regexes = ['''(?i)^\s*(signingkey|signing_key)\s*=''']
+paths = ['''(^|/)(\.git)?config$''']

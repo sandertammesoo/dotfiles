@@ -1,0 +1,44 @@
+# gitleaks config for this repository.
+#
+# A repo-local .gitleaks.toml takes precedence over the global baseline at
+# $XDG_CONFIG_HOME/gitleaks/gitleaks.toml, so the rules that matter for a
+# public dotfiles repo are repeated here rather than inherited.
+#
+# See docs/adr/0002-secret-scanning.md for why gitleaks is the gate and
+# trufflehog is the auditor.
+
+title = "dotfiles"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "GPG signing key fingerprints are public key material, not secrets"
+condition = "AND"
+regexTarget = "line"
+regexes = ['''(?i)^\s*signingkey\s*=''']
+paths = ['''xdg_config/git/config$''']
+
+[[allowlists]]
+description = "Documentation and test fixtures illustrate secrets, they do not contain them"
+condition = "AND"
+paths = [
+  '''^docs/''',
+  '''^spec/''',
+  '''^\.claude/''',
+  '''^CONTEXT\.md$''',
+  '''^CLAUDE\.md$''',
+  '''^NEW_MACHINE\.md$''',
+  '''^README\.md$''',
+]
+regexTarget = "secret"
+regexes = [
+  '''(?i)(example|placeholder|changeme|your[-_]|dummy|xxxx|redacted|<[a-z-]+>)''',
+]
+
+[[allowlists]]
+description = "Vendored submodules and lockfiles carry upstream hashes, not our credentials"
+paths = [
+  '''^git-submodules/''',
+  '''(^|/)(package-lock\.json|yarn\.lock|uv\.lock|poetry\.lock|Cargo\.lock|flake\.lock)$''',
+]

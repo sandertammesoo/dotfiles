@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+#
+# Global pre-commit secret gate.
+#
+# Installed machine-wide via `core.hooksPath` (see
+# zsh-setup-scripts/gitleaks/install.sh), so it runs in every repository —
+# work clones, throwaway checkouts, and agent worktrees included. Dotfiles is
+# not where the worst secret will land; the blast radius is the point.
+#
+# Design constraints, each of which is load-bearing:
+#
+#   * core.hooksPath replaces .git/hooks entirely, so a repository's own
+#     pre-commit would stop running. This hook chains to it instead.
+#   * --config and GITLEAKS_CONFIG both outrank a repo-local .gitleaks.toml.
+#     The global baseline is therefore passed ONLY when the repository has no
+#     config of its own, so a project's tuned rules always win.
+#   * GUI git clients (SourceGit, Fork, Tower) start with a minimal PATH that
+#     usually omits Homebrew, so Homebrew's bin directories are prepended here.
+#   * A missing gitleaks binary warns and allows the commit. A gate that
+#     blocks every commit on a fresh machine gets disabled within the hour,
+#     and a disabled gate protects nothing. Findings still block.
+#
+# Escape hatches:
+#   GITLEAKS_SKIP=1 git commit ...        one commit
+#   git config hooks.gitleaks false       one repository, permanently
+#   git commit --no-verify                skips every hook (last resort)
+
+set -uo pipefail
+
+# --- 1. opt-outs ------------------------------------------------------------
+
+if [[ -n "${GITLEAKS_SKIP:-}" ]]; then
+    printf '\033[33m[pre-commit]\033[0m gitleaks skipped (GITLEAKS_SKIP set)\n' >&2
+    exit 0
+fi
+
+# --- 2. chain to the repository's own hook ----------------------------------
+#
+# Runs first so that formatters which restage files do so before the scan,
+# leaving gitleaks to see the final staged content. --git-common-dir (not
+# --git-dir) is required: inside a worktree the latter points at
+# .git/worktrees/<name>, which holds no hooks.
+
+git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || exit 0
+local_hook="${git_common_dir}/hooks/pre-commit"
+
+if [[ -x "$local_hook" ]]; then
+    # Guard against a repo hook that is a link back to this file.
+    self=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/$(basename "${BASH_SOURCE[0]}")
+    target=$(cd "$(dirname "$local_hook")" && pwd -P)/$(basename "$local_hook")
+    [[ -L "$local_hook" ]] && target=$(readlink -f "$local_hook" 2>/dev/null || echo "$target")
+
+    if [[ "$self" != "$target" ]]; then
+        "$local_hook" "$@" || exit $?
+    fi
+fi
+
+# --- 3. is the gate enabled here? -------------------------------------------
+
+if [[ "$(git config --get hooks.gitleaks || echo true)" == "false" ]]; then
+    exit 0
+fi
+
+# --- 4. locate gitleaks ------------------------------------------------------
+
+export PATH="/opt/homebrew/bin:/usr/local/bin:${PATH}"
+
+if ! command -v gitleaks > /dev/null 2>&1; then
+    printf '\033[33m[pre-commit] WARNING:\033[0m gitleaks not found — commit NOT scanned for secrets.\n' >&2
+    printf '             Install it with: brew install gitleaks\n' >&2
+    exit 0
+fi
+
+# --- 5. choose a config ------------------------------------------------------
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+
+config_args=()
+if [[ ! -f "${repo_root}/.gitleaks.toml" && ! -f "${repo_root}/gitleaks.toml" ]]; then
+    global_config="${XDG_CONFIG_HOME:-$HOME/.config}/gitleaks/gitleaks.toml"
+    [[ -f "$global_config" ]] && config_args=(--config "$global_config")
+fi
+
+# --- 6. scan the staged diff -------------------------------------------------
+
+if gitleaks git --staged --no-banner --redact=80 \
+    --log-level warn "${config_args[@]}" "$repo_root"; then
+    exit 0
+fi
+
+cat >&2 <<'MSG'
+
+────────────────────────────────────────────────────────────────────────
+  COMMIT BLOCKED — gitleaks found a possible secret in the staged diff.
+────────────────────────────────────────────────────────────────────────
+
+  If it is a real secret:
+    1. Unstage the file and remove the value.
+    2. Rotate the credential. Assume it is burned.
+    3. Store it in 1Password and read it at runtime (see hq-sql for the
+       pattern used in this dotfiles repo).
+
+  If it is a false positive, pick the narrowest fix that works:
+    * append  # gitleaks:allow  to the offending line
+    * add an allowlist entry to the repository's .gitleaks.toml
+    * record the fingerprint in .gitleaksignore
+      (get it with: gitleaks git --staged -f json -r - | jq -r '.[].Fingerprint')
+
+  To bypass once:  GITLEAKS_SKIP=1 git commit ...
+
+MSG
+
+exit 1

@@ -78,9 +78,14 @@
     ${XDG_CONFIG_HOME}/vim:
       relink: true
       path: "xdg_config/vim"
+    # git: whole-dir link, which also delivers hooks/ — the global pre-commit
+    # secret gate that core.hooksPath points at (see zsh-setup-scripts/gitleaks)
     ${XDG_CONFIG_HOME}/git:
       relink: true
       path: "xdg_config/git"
+    ${XDG_CONFIG_HOME}/gitleaks:
+      relink: true
+      path: "xdg_config/gitleaks"
     ${XDG_CONFIG_HOME}/yabai:
       relink: true
       path: "xdg_config/yabai"

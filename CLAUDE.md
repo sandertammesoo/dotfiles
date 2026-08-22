@@ -1,16 +1,35 @@
 # CLAUDE.md
 
-Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant throughout. Modular zsh config loaded by file suffix (`env.zsh`, `aliases.zsh`, `functions.zsh`, `completion.zsh`) via `get_zsh_files()`. 285 ShellSpec tests.
+Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant throughout. Modular zsh config loaded by file suffix (`env.zsh`, `aliases.zsh`, `functions.zsh`, `completion.zsh`) via `get_zsh_files()`. 303 ShellSpec tests.
 
 ## Commands
 
 ```bash
 ./run-dotbot   # symlinks + XDG dirs only (first step on new machine)
 ./install-all  # full setup; see source for --skip-* and logging flags
-shellspec      # run all 285 tests (also: mise run test / mise run link)
+shellspec      # run all 303 tests (also: mise run test / mise run link)
 ```
 
 Language runtimes (node, python, go) are owned by **mise**, never Homebrew — see `docs/adr/0001-mise-for-runtime-management.md` and CONTEXT.md "Tool provisioning".
+
+## Secret Scanning
+
+This repo is **public**. A gitleaks pre-commit hook is installed **machine-wide** via `core.hooksPath` in `xdg_config/git/config`, so it gates every repo on the box, not just this one. See `docs/adr/0002-secret-scanning.md`.
+
+```bash
+secrets-audit             # gitleaks over the full history of the current repo
+secrets-audit --verify    # + trufflehog, which live-checks whether a secret still works
+secrets-audit --hooks     # list repos whose local core.hooksPath bypasses the gate
+GITLEAKS_SKIP=1 git commit ...   # bypass once
+```
+
+Three rules when a scan fires:
+
+1. **Never** put a fingerprint in `.gitleaksignore` for a credential that still authenticates. Rotate first, suppress after.
+2. Recurring false positives belong in `.gitleaks.toml` as an allowlist (survives line-number changes), not in `.gitleaksignore` (pinned to `commit:path:rule:line`).
+3. `--config`/`GITLEAKS_CONFIG` **override** a repo-local `.gitleaks.toml` — the hook passes the global baseline only when the repo has none. Do not "simplify" that away.
+
+Secrets belong in 1Password and are read at runtime; `xdg_config/harlequin/scripts/hq-sql` is the reference pattern.
 
 ## Installation System
 
@@ -50,6 +69,7 @@ Functions: `log_trace/debug/verbose/info/warn/error/fatal/success/fail/skip/user
 - `.claude/YABAI_MINIMIZE_BUG/` — minimize bug full investigation
 - `.claude/YABAI_SKHD/` — SKHD config reference and fixes
 - `.claude/README.md` — logging framework refactoring docs
+- `docs/adr/0002-secret-scanning.md` — why gitleaks gates and trufflehog audits
 - `NEW_MACHINE.md` — new machine setup checklist
 
 ## Agent skills

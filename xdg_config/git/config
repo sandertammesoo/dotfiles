@@ -119,6 +119,12 @@
     editor = vim
     # hunk as the default pager; delta still handles interactive.diffFilter
 	pager = hunk pager
+    # Machine-wide secret gate: every repository runs xdg_config/git/hooks/pre-commit
+    # unless it sets core.hooksPath locally (husky, lefthook). Declared here rather
+    # than written by the installer so the value stays portable — `git config --global`
+    # would bake an absolute /Users/<name> path into this tracked file.
+    # See docs/adr/0002-secret-scanning.md.
+	hooksPath = ~/.config/git/hooks
 
 [color]
 

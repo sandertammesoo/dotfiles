@@ -1,0 +1,15 @@
+# Findings deliberately suppressed, by fingerprint
+# (format: commit:path:rule:line — see `gitleaks git -f json -r -`).
+#
+# Add an entry here only for a finding that is fixed, dead, or provably not a
+# secret. Anything still live belongs in a rotation, not in this file.
+
+# A HOMEBREW_GITHUB_API_TOKEN committed in January 2016, in the repository's
+# first two commits. Verified dead: trufflehog checked it against the GitHub
+# API on 2026-08-22 and it did not authenticate (GitHub also auto-revokes
+# tokens it finds in public repositories). History was deliberately NOT
+# rewritten: the token is inert, and rewriting would change every commit SHA
+# in a public repository from the initial commit onward, breaking all ten
+# branches and any existing clone or fork. See docs/adr/0002-secret-scanning.md.
+b94d4e60045b106ccc1d7d56d47bea7b61b4c922:system/exports.bash:generic-api-key:30
+6c7e2cf57353f176324e3f271eaa797c498f203c:homebrew/exports.bash:generic-api-key:1

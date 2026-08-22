@@ -191,6 +191,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   local allowed_installer_paths=(
     "zsh-setup-scripts/homebrew/install.sh"
     "zsh-setup-scripts/osx/install.sh"
+    "zsh-setup-scripts/gitleaks/install.sh"
     # "zsh-setup-scripts/lazyman/install.sh"
   )
 

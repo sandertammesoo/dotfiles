@@ -42,3 +42,36 @@ A region inside a host TUI (e.g. lazygit's main panel) that shows captured
 command output. Can only render what a stream colorizer emits; cannot host a
 review UI.
 _Avoid_: preview window, split
+
+### Secret scanning
+
+**Gate**:
+A control that stops a secret before it enters the repository (the gitleaks
+pre-commit hook, GitHub push protection). Runs on every commit or push and
+blocks.
+_Avoid_: scanner, checker, linter
+
+**Auditor**:
+A scan of history that reports what is already committed (trufflehog, the CI
+job). Runs on demand or on a schedule and never blocks a commit.
+_Avoid_: scanner
+
+**Finding**:
+One match a tool reports. A finding is a candidate, not a proven secret.
+_Avoid_: leak, alert, hit
+
+**Verified finding**:
+A finding that still authenticates against its provider. Rotate it before
+anything else. Only trufflehog verifies.
+_Avoid_: live key, valid secret, true positive
+
+**Allowlist**:
+A rule in `.gitleaks.toml` that suppresses a class of findings by pattern or
+path. Survives a change of line numbers.
+_Avoid_: exception, exclusion
+
+**Fingerprint suppression**:
+An entry in `.gitleaksignore` that suppresses one exact finding by
+`commit:path:rule:line`. Correct for a dead historical leak, wrong for a
+recurring pattern.
+_Avoid_: baseline, ignore rule

@@ -68,6 +68,12 @@ brew "wifi-password"            # Show the current WiFi network password https:/
 brew "gnupg"                    # GNU Privacy Guard (includes gpg command) https://gnupg.org/
 brew "magic-wormhole"           # Securely send files and directories from one computer to another https://github.com/magic-wormhole/magic-wormhole
 
+# Secret scanning — see docs/adr/0002-secret-scanning.md.
+# gitleaks is the always-on gate (global pre-commit hook + CI); trufflehog is
+# the auditor, used on demand because it verifies findings over the network.
+brew "gitleaks"                 # Detect hardcoded secrets in git repos https://github.com/gitleaks/gitleaks
+brew "trufflehog"               # Find and verify leaked credentials https://github.com/trufflesecurity/trufflehog
+
 # System Monitoring & Performance
 # System monitoring and performance analysis tools
 brew "htop"                     # Improved top (interactive process viewer) https://htop.dev/

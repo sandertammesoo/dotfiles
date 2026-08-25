@@ -231,11 +231,15 @@ agent_panel_sort = "priority"
 status_indicators = "symbols"
 
 # Expanded agent rows. Built-in tokens: state_icon, state_text, workspace, tab,
-# pane, agent, terminal_title, terminal_title_stripped.
+# pane, agent, terminal_title, terminal_title_stripped. A per-agent override
+# table also exists, [ui.sidebar.agents.rows_by_agent], keyed by agent id.
 #
-# The default second row is ["agent"], which prints the detected agent name --
-# "claude" under every entry here, so it carries nothing. "pane" replaces it with
-# the Claude session title.
+# The session title leads, and the workspace and tab it sits in follow on the
+# second row: with several Claude sessions open in one repo, what each is working
+# on distinguishes them and their location does not. The default rows are
+# [["state_icon", "workspace", "tab"], ["agent"]], where the second row prints
+# the detected agent name -- "claude" under every entry here, so it carries
+# nothing.
 #
 # "pane" and not terminal_title_stripped, and not the $title custom token:
 #   - $title renders EMPTY. The docs offer $name for values reported through pane
@@ -247,7 +251,7 @@ status_indicators = "symbols"
 #     to the reported metadata title. Only panes running the session-title hook
 #     carry that title, which is what makes this row track /rename.
 [ui.sidebar.agents]
-rows = [["state_icon", "workspace", "tab"], ["pane"]]
+rows = [["state_icon",{ token = "pane", fg = "#ffc155"}], [ "workspace", "tab"]]
 
 # Background notification popup delivery
 [ui.toast]

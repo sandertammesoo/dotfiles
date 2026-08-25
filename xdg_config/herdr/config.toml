@@ -123,6 +123,14 @@ key = "prefix+alt+g"
 type = "pane"
 command = "lazygit"
 
+# prefix+p is herdr's default previous_tab — bind the plugin manager alongside
+# lazygit under prefix+alt+ instead of shadowing tab navigation.
+[[keys.command]]
+key = "prefix+alt+p"
+type = "plugin_action"
+command = "ray.plugin-manager.open"
+description = "open plugin manager"
+
 # Legacy indexed shortcut config is still parsed for compatibility.
 # Prefer switch_tab, switch_workspace, and focus_agent for new configs.
 # [keys.indexed]
@@ -200,6 +208,9 @@ agent_panel_sort = "priority"
 # Accepts: hex (#89b4fa), named colors (cyan, blue, magenta), or rgb(r,g,b)
 # accent = "cyan"
 
+# Agent state presentation in the sidebar: "symbols" or "text".
+status_indicators = "symbols"
+
 # Background notification popup delivery
 [ui.toast]
 # off = disable pop-up notifications
@@ -218,7 +229,7 @@ delivery = "herdr"
 
 # Play sounds when agents change state in background workspaces
 [ui.sound]
-# enabled = true
+enabled = true
 # Optional custom mp3 sound files. Relative paths are resolved from this config file's directory.
 # path = "sounds/notification.mp3"   # one mp3 file for all sound notifications
 # done_path = "sounds/done.mp3"      # overrides only finished notifications

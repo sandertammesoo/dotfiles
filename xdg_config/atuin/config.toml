@@ -341,6 +341,9 @@ name = "tokyo-night"
 # height = "60%"
 
 [ui]
+
+[ai]
+enabled = true
 ## Columns to display in the interactive search, from left to right.
 ## The selection indicator (" > ") is always shown first implicitly.
 ##

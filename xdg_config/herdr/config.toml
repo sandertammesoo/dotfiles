@@ -230,6 +230,25 @@ agent_panel_sort = "priority"
 # Agent state presentation in the sidebar: "symbols" or "text".
 status_indicators = "symbols"
 
+# Expanded agent rows. Built-in tokens: state_icon, state_text, workspace, tab,
+# pane, agent, terminal_title, terminal_title_stripped.
+#
+# The default second row is ["agent"], which prints the detected agent name --
+# "claude" under every entry here, so it carries nothing. "pane" replaces it with
+# the Claude session title.
+#
+# "pane" and not terminal_title_stripped, and not the $title custom token:
+#   - $title renders EMPTY. The docs offer $name for values reported through pane
+#     metadata, but bcihanc.claude-session-title sends title as a reserved field
+#     of pane.report_metadata, not as a custom key, so no $title token exists.
+#   - terminal_title_stripped is whatever the pane painted. On a Claude pane that
+#     matches, but on every other pane it is the hostname ("Ares").
+#   - "pane" resolves a manual pane name (prefix+shift+p) first, then falls back
+#     to the reported metadata title. Only panes running the session-title hook
+#     carry that title, which is what makes this row track /rename.
+[ui.sidebar.agents]
+rows = [["state_icon", "workspace", "tab"], ["pane"]]
+
 # Background notification popup delivery
 [ui.toast]
 # off = disable pop-up notifications

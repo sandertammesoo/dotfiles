@@ -155,13 +155,17 @@ description = "re-adopt a hand-renamed tab"
 
 [ui]
 # Sidebar width (auto-scaled based on workspace names, this sets the default)
-# sidebar_width = 26
+# Raised from the 26 default to fit the single-row space entries below, where the
+# workspace name, branch and git status share one line.
+sidebar_width = 36
 
 # Minimum sidebar width when expanded (columns)
 # sidebar_min_width = 18
 
 # Maximum sidebar width when expanded (columns)
-# sidebar_max_width = 36
+# Room for a long branch name — feat/refine-language and the like — beside the
+# workspace name before the auto-scaling has to truncate.
+sidebar_max_width = 66
 
 # Collapsed sidebar presentation: "compact" keeps the narrow status rail, "hidden" uses zero width.
 # sidebar_collapsed_mode = "compact"
@@ -252,6 +256,17 @@ status_indicators = "symbols"
 #     carry that title, which is what makes this row track /rename.
 [ui.sidebar.agents]
 rows = [["state_icon",{ token = "pane", fg = "#ffc155"}], [ "workspace", "tab"]]
+
+# Expanded space rows. A different token set from the agent rows above:
+# state_icon, state_text, workspace, branch, git_status. Custom values use a
+# $name token as well, but reported through workspace.report_metadata rather
+# than pane.report_metadata. There is no per-space override table.
+#
+# One row instead of the default [["state_icon", "workspace"], ["branch",
+# "git_status"]]. herdr resolves no branch for several of these spaces, so the
+# default's second row collapsed on those and left the list at uneven heights.
+[ui.sidebar.spaces]
+rows = [["state_icon", "workspace", "branch", "git_status"]]
 
 # Background notification popup delivery
 [ui.toast]

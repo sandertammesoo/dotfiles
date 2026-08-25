@@ -8,8 +8,8 @@ LOCATION="HOME"
 # space -> display lookup: row N is the layout when N displays are connected
 DISPLAY_LUT=(
   "1 1 1 1 1 1 1 1 1"
-  "1 1 1 1 1 2 2 3 3"
-  "1 1 1 2 2 2 3 3 4"
+  "1 1 1 2 2 2 2 2 2"
+  "1 1 2 2 3 3 3 3 3"
 )
 
 # "App=space" pairs, used for both yabai rules and moving open windows

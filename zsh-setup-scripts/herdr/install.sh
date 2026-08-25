@@ -29,6 +29,7 @@ fi
 local -a herdr_plugins=(
   "ray.plugin-manager speardragon/herdr-plugin-manager"
   "bcihanc.claude-session-title bcihanc/herdr-claude-session-title"
+  "herdr-automatic-rename qu8n/herdr-automatic-rename"
 )
 
 local result=0
@@ -56,6 +57,14 @@ for entry in "${herdr_plugins[@]}"; do
     result=1
   fi
 done
+
+# jq backs every rename pass in herdr-automatic-rename. Without it the engine
+# exits before it names anything, so this is a warning rather than a failure.
+# Unconditional on purpose: $installed is the list from BEFORE the loop, so a
+# fresh machine — the one that actually needs the warning — would not match it.
+if ! command -v jq &> /dev/null; then
+  log_warn "jq not on PATH — herdr-automatic-rename will not name or number anything."
+fi
 
 # The session-title plugin ships a Claude Code hook but does not register it.
 # Installing a plugin never runs its actions, by design: an action is arbitrary

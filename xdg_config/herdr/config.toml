@@ -80,14 +80,17 @@ auto_switch = false
 # next_workspace = ""     # optional, unset by default
 # previous_agent = ""     # optional, unset by default
 # next_agent = ""         # optional, unset by default
-# focus_agent = ""        # optional indexed binding, e.g. "prefix+alt+1..9"
+# herdr-automatic-rename numbers agent rows and workspaces with the key that
+# jumps to them, so both indexed bindings are set below — a "[N]" with nothing
+# bound behind it is just noise. prefix+1..9 is already switch_tab by default.
+focus_agent = "prefix+alt+1..9"
 # remote_image_paste = "ctrl+v" # only active in herdr --remote; empty disables raw-key image paste
 # new_tab = "prefix+c"
 # rename_tab = "prefix+shift+t"
 # previous_tab = "prefix+p"
 # next_tab = "prefix+n"
 # switch_tab = "prefix+1..9"
-# switch_workspace = ""   # optional indexed binding, e.g. "prefix+shift+1..9"
+switch_workspace = "prefix+shift+1..9"   # numbered by herdr-automatic-rename
 # close_tab = "prefix+shift+x"
 # rename_pane = "prefix+shift+p"
 # edit_scrollback = "prefix+e"
@@ -130,6 +133,15 @@ key = "prefix+alt+p"
 type = "plugin_action"
 command = "ray.plugin-manager.open"
 description = "open plugin manager"
+
+# Re-adopt a tab that was renamed by hand, handing it back to automatic naming.
+# prefix+r is resize_mode and prefix+shift+r is reload_config, so this joins the
+# prefix+alt+ group as well.
+[[keys.command]]
+key = "prefix+alt+r"
+type = "plugin_action"
+command = "herdr-automatic-rename.reset"
+description = "re-adopt a hand-renamed tab"
 
 # Legacy indexed shortcut config is still parsed for compatibility.
 # Prefer switch_tab, switch_workspace, and focus_agent for new configs.
@@ -185,7 +197,14 @@ description = "open plugin manager"
 
 # Ask for a tab name before creating a new tab.
 # Set false to create tabs immediately with generated names.
-# prompt_new_tab_name = true
+# Off because herdr-automatic-rename names tabs after their foreground program:
+# a name typed at this prompt counts as a hand rename, which opts the tab out of
+# naming until the plugin's `reset` action hands it back.
+prompt_new_tab_name = false
+
+# Carry the generated tab name — an agent's task included — into the outer
+# terminal's title bar, not just herdr's own tab bar. herdr >= 0.8.2.
+window_title = "{hostname}: {workspace} · {tab}"
 
 # Draw borders around split panes.
 # pane_borders = true

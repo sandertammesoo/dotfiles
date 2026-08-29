@@ -152,16 +152,19 @@ type = "plugin_action"
 command = "cdragon.command-center.open"
 description = "Open Command Center"
 
-# The other half of the pair: cdragon.command-center on prefix+a is the curated
-# list, this is every action every installed plugin exposes, including the ones
-# nothing is bound to, fuzzy-searched with fzf. Needs fzf and jq (both in
-# brewfiles/Brewfile). The README suggests prefix+p, which is herdr's default
-# previous_tab here — prefix+shift+a keeps it next to the palette it complements.
+# The second door, and a wider one than Command Center above: herdr's own native
+# actions with the key each one actually has, every installed plugin's actions, a
+# file finder on "@", and ripgrep content search on "/". It supersedes
+# jt.command-palette, which listed plugin actions only and is now uninstalled.
+# Needs fzf, and rg/fd/bat for the search and preview — all four are in
+# brewfiles/Brewfile. The README suggests cmd+p; cmd bindings depend on the outer
+# terminal, so this takes prefix+t, which no herdr default claims (prefix+shift+t
+# is rename_tab, prefix+tab cycles panes).
 [[keys.command]]
-key = "prefix+shift+a"
+key = "prefix+t"
 type = "plugin_action"
-command = "jt.command-palette.open"
-description = "Command palette: every plugin action"
+command = "telescope.open"
+description = "Telescope: native actions, plugin actions, files"
 
 # Re-adopt a tab that was renamed by hand, handing it back to automatic naming.
 # prefix+r is resize_mode and prefix+shift+r is reload_config, so this joins the

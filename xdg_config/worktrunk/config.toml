@@ -122,9 +122,21 @@ summary = true    # Enable LLM branch summaries (requires [commit.generation])
 # # pager = "delta --paging=never"
 
 # Picker diff preview needs a stream colorizer; core.pager is hunk (TUI-only),
-# which would pass the preview through uncolored
+# which would pass the preview through uncolored.
+#
+# head -n caps the preview: skim 5.6.5 keeps the preview line count in a u16
+# (tui/preview.rs:229, `text.lines.len().try_into().unwrap()`), so a preview
+# over 65535 lines panics and takes the whole picker down with exit 101. Branches
+# here diff ~126k lines against master, well past that. 20000 also keeps the
+# preview quick to render.
+#
+# Temporary. Filed as max-sixty/worktrunk#3958; max-sixty/worktrunk#3959 caps
+# every preview body at 60000 lines in render_preview and is open, not merged.
+# Once a release carries that fix, worktrunk truncates the preview itself and
+# this `| head -n 20000` becomes dead weight — drop it then, after re-checking
+# with a branch whose diff exceeds 65535 lines.
 [switch.picker]
-pager = "delta --paging=never"
+pager = "delta --paging=never | head -n 20000"
 #
 # # Wall-clock budget (ms) for picker data collection (default: 500)
 # # Tasks still running when the budget expires are abandoned; 0 disables

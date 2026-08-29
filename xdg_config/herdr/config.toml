@@ -141,6 +141,28 @@ type = "plugin_action"
 command = "ray.plugin-manager.open"
 description = "open plugin manager"
 
+# One door for everything below. cdragon.command-center lists every registered
+# command in a popup and runs it by its slot key, so the prefix+alt+ group stops
+# being something to remember. prefix+a is free: herdr binds no default to it and
+# no other plugin claims it. The list itself lives in
+# plugins/config/cdragon.command-center/commands.toml.
+[[keys.command]]
+key = "prefix+a"
+type = "plugin_action"
+command = "cdragon.command-center.open"
+description = "Open Command Center"
+
+# The other half of the pair: cdragon.command-center on prefix+a is the curated
+# list, this is every action every installed plugin exposes, including the ones
+# nothing is bound to, fuzzy-searched with fzf. Needs fzf and jq (both in
+# brewfiles/Brewfile). The README suggests prefix+p, which is herdr's default
+# previous_tab here — prefix+shift+a keeps it next to the palette it complements.
+[[keys.command]]
+key = "prefix+shift+a"
+type = "plugin_action"
+command = "jt.command-palette.open"
+description = "Command palette: every plugin action"
+
 # Re-adopt a tab that was renamed by hand, handing it back to automatic naming.
 # prefix+r is resize_mode and prefix+shift+r is reload_config, so this joins the
 # prefix+alt+ group as well.

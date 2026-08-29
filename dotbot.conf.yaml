@@ -127,6 +127,10 @@
     ${XDG_CONFIG_HOME}/herdr/plugins/config/worktrunk/config.toml:
       relink: true
       path: "xdg_config/herdr/plugins/config/worktrunk/config.toml"
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/cdragon.command-center/commands.toml:
+      relink: true
+      force: true
+      path: "xdg_config/herdr/plugins/config/cdragon.command-center/commands.toml"
     # hunk: link only config.toml — ~/.config/hunk also holds runtime
     # state (state.json) that must not live in the repo
     ${XDG_CONFIG_HOME}/hunk/config.toml:

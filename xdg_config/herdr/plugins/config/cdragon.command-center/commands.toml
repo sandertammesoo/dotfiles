@@ -1,0 +1,148 @@
+schema_version = 1
+
+# Editors the popup offers for `shift+o` (edit this file). Trimmed from the
+# eight-entry seed to the two that are actually on this machine: several
+# candidates make the popup ask which one, one opens straight away.
+editor = ["code", "vim"]
+
+# Slots are the key that runs the entry: 1-9, 0, then a-z. A slot is stored with
+# its command, so it survives reordering. Lowercase and digits run; uppercase
+# acts on the list (shift+a add, shift+e edit, shift+d delete, shift+o open this
+# file, shift+i import from config.toml).
+#
+# The plugin_action entries below duplicate the prefix+alt+ group in
+# ../../../config.toml on purpose. Both routes stay: the keys are muscle memory,
+# and this popup is the one door to find when the memory fails.
+
+# --- Worktrees (worktrunk) -------------------------------------------------
+
+[[commands]]
+id = "worktree-switch-create"
+slot = "g"
+label = "Worktree: switch / create"
+type = "plugin_action"
+command = "worktrunk.open"
+description = "Branch off the default branch — same as prefix+shift+g"
+
+[[commands]]
+id = "worktree-switch-create-current"
+slot = "c"
+label = "Worktree: switch / create from current"
+type = "plugin_action"
+command = "worktrunk.open-current"
+description = "Branch off the current branch — same as prefix+alt+c"
+
+[[commands]]
+id = "worktree-switch-create-remotes"
+slot = "w"
+label = "Worktree: switch / create incl. remotes"
+type = "plugin_action"
+command = "worktrunk.open-with-remotes"
+description = "Picker including remote branches — same as prefix+alt+w"
+
+[[commands]]
+id = "worktree-merge"
+slot = "m"
+label = "Worktree: merge into target branch"
+type = "plugin_action"
+command = "worktrunk.merge"
+description = "Squash merge and run worktrunk's hooks — same as prefix+alt+m"
+
+[[commands]]
+id = "worktree-merge-no-squash"
+slot = "n"
+label = "Worktree: merge without squashing"
+type = "plugin_action"
+command = "worktrunk.merge-no-squash"
+description = "Keep every commit — no keybinding, popup only"
+
+[[commands]]
+id = "worktree-remove"
+slot = "x"
+label = "Worktree: remove"
+type = "plugin_action"
+command = "worktrunk.remove"
+description = "Tear down through worktrunk's hooks — same as prefix+alt+x"
+
+# --- herdr itself ----------------------------------------------------------
+
+[[commands]]
+id = "plugin-manager"
+slot = "p"
+label = "Plugin manager"
+type = "plugin_action"
+command = "ray.plugin-manager.open"
+description = "Install, update and toggle herdr plugins — same as prefix+alt+p"
+
+[[commands]]
+id = "tab-rename-reset"
+slot = "r"
+label = "Re-adopt a hand-renamed tab"
+type = "plugin_action"
+command = "herdr-automatic-rename.reset"
+description = "Hand the tab back to automatic naming — same as prefix+alt+r"
+
+[[commands]]
+id = "reload-herdr-config"
+slot = "0"
+label = "Reload herdr config"
+type = "shell"
+command = "herdr server reload-config"
+description = "Apply config.toml edits without restarting the server"
+
+# --- Repo shortcuts --------------------------------------------------------
+
+[[commands]]
+id = "open-in-vs-code"
+slot = "1"
+label = "Open in VS Code"
+type = "shell"
+command = "code ."
+cwd = "focused"
+description = "Open the focused pane's directory in VS Code"
+
+[[commands]]
+id = "open-repo-on-github"
+slot = "2"
+label = "Open repo on GitHub"
+type = "shell"
+command = "gh browse"
+cwd = "focused"
+description = "Open the current repository in the browser"
+
+[[commands]]
+id = "open-pull-request"
+slot = "3"
+label = "Open pull request"
+type = "shell"
+command = "gh pr view --web"
+cwd = "focused"
+description = "Open this branch's pull request in the browser"
+
+# type = "pane" types the command into the pane you were looking at, so you see
+# the output. herdr refuses it when that pane runs an agent — it would go to the
+# agent as a prompt — so these are for shell panes only.
+
+[[commands]]
+id = "git-status"
+slot = "s"
+label = "git status"
+type = "pane"
+command = "git status --short --branch"
+description = "Short status in the focused shell pane"
+
+[[commands]]
+id = "hunk-diff"
+slot = "d"
+label = "Review the diff (hunk)"
+type = "pane"
+command = "hunk"
+description = "Stage and review hunks in the focused shell pane"
+
+[[commands]]
+id = "worktree-list"
+slot = "l"
+label = "List worktrees"
+type = "pane"
+command = "wt list"
+description = "Every worktree worktrunk knows about, in the focused shell pane"

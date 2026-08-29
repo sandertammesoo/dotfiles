@@ -408,7 +408,14 @@ resume_agents_on_restore = true
 # allow_nested = false
 # Experimental local Kitty graphics rendering for attached clients.
 # Requires a Kitty graphics-compatible outer terminal.
-# kitty_graphics = false
+# On, because yazi in a pane (ray.file-explorer, prefix+y) has no other way to
+# draw an image. Off, herdr answers no graphics probe, so yazi falls back to the
+# iTerm2 inline-image protocol its TERM_PROGRAM=WezTerm implies, herdr passes
+# none of it through, and the preview arrives as a wall of tofu. On, herdr answers
+# the Kitty probe as libghostty and `ya env` in a pane reports Drivers.matches:
+# Kgp — which herdr renders itself. There is no yazi-side lever for this: yazi 26
+# picks the adapter by probe and ignores YAZI_ADAPTER.
+kitty_graphics = true
 # Save recent pane screen history across full server restarts.
 pane_history = false
 # While prefix mode is active, temporarily switch the macOS host input

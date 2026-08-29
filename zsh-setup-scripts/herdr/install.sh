@@ -32,6 +32,9 @@ local -a herdr_plugins=(
   "bcihanc.claude-session-title bcihanc/herdr-claude-session-title"
   "herdr-automatic-rename qu8n/herdr-automatic-rename"
   "worktrunk devashish2203/herdr-worktrunk"
+  "cdragon.command-center speardragon/herdr-command-center"
+  "telescope zackshen/herdr-telescope"
+  "ray.file-explorer speardragon/herdr-yazi"
 )
 
 local result=0
@@ -60,13 +63,24 @@ for entry in "${herdr_plugins[@]}"; do
   fi
 done
 
-# jq backs every rename pass in herdr-automatic-rename. Without it the engine
-# exits before it names anything, so this is a warning rather than a failure.
+# Several plugins shell out to tools they do not install. Each missing one costs
+# a feature rather than the plugin, so these are warnings rather than failures.
 # Unconditional on purpose: $installed is the list from BEFORE the loop, so a
-# fresh machine — the one that actually needs the warning — would not match it.
+# fresh machine — the one that actually needs the warnings — would not match it.
 if ! command -v jq &> /dev/null; then
   log_warn "jq not on PATH — herdr-automatic-rename will not name or number anything."
 fi
+
+# telescope needs fzf for the picker itself, rg for its "/" content search, fd
+# for the "@" file finder (it falls back to git ls-files, then find), and bat to
+# highlight the search preview. cdragon.command-center needs node >= 22, which
+# its own [[build]] step checks. All are in brewfiles/Brewfile except node,
+# which mise owns.
+local dep
+for dep in fzf rg fd bat node; do
+  command -v "$dep" &> /dev/null \
+    || log_warn "${dep} not on PATH — telescope and command-center lose features that depend on it."
+done
 
 # The session-title plugin ships a Claude Code hook but does not register it.
 # Installing a plugin never runs its actions, by design: an action is arbitrary

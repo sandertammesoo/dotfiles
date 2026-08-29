@@ -1,0 +1,50 @@
+# Yazi runs in two places here: standalone through the `y` wrapper in
+# zsh-setup-scripts/yazi/functions.zsh, and inside a herdr pane through the
+# ray.file-explorer plugin (prefix+y, prefix+shift+y — see ../herdr/config.toml).
+# Both read this file. Colors live in theme.toml, keys in keymap.toml.
+
+[mgr]
+# Three columns: parent, current, preview. The herdr pane is a split beside an
+# agent, so the preview has to earn its width — 1:3:4 keeps the file list
+# readable and still shows enough of the file to recognize it.
+ratio = [1, 3, 4]
+
+# Sort newest first. These are working directories, and the file that matters is
+# almost always the one just written.
+sort_by = "mtime"
+sort_reverse = true
+sort_dir_first = true
+
+# Dotfiles are the point of this repo, so show them.
+show_hidden = true
+show_symlink = true
+
+# Size and mtime on every row, not just the hovered one.
+linemode = "size"
+
+[preview]
+# Preview images with the terminal's own graphics protocol. WezTerm speaks
+# kitty graphics, so previews render as real images rather than half-blocks.
+max_width = 1200
+max_height = 1800
+
+[opener]
+# `o` on a file. The edit entry is what the herdr telescope's file finder also
+# reaches through $EDITOR.
+edit = [
+  { run = 'code "$@"', orphan = true, desc = "VS Code", for = "unix" },
+  { run = '${EDITOR:-vim} "$@"', block = true, desc = "$EDITOR", for = "unix" },
+]
+open = [
+  { run = 'open "$@"', desc = "Reveal in Finder", for = "macos" },
+]
+
+[open]
+prepend_rules = [
+  # Text-shaped files go to the editor rather than to macOS's file association,
+  # which would hand a .toml or a .log to whatever last claimed it.
+  { mime = "text/*", use = ["edit", "open", "reveal"] },
+  { mime = "application/{json,x-ndjson,toml,yaml,xml}", use = ["edit", "open", "reveal"] },
+  # The key is `url`, not `name` — yazi 26 renamed it, and `name` is a parse error.
+  { url = "*.{md,markdown,zsh,sh,bash,lua,rs,py,ts,tsx,js,jsx}", use = ["edit", "open", "reveal"] },
+]

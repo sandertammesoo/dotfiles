@@ -1,0 +1,9 @@
+# Yazi colors. The whole palette comes from the tokyo-night flavor, which is a
+# vendored directory under ~/.config/yazi/flavors/ rather than a file in this
+# repo — `ya pkg` deploys it from the pin in package.toml, and
+# zsh-setup-scripts/yazi/install.sh runs that on a new machine.
+#
+# tokyo-night to match herdr (theme.name in ../herdr/config.toml), WezTerm and
+# starship. No light entry: this stack has no light mode to switch to.
+[flavor]
+dark = "tokyo-night"

@@ -48,6 +48,12 @@ brew "bat"                      # Clone of cat(1) with syntax highlighting and G
 brew "eza"                      # Modern, maintained replacement for ls https://github.com/eza-community/eza
 brew "superfile"                # Modern and pretty fancy file manager for the terminal https://superfile.netlify.app/
 brew "yazi"                     # Blazing fast terminal file manager, runs in a herdr pane via ray.file-explorer https://yazi-rs.github.io/
+# yazi previews delegate to these; each one is a file type it can show rather than name
+brew "ffmpeg"                   # Play, record, convert, and stream audio and video — yazi video thumbnails https://ffmpeg.org/
+brew "sevenzip"                 # 7-Zip is a file archiver with a high compression ratio — yazi archive listings https://www.7-zip.org/
+brew "poppler"                  # PDF rendering library — yazi PDF previews https://poppler.freedesktop.org/
+brew "imagemagick"              # Tools and libraries to manipulate images in many formats — yazi wide-format images https://imagemagick.org/
+brew "resvg"                    # SVG rendering library and CLI — yazi SVG previews https://github.com/linebender/resvg
 brew "stow"                     # Organize software neatly under a single directory tree (e.g. /usr/local) https://www.gnu.org/software/stow/
 brew "unp"                      # Unpack everything with one command https://tracker.debian.org/pkg/unp
 # brew "ranger"                   # Console file manager with VI key bindings https://ranger.github.io/

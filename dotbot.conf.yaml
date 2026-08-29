@@ -133,6 +133,17 @@
       path: "xdg_config/herdr/plugins/config/cdragon.command-center/commands.toml"
     # hunk: link only config.toml — ~/.config/hunk also holds runtime
     # state (state.json) that must not live in the repo
+    # yazi: link the three files we own — flavors/ next to them is vendored by
+    # `ya pkg install` from the pin in package.toml, and must not live in the repo
+    ${XDG_CONFIG_HOME}/yazi/yazi.toml:
+      relink: true
+      path: "xdg_config/yazi/yazi.toml"
+    ${XDG_CONFIG_HOME}/yazi/theme.toml:
+      relink: true
+      path: "xdg_config/yazi/theme.toml"
+    ${XDG_CONFIG_HOME}/yazi/package.toml:
+      relink: true
+      path: "xdg_config/yazi/package.toml"
     ${XDG_CONFIG_HOME}/hunk/config.toml:
       relink: true
       path: "xdg_config/hunk/config.toml"

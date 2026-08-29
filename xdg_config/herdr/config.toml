@@ -166,6 +166,23 @@ type = "plugin_action"
 command = "telescope.open"
 description = "Telescope: native actions, plugin actions, files"
 
+# Yazi in a herdr pane, opened in the directory of the pane that triggered it —
+# the plugin reads the cwd out of herdr's context and passes it as --cwd. Split
+# for browsing beside an agent, new tab for a full-width look at a tree. prefix+y
+# and prefix+shift+y are both unclaimed by herdr defaults. Both actions are in
+# Command Center as well, on slots f and t.
+[[keys.command]]
+key = "prefix+y"
+type = "plugin_action"
+command = "ray.file-explorer.open"
+description = "File explorer: split pane"
+
+[[keys.command]]
+key = "prefix+shift+y"
+type = "plugin_action"
+command = "ray.file-explorer.open-tab"
+description = "File explorer: new tab"
+
 # Re-adopt a tab that was renamed by hand, handing it back to automatic naming.
 # prefix+r is resize_mode and prefix+shift+r is reload_config, so this joins the
 # prefix+alt+ group as well.

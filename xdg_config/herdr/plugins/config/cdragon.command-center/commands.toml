@@ -64,6 +64,24 @@ type = "plugin_action"
 command = "worktrunk.remove"
 description = "Tear down through worktrunk's hooks — same as prefix+alt+x"
 
+# --- Files ------------------------------------------------------------------
+
+[[commands]]
+id = "file-explorer"
+slot = "f"
+label = "File explorer (split)"
+type = "plugin_action"
+command = "ray.file-explorer.open"
+description = "Yazi beside the current pane — same as prefix+y"
+
+[[commands]]
+id = "file-explorer-tab"
+slot = "t"
+label = "File explorer (new tab)"
+type = "plugin_action"
+command = "ray.file-explorer.open-tab"
+description = "Yazi full width in its own tab — same as prefix+shift+y"
+
 # --- herdr itself ----------------------------------------------------------
 
 [[commands]]

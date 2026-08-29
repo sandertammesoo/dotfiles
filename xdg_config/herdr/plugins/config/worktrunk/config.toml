@@ -1,0 +1,34 @@
+# herdr-worktrunk plugin configuration
+# Place this file at ~/.config/herdr/plugins/config/worktrunk/config.toml
+# (`herdr plugin config-dir worktrunk` prints the directory).
+#
+# Not the same file as ~/.config/worktrunk/config.toml, which configures the wt
+# CLI itself — worktree-path, [merge], [commit.generation]. This one holds only
+# the six keys the plugin reads, and wt never sees it. Do not link the two:
+# the plugin parses with one section-blind sed regex (config.sh), so any key
+# elsewhere in a TOML file drives it regardless of the table it sits under.
+#
+# Merge behavior belongs in the wt config's [merge] block, not in merge_flags
+# here — [merge] covers `wt merge` from the shell and through the plugin alike,
+# while merge_flags only covers the plugin.
+#
+# Re-read on every picker run: no reinstall, no reload_config.
+
+# Where the picker draws: "split" is a pane below the workspace, "popup" a
+# floating terminal centered over the tab that leaves the tiled layout alone.
+# Needs herdr >= 0.7.4.
+picker_placement = "popup"
+
+# Popup size, in terminal cells (24) or a percentage of the window ("70%").
+# Omitting both gives a half-window popup.
+popup_width = "70%"
+popup_height = "60%"
+
+# List remote-tracking branches (origin/foo) in the picker as well. Local
+# branches without worktrees appear either way. These are whatever the last
+# `git fetch` left behind — the picker does not fetch.
+show_remote_branches = true
+
+# open_mode = "workspace"  # default; each checkout becomes a nested worktree
+#                          # workspace in the sidebar. "tab" opens a tab instead.
+# merge_flags = ""         # see the note above — prefer the wt config's [merge]

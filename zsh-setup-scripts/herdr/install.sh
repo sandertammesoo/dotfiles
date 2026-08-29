@@ -2,8 +2,9 @@
 #
 # Declare the herdr plugin set and register the Claude Code session-title hook.
 #
-# dotbot links only ~/.config/herdr/config.toml, because that directory also
-# holds sockets, logs and session state (see dotbot.conf.yaml). herdr keeps its
+# dotbot links individual files under ~/.config/herdr — config.toml and the
+# worktrunk plugin's config.toml — because that directory also holds sockets,
+# logs and session state (see dotbot.conf.yaml). herdr keeps its
 # installed-plugin state in ~/.config/herdr/plugins.json alongside them and
 # offers no export command, so the plugin set is re-declared here rather than
 # tracked as a file.
@@ -30,6 +31,7 @@ local -a herdr_plugins=(
   "ray.plugin-manager speardragon/herdr-plugin-manager"
   "bcihanc.claude-session-title bcihanc/herdr-claude-session-title"
   "herdr-automatic-rename qu8n/herdr-automatic-rename"
+  "worktrunk devashish2203/herdr-worktrunk"
 )
 
 local result=0

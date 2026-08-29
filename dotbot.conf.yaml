@@ -122,6 +122,11 @@
     ${XDG_CONFIG_HOME}/herdr/config.toml:
       relink: true
       path: "xdg_config/herdr/config.toml"
+    # herdr plugin config: same reason — link the single file, not the
+    # plugins/ tree, which herdr owns and rewrites on install/uninstall
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/worktrunk/config.toml:
+      relink: true
+      path: "xdg_config/herdr/plugins/config/worktrunk/config.toml"
     # hunk: link only config.toml — ~/.config/hunk also holds runtime
     # state (state.json) that must not live in the repo
     ${XDG_CONFIG_HOME}/hunk/config.toml:

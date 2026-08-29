@@ -71,8 +71,15 @@ auto_switch = false
 # workspace_picker = "prefix+w"
 # goto = "prefix+g"
 # new_workspace = "prefix+shift+n"
-# new_worktree = "prefix+shift+g"
-# open_worktree = ""    # optional, unset by default
+# new_worktree = "prefix+shift+g"   # taken over by worktrunk.open below
+# herdr's own worktree picker, unset by default. It complements
+# worktrunk.open, which reaches only checkouts whose path matches wt's
+# worktree-path template — this one adopts any existing worktree, including one
+# whose branch has drifted from its directory name. prefix+o is
+# open_notification_target, so this joins the prefix+alt+ group.
+open_worktree = "prefix+alt+o"
+# remove_worktree stays unbound: removal belongs on worktrunk.remove
+# (prefix+alt+x), which runs worktrunk's teardown hooks. The built-in does not.
 # remove_worktree = ""  # optional, unset by default; opens confirmation
 # rename_workspace = "prefix+shift+w"
 # close_workspace = "prefix+shift+d"
@@ -142,6 +149,47 @@ key = "prefix+alt+r"
 type = "plugin_action"
 command = "herdr-automatic-rename.reset"
 description = "re-adopt a hand-renamed tab"
+
+# The worktrunk plugin replaces herdr's built-in worktree management: worktrunk
+# runs its lifecycle hooks on create and remove, which the built-in has no way
+# to do. Its switch/create picker therefore takes over prefix+shift+g, the
+# built-in new_worktree key — a custom binding wins over the built-in on the
+# same key. The other five actions join the prefix+alt+ plugin group, because
+# prefix+shift+{c,d,m,r,w,x} are spoken for by close_workspace, reload_config,
+# rename_workspace and close_tab.
+[[keys.command]]
+key = "prefix+shift+g"
+type = "plugin_action"
+command = "worktrunk.open"
+description = "Worktree: switch / create from default branch"
+
+[[keys.command]]
+key = "prefix+alt+c"
+type = "plugin_action"
+command = "worktrunk.open-current"
+description = "Worktree: switch / create from current branch"
+
+# Redundant with worktrunk.open while show_remote_branches = true in the
+# plugin's config.toml — kept because that setting is the one to turn off if a
+# repo's remote branch list ever swamps the picker, and this key still reaches
+# them for the one invocation.
+[[keys.command]]
+key = "prefix+alt+w"
+type = "plugin_action"
+command = "worktrunk.open-with-remotes"
+description = "Worktree: switch / create incl. remote branches"
+
+[[keys.command]]
+key = "prefix+alt+m"
+type = "plugin_action"
+command = "worktrunk.merge"
+description = "Worktree: merge into the target branch"
+
+[[keys.command]]
+key = "prefix+alt+x"
+type = "plugin_action"
+command = "worktrunk.remove"
+description = "Worktree: remove"
 
 # Legacy indexed shortcut config is still parsed for compatibility.
 # Prefer switch_tab, switch_workspace, and focus_agent for new configs.

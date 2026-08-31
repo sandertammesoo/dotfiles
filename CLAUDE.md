@@ -1,13 +1,13 @@
 # CLAUDE.md
 
-Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant throughout. Modular zsh config loaded by file suffix (`env.zsh`, `aliases.zsh`, `functions.zsh`, `completion.zsh`) via `get_zsh_files()`. 303 ShellSpec tests.
+Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant throughout. Modular zsh config loaded by file suffix (`env.zsh`, `aliases.zsh`, `functions.zsh`, `completion.zsh`) via `get_zsh_files()`. 350 ShellSpec tests.
 
 ## Commands
 
 ```bash
 ./run-dotbot   # symlinks + XDG dirs only (first step on new machine)
 ./install-all  # full setup; see source for --skip-* and logging flags
-shellspec      # run all 303 tests (also: mise run test / mise run link)
+shellspec      # run all 350 tests (also: mise run test / mise run link)
 ```
 
 Language runtimes (node, python, go) are owned by **mise**, never Homebrew — see `docs/adr/0001-mise-for-runtime-management.md` and CONTEXT.md "Tool provisioning".
@@ -29,7 +29,7 @@ Three rules when a scan fires:
 2. Recurring false positives belong in `.gitleaks.toml` as an allowlist (survives line-number changes), not in `.gitleaksignore` (pinned to `commit:path:rule:line`).
 3. `--config`/`GITLEAKS_CONFIG` **override** a repo-local `.gitleaks.toml` — the hook passes the global baseline only when the repo has none. Do not "simplify" that away.
 
-Secrets belong in 1Password and are read at runtime; `xdg_config/harlequin/scripts/hq-sql` is the reference pattern.
+Secrets belong in 1Password and are read at runtime; `xdg_config/harlequin/scripts/hq-sql` is the reference pattern. It also **caches** what it fetched (0600 file, one hour) so Touch ID does not fire on every agent call — see `docs/adr/0003-hq-sql-credential-cache.md`.
 
 ## Installation System
 
@@ -70,6 +70,7 @@ Functions: `log_trace/debug/verbose/info/warn/error/fatal/success/fail/skip/user
 - `.claude/YABAI_SKHD/` — SKHD config reference and fixes
 - `.claude/README.md` — logging framework refactoring docs
 - `docs/adr/0002-secret-scanning.md` — why gitleaks gates and trufflehog audits
+- `docs/adr/0003-hq-sql-credential-cache.md` — why hq-sql caches 1Password credentials on disk
 - `NEW_MACHINE.md` — new machine setup checklist
 
 ## Agent skills

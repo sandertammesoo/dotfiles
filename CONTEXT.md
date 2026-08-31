@@ -75,3 +75,30 @@ An entry in `.gitleaksignore` that suppresses one exact finding by
 `commit:path:rule:line`. Correct for a dead historical leak, wrong for a
 recurring pattern.
 _Avoid_: baseline, ignore rule
+
+### Database access
+
+**Credential cache**:
+The `0600` file that holds the five connection fields read from a 1Password
+item. Persistent, and shared by every run for one environment.
+_Avoid_: session, token store, keychain
+
+**Ephemeral profile**:
+The harlequin TOML profile that `hq-sql` writes at each run and deletes at
+the end of the run. Private to one run, and the only file the runner is given.
+_Avoid_: temp config, generated config
+
+**Idle window**:
+The period after the last use of a credential cache during which the cache
+stays valid. Measured from the file mtime, and touched on every hit.
+_Avoid_: TTL, session length
+
+**Fetch ceiling**:
+The maximum age of a credential cache measured from the 1Password read.
+Outranks the idle window, so a busy session still expires.
+_Avoid_: max TTL, hard expiry, absolute TTL
+
+**Unattended auth**:
+1Password access through a service account token, which prompts for no
+biometric. The alternative is the desktop app integration.
+_Avoid_: headless mode, CI mode, non-interactive auth

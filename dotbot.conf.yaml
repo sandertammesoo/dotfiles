@@ -16,6 +16,7 @@
     - "${XDG_CACHE_HOME}/npm"
     - "${XDG_CACHE_HOME}/python"
     - "${XDG_CACHE_HOME}/composer"
+    - "${XDG_CACHE_HOME}/hq-sql"
     - "${XDG_DATA_HOME}/cargo"
     - "${XDG_DATA_HOME}/rustup"
     - "${XDG_DATA_HOME}/composer"

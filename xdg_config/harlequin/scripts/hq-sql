@@ -2,24 +2,54 @@
 # hq-sql — read-only access to the Fractory API databases.
 #
 # Usage:
-#   hq-sql <staging|prod|production> [hsql options...]     headless SQL
-#   hq-sql --tui <staging|prod|production> [options...]    harlequin TUI
+#   hq-sql [--tui] [--refresh] <staging|prod|production> [runner options...]
+#   hq-sql --forget
+#
 #   hq-sql staging --json -c "SELECT COUNT(*) FROM orders"
 #   echo "SELECT 1" | hq-sql prod --csv -f -
 #
 # Single owner of the connection machinery — the hq-staging / hq-prod zsh
 # functions delegate here with --tui. An ephemeral profile is built at
-# invocation time: credentials and connection details come from 1Password
-# DATABASE items, so nothing environment-specific lives in this repo.
-# Standalone on purpose — agents and cron jobs run non-interactive shells
-# where zsh functions are not loaded.
+# invocation time from 1Password DATABASE items, so nothing
+# environment-specific lives in this repo. Standalone on purpose — agents
+# and cron jobs run non-interactive shells where zsh functions are not
+# loaded. That also puts it outside helpers_logging.zsh, so it carries its
+# own err() and dbg() instead of the repo's log_* functions.
 #
-# Auth (in order):
-#   1. If OP_SERVICE_ACCOUNT_TOKEN is set, op uses it — unattended, no
-#      biometric prompts. Set HQ_SQL_OP_VAULT to the vault the service
-#      account can read (service accounts cannot access Employee vaults).
-#   2. Otherwise the 1Password desktop-app integration — Touch ID once
-#      per terminal per 10-minute sliding session.
+# Auth, in order:
+#   1. OP_SERVICE_ACCOUNT_TOKEN — unattended, no biometric prompt. The
+#      credential cache is bypassed entirely on this path, because it
+#      would add a disk copy and save nothing. Set HQ_SQL_OP_VAULT to a
+#      vault the service account can read (service accounts cannot reach
+#      Employee vaults).
+#   2. A fresh credential cache — no op call, no prompt.
+#   3. The 1Password desktop-app integration — Touch ID. The app
+#      authorizes each new PROCESS, so its 10-minute session never applies
+#      to an agent, whose every call is a new process. That is the problem
+#      the cache exists to solve.
+#      See docs/adr/0003-hq-sql-credential-cache.md.
+#
+# Credential cache:
+#   $XDG_CACHE_HOME/hq-sql/<env>-<hash of account:vault>. Directory 0700,
+#   file 0600, JSON, the five connection fields plus fetched_at. Two
+#   clocks must both pass for a hit — the idle window (file mtime,
+#   touched on every hit; staging 3600s, production 900s) and the fetch
+#   ceiling (fetched_at; 28800s). Override with HQ_SQL_CACHE_TTL and
+#   HQ_SQL_CACHE_MAX_AGE. HQ_SQL_CACHE_DIR relocates the whole cache.
+#
+#   A cold cache is filled under a mkdir lock, so two parallel calls raise
+#   one prompt, not two. The loser waits HQ_SQL_LOCK_WAIT seconds (30) and
+#   then reads 1Password itself. A lock older than HQ_SQL_LOCK_STALE
+#   seconds (60) is broken, because a crashed run must not wedge every
+#   later call.
+#
+#   CAUTION: The cache holds a database password in cleartext, and Touch
+#   ID no longer gates each query. Run hq-sql --forget on a shared or
+#   lost machine.
+#
+#   The dig-resolved private IP is never cached. It changes, and TOML
+#   forbids a second definition of a key, so a per-run host override
+#   cannot patch a cached profile.
 #
 # Security properties:
 #   - the password never appears on a command line (temp 0600 config,
@@ -29,18 +59,64 @@
 #     intermittently yields the firewalled public IP)
 #   - an explicit --config-path merges last, so a cwd .harlequin.toml
 #     cannot hijack the profile
+#   - nothing about the cache reaches stdout, which carries --json output.
+#     HQ_SQL_DEBUG=1 sends hit and miss to stderr.
 
 set -u
 
 OP_ACCOUNT="fractorysolutionso.1password.com"
 OP_VAULT="${HQ_SQL_OP_VAULT:-Employee}"
 
+CACHE_DIR="${HQ_SQL_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/hq-sql}"
+CACHE_MAX_AGE="${HQ_SQL_CACHE_MAX_AGE:-28800}"
+LOCK_WAIT_MAX="${HQ_SQL_LOCK_WAIT:-30}"
+LOCK_STALE_AGE="${HQ_SQL_LOCK_STALE:-60}"
+
+LOCK_HELD=""
+# Identifies this run's claim on the lock, so a run whose lock was broken
+# as stale cannot remove the lock its successor now holds.
+LOCK_NONCE="$$-${RANDOM}"
+tmp_config=""
+
 err() { print -u2 "hq-sql: $*"; }
 
+dbg() {
+    if [[ "${HQ_SQL_DEBUG:-0}" == "1" ]]; then
+        print -u2 "hq-sql: $*"
+    fi
+}
+
+cleanup() {
+    [[ -n "$tmp_config" ]] && rm -f "$tmp_config"
+    release_lock
+    return 0
+}
+trap cleanup EXIT INT TERM
+
+# --- argument parsing ---------------------------------------------------
+# hq-sql's own flags must be consumed before the environment name.
+# Anything left over is forwarded to the runner, which rejects them.
+
 tui=false
-if [[ "${1:-}" == "--tui" ]]; then
-    tui=true
-    shift
+refresh=false
+forget=false
+while (( $# > 0 )); do
+    case "$1" in
+        --tui) tui=true; shift ;;
+        --refresh) refresh=true; shift ;;
+        --forget) forget=true; shift ;;
+        *) break ;;
+    esac
+done
+
+if [[ "$forget" == "true" ]]; then
+    if [[ -d "$CACHE_DIR" ]]; then
+        rm -rf -- "$CACHE_DIR"
+        err "credential cache deleted: ${CACHE_DIR}"
+    else
+        err "no credential cache at ${CACHE_DIR}"
+    fi
+    exit 0
 fi
 
 env_name="${1:-}"
@@ -48,6 +124,7 @@ case "$env_name" in
     staging)
         op_item="My API staging READ-ONLY"
         theme="tokyo-night"
+        default_ttl=3600
         ;;
     prod|production)
         env_name="production"
@@ -55,101 +132,407 @@ case "$env_name" in
         # monokai's red-pink secondary is the reddest built-in — the TUI's
         # visual "this is production" signal
         theme="monokai"
+        # production queries are rare, so a prompt on one is not the
+        # friction this cache removes
+        default_ttl=900
         ;;
     *)
-        err "usage: hq-sql [--tui] <staging|prod|production> [options...]"
+        err "usage: hq-sql [--tui] [--refresh] <staging|prod|production> [options...]"
+        err "       hq-sql --forget"
         exit 2
         ;;
 esac
 shift
 
+CACHE_TTL="${HQ_SQL_CACHE_TTL:-$default_ttl}"
+
 runner="hsql"
 [[ "$tui" == "true" ]] && runner="harlequin"
-for dep in "$runner" op jq dig nc; do
+for dep in "$runner" op jq dig nc shasum; do
     if ! command -v "$dep" &> /dev/null; then
         err "required command not found: $dep"
         exit 1
     fi
 done
 
-# Service account token switches op to unattended auth; --account is only
-# valid (and only needed) for the desktop-app integration
-op_args=(--vault "$OP_VAULT")
-if [[ -z "${OP_SERVICE_ACCOUNT_TOKEN:-}" ]]; then
-    op_args+=(--account "$OP_ACCOUNT")
+# A service account token means no prompt at all, so a disk copy of the
+# password buys nothing.
+use_cache=true
+if [[ -n "${OP_SERVICE_ACCOUNT_TOKEN:-}" ]]; then
+    use_cache=false
 fi
 
-if ! item_json="$(op item get "$op_item" "${op_args[@]}" --format=json)"; then
-    err "failed to read '${op_item}' from 1Password (vault: ${OP_VAULT})"
-    exit 1
-fi
-
-field() { jq -r ".fields[] | select(.id == \"$1\").value // empty" <<< "$item_json"; }
-host="$(field hostname)"
-port="$(field port)"
-database="$(field database)"
-db_user="$(field username)"
-password="$(field password)"
-
-if [[ -z "$host" || -z "$port" || -z "$database" || -z "$db_user" || -z "$password" ]]; then
-    err "1Password item '${op_item}' is missing one of: hostname, port, database, username, password"
-    exit 1
-fi
-if [[ "$port" != <-> ]]; then
-    err "1Password item '${op_item}' has a non-numeric port: ${port}"
-    exit 1
-fi
-# TOML literal strings ('...') have no escape mechanism
-for value in "$host" "$database" "$db_user" "$password"; do
-    if [[ "$value" == *"'"* ]]; then
-        err "a 1Password field of '${op_item}' contains a single quote — cannot write it into the TOML profile"
-        exit 1
+# The directory is created in one place, so its mode is an invariant. A
+# dotbot `create:` entry cannot set a mode, so do not rely on that one.
+ensure_cache_dir() {
+    if ! mkdir -p "$CACHE_DIR" 2> /dev/null; then
+        return 1
     fi
-done
+    chmod 700 "$CACHE_DIR" 2> /dev/null
+    return 0
+}
 
-resolved="$(dig +short +time=2 +tries=1 @100.100.100.100 "$host" 2>/dev/null \
-    | grep -E '^(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.' | head -1)"
-if [[ -n "$resolved" ]]; then
-    host="$resolved"
-fi
+cache_key="${env_name}-$(print -rn -- "${OP_ACCOUNT}:${OP_VAULT}" | shasum -a 256 | cut -c1-12)"
+cache_file="${CACHE_DIR}/${cache_key}"
 
-if ! nc -z -G 3 "$host" "$port" &> /dev/null; then
-    err "cannot reach ${host}:${port} within 3s — is Tailscale connected?"
-    exit 1
-fi
+# --- field validation --------------------------------------------------
+# Applied to both load paths. A cache file that fails these is treated as
+# a miss, not as a fatal error, so a corrupted cache self-heals.
 
-if ! tmp_config="$(mktemp "${TMPDIR:-/tmp}/harlequin-XXXXXX")"; then
-    err "failed to create a temporary harlequin config"
-    exit 1
-fi
-trap 'rm -f "$tmp_config"' EXIT INT TERM
-chmod 600 "$tmp_config"
+validate_fields() {
+    local origin="$1" value
+    if [[ -z "$host" || -z "$port" || -z "$database" || -z "$db_user" || -z "$password" ]]; then
+        err "${origin} is missing one of: hostname, port, database, username, password"
+        return 1
+    fi
+    if [[ "$port" != <-> ]]; then
+        err "${origin} has a non-numeric port: ${port}"
+        return 1
+    fi
+    # TOML literal strings ('...') have no escape mechanism
+    for value in "$host" "$database" "$db_user" "$password"; do
+        if [[ "$value" == *"'"* ]]; then
+            err "a field of ${origin} contains a single quote — cannot write it into the TOML profile"
+            return 1
+        fi
+    done
+    return 0
+}
 
-# Copy the user config first: harlequin/hsql always merge it, and its
-# default_profile must keep pointing at a profile that exists after this
-# file's profiles table (merged last) replaces the user config's one
-user_config="${XDG_CONFIG_HOME:-$HOME/.config}/harlequin/config.toml"
-if [[ -r "$user_config" ]]; then
-    cat "$user_config" > "$tmp_config"
-fi
-cat >> "$tmp_config" <<EOF
+# --- cache -------------------------------------------------------------
+
+cache_is_fresh() {
+    local now mtime fetched_at mode owner
+    [[ -f "$cache_file" ]] || return 1
+    # A cache file that is not a 0600 file owned by this user is not
+    # trusted, because its .host and .password steer the connection.
+    mode="$(stat -f %Lp "$cache_file" 2> /dev/null)"
+    owner="$(stat -f %u "$cache_file" 2> /dev/null)"
+    if [[ "$mode" != "600" || "$owner" != "$(id -u)" ]]; then
+        dbg "cache miss: ${cache_file} is not a 0600 file owned by this user"
+        return 1
+    fi
+    now="$(date +%s)"
+    mtime="$(stat -f %m "$cache_file" 2> /dev/null)" || return 1
+    [[ "$mtime" == <-> ]] || return 1
+    if (( now - mtime > CACHE_TTL )); then
+        dbg "cache miss: idle window of ${CACHE_TTL}s expired"
+        return 1
+    fi
+    # The fetch ceiling must come from inside the file. A cache hit
+    # touches the mtime, so the mtime measures the last use only.
+    fetched_at="$(jq -r '.fetched_at // empty' < "$cache_file" 2> /dev/null)"
+    if [[ "$fetched_at" != <-> ]]; then
+        dbg "cache miss: no usable fetched_at"
+        return 1
+    fi
+    if (( now - fetched_at > CACHE_MAX_AGE )); then
+        dbg "cache miss: fetch ceiling of ${CACHE_MAX_AGE}s exceeded"
+        return 1
+    fi
+    return 0
+}
+
+read_cache() {
+    local json
+    json="$(cat "$cache_file" 2> /dev/null)" || return 1
+    host="$(jq -r '.host // empty' <<< "$json" 2> /dev/null)" || return 1
+    port="$(jq -r '.port // empty' <<< "$json" 2> /dev/null)" || return 1
+    database="$(jq -r '.database // empty' <<< "$json" 2> /dev/null)" || return 1
+    db_user="$(jq -r '.user // empty' <<< "$json" 2> /dev/null)" || return 1
+    password="$(jq -r '.password // empty' <<< "$json" 2> /dev/null)" || return 1
+    return 0
+}
+
+write_cache() {
+    local tmp
+    if ! ensure_cache_dir; then
+        err "cannot create the cache directory ${CACHE_DIR}"
+        return 1
+    fi
+    if ! tmp="$(mktemp "${CACHE_DIR}/.tmp-XXXXXX")"; then
+        err "cannot create a temporary cache file in ${CACHE_DIR}"
+        return 1
+    fi
+    chmod 600 "$tmp"
+    # Only the five fields. The 1Password item carries more, and none of
+    # the rest belongs on disk.
+    if ! jq -n \
+        --arg host "$host" \
+        --argjson port "$port" \
+        --arg database "$database" \
+        --arg user "$db_user" \
+        --arg password "$password" \
+        --argjson fetched_at "$(date +%s)" \
+        '{host: $host, port: $port, database: $database, user: $user, password: $password, fetched_at: $fetched_at}' \
+        > "$tmp"; then
+        rm -f "$tmp"
+        err "failed to write the credential cache"
+        return 1
+    fi
+    mv -f "$tmp" "$cache_file"
+}
+
+lock_dir="${CACHE_DIR}/.lock"
+
+# 0 = lock held, 1 = give up and read 1Password unlocked,
+# 2 = another run filled the cache while we waited
+acquire_lock() {
+    local waited=0 age lock_mtime now broke_stale
+    ensure_cache_dir || return 1
+    while ! mkdir "$lock_dir" 2> /dev/null; do
+        now="$(date +%s)"
+        lock_mtime="$(stat -f %m "$lock_dir" 2> /dev/null)"
+        broke_stale=false
+        if [[ "$lock_mtime" == <-> ]]; then
+            age=$(( now - lock_mtime ))
+            # A crashed run must not wedge every later call.
+            if (( age > LOCK_STALE_AGE )); then
+                dbg "breaking a stale lock (${age}s old)"
+                rm -rf "$lock_dir" 2> /dev/null
+                broke_stale=true
+            fi
+        fi
+        # After breaking a lock, take it. Otherwise check whether the
+        # holder finished the work for us.
+        if [[ "${broke_stale:-false}" != "true" ]] && cache_is_fresh; then
+            dbg "another run filled the cache while waiting"
+            return 2
+        fi
+        # The counter advances on every iteration, including one that
+        # broke a lock, so a directory that cannot be removed cannot spin.
+        if (( waited >= LOCK_WAIT_MAX )); then
+            dbg "lock wait timed out after ${waited}s, reading 1Password unlocked"
+            return 1
+        fi
+        sleep 1
+        waited=$(( waited + 1 ))
+    done
+    print -r -- "$LOCK_NONCE" > "${lock_dir}/owner" 2> /dev/null
+    LOCK_HELD="$lock_dir"
+    return 0
+}
+
+release_lock() {
+    local owner
+    [[ -n "$LOCK_HELD" ]] || return 0
+    owner="$(cat "${LOCK_HELD}/owner" 2> /dev/null)"
+    if [[ "$owner" == "$LOCK_NONCE" ]]; then
+        rm -f "${LOCK_HELD}/owner" 2> /dev/null
+        rmdir "$LOCK_HELD" 2> /dev/null
+    else
+        # Our lock was broken as stale and another run holds it now.
+        dbg "not releasing ${LOCK_HELD}: it belongs to another run"
+    fi
+    LOCK_HELD=""
+    return 0
+}
+
+# --- 1Password ---------------------------------------------------------
+
+fetch_from_op() {
+    local item_json op_args
+    # --account is only valid (and only needed) for the desktop-app
+    # integration
+    op_args=(--vault "$OP_VAULT")
+    if [[ -z "${OP_SERVICE_ACCOUNT_TOKEN:-}" ]]; then
+        op_args+=(--account "$OP_ACCOUNT")
+    fi
+
+    dbg "reading '${op_item}' from 1Password (vault: ${OP_VAULT})"
+    if ! item_json="$(op item get "$op_item" "${op_args[@]}" --format=json)"; then
+        err "failed to read '${op_item}' from 1Password (vault: ${OP_VAULT})"
+        return 1
+    fi
+
+    field() { jq -r ".fields[] | select(.id == \"$1\").value // empty" <<< "$item_json"; }
+    host="$(field hostname)"
+    port="$(field port)"
+    database="$(field database)"
+    db_user="$(field username)"
+    password="$(field password)"
+
+    validate_fields "1Password item '${op_item}'" || return 1
+    return 0
+}
+
+serve_from_cache() {
+    read_cache || return 1
+    validate_fields "the credential cache ${cache_file}" || return 1
+    from_cache=true
+    # The mtime is the idle window's clock, so extend it on use.
+    touch "$cache_file" 2> /dev/null
+    return 0
+}
+
+# Sets host/port/database/db_user/password, and from_cache.
+load_credentials() {
+    local lock_status
+    from_cache=false
+
+    if [[ "${use_cache:-false}" == "true" && "${refresh:-false}" == "false" ]] \
+        && cache_is_fresh; then
+        if serve_from_cache; then
+            dbg "cache hit: ${cache_file}"
+            return 0
+        fi
+        dbg "cache unusable, falling back to 1Password"
+    fi
+
+    if [[ "${use_cache:-false}" != "true" ]]; then
+        dbg "cache bypassed: OP_SERVICE_ACCOUNT_TOKEN is set"
+        fetch_from_op || return 1
+        return 0
+    fi
+
+    acquire_lock
+    lock_status=$?
+    # A --refresh run must never accept a cached value, not even one the
+    # lock holder wrote while we waited.
+    if (( lock_status == 2 )) && [[ "${refresh:-false}" == "false" ]]; then
+        if serve_from_cache; then
+            dbg "cache hit after waiting for the lock"
+            return 0
+        fi
+    fi
+
+    if ! fetch_from_op; then
+        release_lock
+        return 1
+    fi
+    write_cache || err "continuing without a cache"
+    release_lock
+    return 0
+}
+
+# --- connection --------------------------------------------------------
+
+resolve_host() {
+    local resolved
+    connect_host="$host"
+    resolved="$(dig +short +time=2 +tries=1 @100.100.100.100 "$host" 2> /dev/null \
+        | grep -E '^(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.' | head -1)"
+    if [[ -n "$resolved" ]]; then
+        connect_host="$resolved"
+    fi
+}
+
+# Runs before the runner, so a Tailscale outage can never reach the
+# authentication retry below.
+preflight() {
+    if ! nc -z -G 3 "$connect_host" "$port" &> /dev/null; then
+        err "cannot reach ${connect_host}:${port} within 3s — is Tailscale connected?"
+        return 1
+    fi
+}
+
+write_profile() {
+    if [[ -n "$tmp_config" ]]; then
+        rm -f "$tmp_config"
+        tmp_config=""
+    fi
+    if ! tmp_config="$(mktemp "${TMPDIR:-/tmp}/harlequin-XXXXXX")"; then
+        err "failed to create a temporary harlequin config"
+        return 1
+    fi
+    chmod 600 "$tmp_config"
+
+    # Copy the user config first: harlequin/hsql always merge it, and its
+    # default_profile must keep pointing at a profile that exists after
+    # this file's profiles table (merged last) replaces the user config's
+    # one. This copy is per run, never cached, so an edit to config.toml
+    # takes effect on the next invocation.
+    local user_config="${XDG_CONFIG_HOME:-$HOME/.config}/harlequin/config.toml"
+    if [[ -r "$user_config" ]]; then
+        cat "$user_config" > "$tmp_config"
+    fi
+    cat >> "$tmp_config" <<EOF
 
 [profiles.fractory-${env_name}]
 adapter = "mysql"
-host = '${host}'
+host = '${connect_host}'
 port = ${port}
 database = '${database}'
 user = '${db_user}'
 password = '${password}'
 EOF
 
-# TUI extras; headless leaves theme meaningless and row caps to hsql's
-# own default (500) and the caller's --limit
-if [[ "$tui" == "true" ]]; then
-    cat >> "$tmp_config" <<EOF
+    # TUI extras; headless leaves theme meaningless and row caps to hsql's
+    # own default (500) and the caller's --limit
+    if [[ "$tui" == "true" ]]; then
+        cat >> "$tmp_config" <<EOF
 theme = "${theme}"
 limit = 100
 EOF
+    fi
+}
+
+prepare_connection() {
+    resolve_host
+    preflight || return 1
+    write_profile || return 1
+    return 0
+}
+
+# --- run ---------------------------------------------------------------
+
+load_credentials || exit 1
+prepare_connection || exit 1
+
+if [[ "${tui:-false}" == "true" ]]; then
+    # The TUI is interactive: the user reads an authentication error and
+    # reruns with --refresh. Capturing its stderr buys nothing and risks
+    # the terminal.
+    "$runner" --config-path "$tmp_config" --profile "fractory-${env_name}" "$@"
+    exit $?
 fi
 
-"$runner" --config-path "$tmp_config" --profile "fractory-${env_name}" "$@"
+# hsql reads a script from stdin when an argument is a bare "-". The
+# authentication retry below cannot repeat such a call, because the first
+# attempt already drained stdin.
+reads_stdin=false
+for arg in "$@"; do
+    case "$arg" in
+        -|--file=-) reads_stdin=true; break ;;
+    esac
+done
+
+errfile="$(mktemp "${TMPDIR:-/tmp}/hq-sql-err-XXXXXX")" || exit 1
+trap 'cleanup; rm -f "$errfile"' EXIT INT TERM
+
+# Buffering the runner's stderr is what makes the retry below possible. It
+# is replayed whole after the run, so stderr no longer interleaves with
+# stdout live.
+run_runner() {
+    "$runner" --config-path "$tmp_config" --profile "fractory-${env_name}" "$@" 2> "$errfile"
+    run_status=$?
+    if [[ -s "$errfile" ]]; then
+        cat "$errfile" >&2
+    fi
+    return $run_status
+}
+
+run_runner "$@"
+
+# A rotated password makes every cached run fail until someone purges the
+# cache. Re-read 1Password once, but only for an authentication error and
+# only when the failing credentials came from the cache. The pattern names
+# the MySQL access-denied error, not a bare 1045, which a query text can
+# contain.
+if (( run_status != 0 )) && [[ "${from_cache:-false}" == "true" ]] \
+    && grep -qiE 'access denied|error 1045|\(28000\)' "$errfile"; then
+    if [[ "${reads_stdin:-false}" == "true" ]]; then
+        err "authentication failed and stdin is already consumed — rerun with --refresh"
+    else
+        dbg "authentication failed with cached credentials, re-reading 1Password"
+        # No rm here: write_cache replaces the file atomically under the
+        # lock, so a concurrent run's fresh cache is never deleted.
+        refresh=true
+        if load_credentials && prepare_connection; then
+            : > "$errfile"
+            run_runner "$@"
+        fi
+    fi
+fi
+
+exit $run_status

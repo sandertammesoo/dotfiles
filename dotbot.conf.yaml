@@ -131,6 +131,10 @@
       relink: true
       force: true
       path: "xdg_config/herdr/plugins/config/cdragon.command-center/commands.toml"
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/herdr-navigator/config.toml:
+      relink: true
+      force: true
+      path: "xdg_config/herdr/plugins/config/herdr-navigator/config.toml"
     # hunk: link only config.toml — ~/.config/hunk also holds runtime
     # state (state.json) that must not live in the repo
     # yazi: link the three files we own — flavors/ next to them is vendored by

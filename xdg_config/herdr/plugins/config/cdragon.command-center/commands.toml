@@ -64,6 +64,32 @@ type = "plugin_action"
 command = "worktrunk.remove"
 description = "Tear down through worktrunk's hooks — same as prefix+alt+x"
 
+# --- Navigation --------------------------------------------------------------
+
+[[commands]]
+id = "navigator"
+slot = "j"
+label = "Navigator: jump to anything"
+type = "plugin_action"
+command = "herdr-navigator.open"
+description = "Workspaces, agents, projects, sessions, zoxide dirs — same as prefix+f"
+
+[[commands]]
+id = "navigator-jump-back"
+slot = "k"
+label = "Navigator: jump back"
+type = "plugin_action"
+command = "herdr-navigator.jump-back"
+description = "Return to the previous workspace — same as prefix+shift+f"
+
+[[commands]]
+id = "navigator-side"
+slot = "o"
+label = "Navigator: side pane"
+type = "plugin_action"
+command = "herdr-navigator.open-side"
+description = "Keep the navigator docked — same as prefix+alt+f"
+
 # --- Files ------------------------------------------------------------------
 
 [[commands]]

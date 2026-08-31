@@ -39,6 +39,7 @@ local -a herdr_plugins=(
   # "alexarthurs/herdr-sidebar" alone fails with a bare "No such file or
   # directory". herdr accepts owner/repo/subdir, which is what this is.
   "herdr-sidebar alexarthurs/herdr-sidebar/plugins/herdr-sidebar"
+  "herdr-navigator thanhdat77/herdr-navigator"
 )
 
 local result=0

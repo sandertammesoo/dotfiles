@@ -206,6 +206,31 @@ type = "plugin_action"
 command = "herdr-sidebar.open-git"
 description = "Sidebar: source control"
 
+# herdr-navigator jumps to a workspace, agent, project, session or directory —
+# the "where" picker, where telescope on prefix+t is the "what" one. Its README
+# offers prefix+t, prefix+l and prefix+shift+t, all three of which are taken here
+# by telescope, focus_pane_right and rename_tab. It gets the f group instead:
+# f for find, shifted for the tmux-style jump back to the previous workspace,
+# and alt for the side pane that stays open after Enter. Command Center slots
+# j, k and o. Its own config.toml is linked from this repo.
+[[keys.command]]
+key = "prefix+f"
+type = "plugin_action"
+command = "herdr-navigator.open"
+description = "Navigator: jump to workspace, agent, project or directory"
+
+[[keys.command]]
+key = "prefix+shift+f"
+type = "plugin_action"
+command = "herdr-navigator.jump-back"
+description = "Navigator: jump back to the previous workspace"
+
+[[keys.command]]
+key = "prefix+alt+f"
+type = "plugin_action"
+command = "herdr-navigator.open-side"
+description = "Navigator: persistent side pane"
+
 # Re-adopt a tab that was renamed by hand, handing it back to automatic naming.
 # prefix+r is resize_mode and prefix+shift+r is reload_config, so this joins the
 # prefix+alt+ group as well.

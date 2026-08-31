@@ -72,6 +72,16 @@ CACHE_MAX_AGE="${HQ_SQL_CACHE_MAX_AGE:-28800}"
 LOCK_WAIT_MAX="${HQ_SQL_LOCK_WAIT:-30}"
 LOCK_STALE_AGE="${HQ_SQL_LOCK_STALE:-60}"
 
+# The five connection fields, named in CONTEXT.md. The keys match the JSON
+# keys of the credential cache, so neither store translates. Every key is
+# initialized, because zsh under `set -u` errors on a missing key.
+CRED_KEYS=(host port database user password)
+typeset -gA CRED
+for _key in "${CRED_KEYS[@]}"; do
+    CRED[$_key]=""
+done
+unset _key
+
 LOCK_HELD=""
 # Identifies this run's claim on the lock, so a run whose lock was broken
 # as stale cannot remove the lock its successor now holds.
@@ -179,20 +189,29 @@ cache_file="${CACHE_DIR}/${cache_key}"
 # Applied to both load paths. A cache file that fails these is treated as
 # a miss, not as a fatal error, so a corrupted cache self-heals.
 
+reset_cred() {
+    local key
+    for key in "${CRED_KEYS[@]}"; do
+        CRED[$key]=""
+    done
+}
+
 validate_fields() {
-    local origin="$1" value
-    if [[ -z "$host" || -z "$port" || -z "$database" || -z "$db_user" || -z "$password" ]]; then
-        err "${origin} is missing one of: hostname, port, database, username, password"
-        return 1
-    fi
-    if [[ "$port" != <-> ]]; then
-        err "${origin} has a non-numeric port: ${port}"
+    local origin="$1" key
+    for key in "${CRED_KEYS[@]}"; do
+        if [[ -z "${CRED[$key]}" ]]; then
+            err "${origin} is missing the ${key} field"
+            return 1
+        fi
+    done
+    if [[ "${CRED[port]}" != <-> ]]; then
+        err "${origin} has a non-numeric port: ${CRED[port]}"
         return 1
     fi
     # TOML literal strings ('...') have no escape mechanism
-    for value in "$host" "$database" "$db_user" "$password"; do
-        if [[ "$value" == *"'"* ]]; then
-            err "a field of ${origin} contains a single quote — cannot write it into the TOML profile"
+    for key in host database user password; do
+        if [[ "${CRED[$key]}" == *"'"* ]]; then
+            err "the ${key} field of ${origin} contains a single quote — cannot write it into the TOML profile"
             return 1
         fi
     done
@@ -234,13 +253,12 @@ cache_is_fresh() {
 }
 
 read_cache() {
-    local json
+    local json key
     json="$(cat "$cache_file" 2> /dev/null)" || return 1
-    host="$(jq -r '.host // empty' <<< "$json" 2> /dev/null)" || return 1
-    port="$(jq -r '.port // empty' <<< "$json" 2> /dev/null)" || return 1
-    database="$(jq -r '.database // empty' <<< "$json" 2> /dev/null)" || return 1
-    db_user="$(jq -r '.user // empty' <<< "$json" 2> /dev/null)" || return 1
-    password="$(jq -r '.password // empty' <<< "$json" 2> /dev/null)" || return 1
+    for key in "${CRED_KEYS[@]}"; do
+        CRED[$key]="$(jq -r --arg k "$key" '.[$k] // empty' <<< "$json" 2> /dev/null)" \
+            || return 1
+    done
     return 0
 }
 
@@ -258,11 +276,11 @@ write_cache() {
     # Only the five fields. The 1Password item carries more, and none of
     # the rest belongs on disk.
     if ! jq -n \
-        --arg host "$host" \
-        --argjson port "$port" \
-        --arg database "$database" \
-        --arg user "$db_user" \
-        --arg password "$password" \
+        --arg host "${CRED[host]}" \
+        --argjson port "${CRED[port]}" \
+        --arg database "${CRED[database]}" \
+        --arg user "${CRED[user]}" \
+        --arg password "${CRED[password]}" \
         --argjson fetched_at "$(date +%s)" \
         '{host: $host, port: $port, database: $database, user: $user, password: $password, fetched_at: $fetched_at}' \
         > "$tmp"; then
@@ -346,11 +364,12 @@ fetch_from_op() {
     fi
 
     field() { jq -r ".fields[] | select(.id == \"$1\").value // empty" <<< "$item_json"; }
-    host="$(field hostname)"
-    port="$(field port)"
-    database="$(field database)"
-    db_user="$(field username)"
-    password="$(field password)"
+    # The item's field ids differ from our key names, so translate here.
+    CRED[host]="$(field hostname)"
+    CRED[port]="$(field port)"
+    CRED[database]="$(field database)"
+    CRED[user]="$(field username)"
+    CRED[password]="$(field password)"
 
     validate_fields "1Password item '${op_item}'" || return 1
     return 0
@@ -369,6 +388,7 @@ serve_from_cache() {
 load_credentials() {
     local lock_status
     from_cache=false
+    reset_cred
 
     if [[ "${use_cache:-false}" == "true" && "${refresh:-false}" == "false" ]] \
         && cache_is_fresh; then
@@ -409,8 +429,8 @@ load_credentials() {
 
 resolve_host() {
     local resolved
-    connect_host="$host"
-    resolved="$(dig +short +time=2 +tries=1 @100.100.100.100 "$host" 2> /dev/null \
+    connect_host="${CRED[host]}"
+    resolved="$(dig +short +time=2 +tries=1 @100.100.100.100 "${CRED[host]}" 2> /dev/null \
         | grep -E '^(10|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.' | head -1)"
     if [[ -n "$resolved" ]]; then
         connect_host="$resolved"
@@ -420,8 +440,8 @@ resolve_host() {
 # Runs before the runner, so a Tailscale outage can never reach the
 # authentication retry below.
 preflight() {
-    if ! nc -z -G 3 "$connect_host" "$port" &> /dev/null; then
-        err "cannot reach ${connect_host}:${port} within 3s — is Tailscale connected?"
+    if ! nc -z -G 3 "$connect_host" "${CRED[port]}" &> /dev/null; then
+        err "cannot reach ${connect_host}:${CRED[port]} within 3s — is Tailscale connected?"
         return 1
     fi
 }
@@ -451,10 +471,10 @@ write_profile() {
 [profiles.fractory-${env_name}]
 adapter = "mysql"
 host = '${connect_host}'
-port = ${port}
-database = '${database}'
-user = '${db_user}'
-password = '${password}'
+port = ${CRED[port]}
+database = '${CRED[database]}'
+user = '${CRED[user]}'
+password = '${CRED[password]}'
 EOF
 
     # TUI extras; headless leaves theme meaningless and row caps to hsql's

@@ -443,6 +443,35 @@ STUB
     End
   End
 
+  Describe 'a cache missing a connection field'
+    # The rewrite must be chmod'd back to 600, or the ownership check
+    # rejects the file first and the test passes for the wrong reason.
+    drop_password() {
+      local f
+      f="$(cache_file)"
+      jq 'del(.password)' < "$f" > "${f}.rewrite"
+      mv -f "${f}.rewrite" "$f"
+      chmod 600 "$f"
+    }
+
+    It 'falls back to 1Password'
+      warm_cache
+      drop_password
+      run_query staging
+      When call op_calls
+      The output should equal 2
+    End
+
+    It 'names the field that is missing'
+      warm_cache
+      drop_password
+      When call hq staging -c "SELECT 1"
+      The status should be success
+      The stderr should include "missing the password field"
+      The stdout should equal "query-ok"
+    End
+  End
+
   Describe 'a corrupted cache'
     It 'falls back to 1Password'
       warm_cache

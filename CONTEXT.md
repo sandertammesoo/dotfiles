@@ -78,6 +78,11 @@ _Avoid_: baseline, ignore rule
 
 ### Database access
 
+**Connection field**:
+One of the five values a profile needs to reach a database: host, port,
+database, user, password. Carried as one unit, never singly.
+_Avoid_: credential, connection detail, connection string
+
 **Credential cache**:
 The `0600` file that holds the five connection fields read from a 1Password
 item. Persistent, and shared by every run for one environment.

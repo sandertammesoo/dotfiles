@@ -1,0 +1,41 @@
+# A herdr-plus project: a workspace template. Opening it (Command Center slot 4,
+# or Ctrl-P inside the navigator on prefix+f) creates a workspace rooted at
+# working_dir with one tab per [[tabs]] entry, in file order. The first tab
+# reuses the workspace's root tab.
+#
+# Drafted from how the dotfiles workspace is actually laid out: an agent, a
+# shell, and git. Tab names here are explicit, which means herdr-automatic-rename
+# treats them as hand-named and will not rename them after their foreground
+# program. prefix+alt+r hands one back to automatic naming.
+
+name = "dotfiles"
+description = "Personal macOS dotfiles — zsh modules, herdr, yabai, ShellSpec"
+group = "Personal"
+working_dir = "~/projects/dotfiles"
+
+[[tabs]]
+name = "claude"
+command = "claude"
+
+# No command: an empty shell for ./run-dotbot, shellspec, secrets-audit and the
+# rest of the repo's commands.
+[[tabs]]
+name = "shell"
+
+[[tabs]]
+name = "git"
+command = "lazygit"
+
+# Split tab: hunk for reviewing and staging hunks, with a shell under it to run
+# whatever the review turns up. hunk gets the top 70%.
+[[tabs]]
+name = "review"
+
+[[tabs.panes]]
+label = "hunk"
+command = "hunk"
+
+[[tabs.panes]]
+label = "shell"
+split = "down"
+ratio = 0.3

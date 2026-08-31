@@ -40,6 +40,7 @@ local -a herdr_plugins=(
   # directory". herdr accepts owner/repo/subdir, which is what this is.
   "herdr-sidebar alexarthurs/herdr-sidebar/plugins/herdr-sidebar"
   "herdr-navigator thanhdat77/herdr-navigator"
+  "cloudmanic.herdr-plus cloudmanic/herdr-plus"
 )
 
 local result=0

@@ -64,6 +64,24 @@ type = "plugin_action"
 command = "worktrunk.remove"
 description = "Tear down through worktrunk's hooks — same as prefix+alt+x"
 
+# --- Projects ----------------------------------------------------------------
+
+[[commands]]
+id = "herdr-plus-projects"
+slot = "4"
+label = "Projects"
+type = "plugin_action"
+command = "cloudmanic.herdr-plus.projects"
+description = "Open a project workspace from its template — also Ctrl-P in the navigator"
+
+[[commands]]
+id = "herdr-plus-quick-actions"
+slot = "q"
+label = "Quick actions"
+type = "plugin_action"
+command = "cloudmanic.herdr-plus.quick-actions"
+description = "herdr-plus quick actions — also Ctrl-Q in the navigator"
+
 # --- Navigation --------------------------------------------------------------
 
 [[commands]]

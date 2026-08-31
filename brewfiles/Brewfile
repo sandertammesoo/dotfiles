@@ -54,6 +54,7 @@ brew "sevenzip"                 # 7-Zip is a file archiver with a high compressi
 brew "poppler"                  # PDF rendering library — yazi PDF previews https://poppler.freedesktop.org/
 brew "imagemagick"              # Tools and libraries to manipulate images in many formats — yazi wide-format images https://imagemagick.org/
 brew "resvg"                    # SVG rendering library and CLI — yazi SVG previews https://github.com/linebender/resvg
+brew "rust"                     # Safe, concurrent, practical language — builds herdr-sidebar when no release binary matches https://www.rust-lang.org/
 brew "stow"                     # Organize software neatly under a single directory tree (e.g. /usr/local) https://www.gnu.org/software/stow/
 brew "unp"                      # Unpack everything with one command https://tracker.debian.org/pkg/unp
 # brew "ranger"                   # Console file manager with VI key bindings https://ranger.github.io/

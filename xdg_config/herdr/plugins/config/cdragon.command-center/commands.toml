@@ -82,6 +82,22 @@ type = "plugin_action"
 command = "ray.file-explorer.open-tab"
 description = "Yazi full width in its own tab — same as prefix+shift+y"
 
+[[commands]]
+id = "sidebar-explorer"
+slot = "b"
+label = "Sidebar: file tree"
+type = "plugin_action"
+command = "herdr-sidebar.open-sidebar"
+description = "VS Code-style explorer docked in the tab — same as prefix+shift+b"
+
+[[commands]]
+id = "sidebar-source-control"
+slot = "v"
+label = "Sidebar: source control"
+type = "plugin_action"
+command = "herdr-sidebar.open-git"
+description = "Staging, diffs and history in a docked pane — same as prefix+shift+s"
+
 # --- herdr itself ----------------------------------------------------------
 
 [[commands]]

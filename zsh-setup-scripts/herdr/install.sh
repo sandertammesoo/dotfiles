@@ -35,6 +35,10 @@ local -a herdr_plugins=(
   "cdragon.command-center speardragon/herdr-command-center"
   "telescope zackshen/herdr-telescope"
   "ray.file-explorer speardragon/herdr-yazi"
+  # The manifest sits in a subdirectory, not at the repo root — installing
+  # "alexarthurs/herdr-sidebar" alone fails with a bare "No such file or
+  # directory". herdr accepts owner/repo/subdir, which is what this is.
+  "herdr-sidebar alexarthurs/herdr-sidebar/plugins/herdr-sidebar"
 )
 
 local result=0

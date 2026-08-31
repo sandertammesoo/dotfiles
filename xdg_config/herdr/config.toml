@@ -183,6 +183,29 @@ type = "plugin_action"
 command = "ray.file-explorer.open-tab"
 description = "File explorer: new tab"
 
+# herdr-sidebar: a VS Code-style file tree and source-control panel docked into
+# the tab. NOT on prefix+b, which its README suggests — that is herdr's own
+# toggle_sidebar, and herdr's sidebar is the one carrying the agent and space
+# rows configured under [ui.sidebar] below. The plugin's sidebar takes the
+# shifted key beside it, and its source-control panel the shifted key beside
+# prefix+s (settings). Both are Command Center slots b and v as well.
+#
+# The plugin also docks itself through event hooks on tab.created, tab.focused,
+# pane.focused and workspace.created, so it appears without either key being
+# pressed. Its own "b" hides it for a tab; "Auto-open sidebar" in its settings
+# modal turns the hooks off everywhere.
+[[keys.command]]
+key = "prefix+shift+b"
+type = "plugin_action"
+command = "herdr-sidebar.open-sidebar"
+description = "Sidebar: file tree"
+
+[[keys.command]]
+key = "prefix+shift+s"
+type = "plugin_action"
+command = "herdr-sidebar.open-git"
+description = "Sidebar: source control"
+
 # Re-adopt a tab that was renamed by hand, handing it back to automatic naming.
 # prefix+r is resize_mode and prefix+shift+r is reload_config, so this joins the
 # prefix+alt+ group as well.

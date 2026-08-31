@@ -1,0 +1,7 @@
+# A plain command action. The picker closes its pane as soon as the command
+# exits, so anything worth reading has to hold the pane open itself. stdin is
+# /dev/null, hence the explicit </dev/tty.
+
+name = "brew outdated"
+description = "What Homebrew has updates waiting for"
+command = 'brew outdated --verbose; printf "\n— done · press Enter to close (auto-closes in 60s) —\n"; read -t 60 _ </dev/tty || true'

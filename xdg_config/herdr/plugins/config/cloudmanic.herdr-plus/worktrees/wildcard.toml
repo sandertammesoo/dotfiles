@@ -1,0 +1,31 @@
+# The default shape for any worktree with no repo-specific layout beside it.
+#
+# This fires without a keypress. worktrunk's picker execs `herdr worktree open`
+# (picker.sh:193), which emits herdr's worktree.opened event, and herdr-plus
+# handles it — so a worktree created with prefix+shift+g comes up with these tabs
+# and their commands already running.
+#
+# Matching is against herdr's repo_name, or the basename of repo_root. For this
+# repo herdr reports repo_name = "dotfiles" — the clean name, not the
+# "dotfiles.sander" worktree directory that wt's path template produces — so a
+# repo-specific layout can match on the plain name.
+#
+# Specificity: repo+branch > repo > wildcard+branch > wildcard. Add a file with
+# repo = "<name>" to override this for one repo. Delete a file to switch a layout
+# off; with worktrees/ empty the whole feature is inert.
+#
+# `herdr plugin log list --plugin cloudmanic.herdr-plus` says which layout fired.
+
+repo = "*"
+
+[[tabs]]
+name = "claude"
+command = "claude"
+
+# No command — an empty shell for the branch's own work.
+[[tabs]]
+name = "shell"
+
+[[tabs]]
+name = "git"
+command = "lazygit"

@@ -1,0 +1,11 @@
+# A select action whose list is built at open time: options_command runs fresh on
+# every invocation, one option per line, so the list always matches what is
+# actually in ~/projects rather than a hard-coded [[options]] block.
+
+name = "Open project"
+description = "Pick a repo from ~/projects and open it as a herdr workspace"
+type = "select"
+options_command = "ls -1 ~/projects"
+# A herdr workspace rather than an editor: this stack lives in panes, and a
+# workspace is what navigator (prefix+f) and the sidebar then attach to.
+command = "herdr workspace create --cwd '{{.Home}}/projects/{{.Value}}' --label '{{.Value}}' --focus"

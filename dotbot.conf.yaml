@@ -141,6 +141,26 @@
       relink: true
       force: true
       path: "xdg_config/herdr/plugins/config/cloudmanic.herdr-plus/projects/dotfiles.toml"
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/cloudmanic.herdr-plus/config.toml:
+      relink: true
+      force: true
+      path: "xdg_config/herdr/plugins/config/cloudmanic.herdr-plus/config.toml"
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/cloudmanic.herdr-plus/worktrees/wildcard.toml:
+      relink: true
+      force: true
+      path: "xdg_config/herdr/plugins/config/cloudmanic.herdr-plus/worktrees/wildcard.toml"
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/cloudmanic.herdr-plus/worktrees/dotfiles.toml:
+      relink: true
+      force: true
+      path: "xdg_config/herdr/plugins/config/cloudmanic.herdr-plus/worktrees/dotfiles.toml"
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/cloudmanic.herdr-plus/quick-actions/open-project.toml:
+      relink: true
+      force: true
+      path: "xdg_config/herdr/plugins/config/cloudmanic.herdr-plus/quick-actions/open-project.toml"
+    ${XDG_CONFIG_HOME}/herdr/plugins/config/cloudmanic.herdr-plus/quick-actions/brew-outdated.toml:
+      relink: true
+      force: true
+      path: "xdg_config/herdr/plugins/config/cloudmanic.herdr-plus/quick-actions/brew-outdated.toml"
     # hunk: link only config.toml — ~/.config/hunk also holds runtime
     # state (state.json) that must not live in the repo
     # yazi: link the three files we own — flavors/ next to them is vendored by

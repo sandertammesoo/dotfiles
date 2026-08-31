@@ -1,0 +1,10 @@
+# Project-local quick action: files here show under a "Project" heading in the
+# quick-actions picker, and only when it is launched from inside this repo.
+# Global actions live in xdg_config/herdr/plugins/config/cloudmanic.herdr-plus/.
+#
+# The command runs in the directory the picker was launched from. That is the
+# repo root in normal use, which is where ./run-dotbot expects to be.
+
+name = "run-dotbot"
+description = "Re-link symlinks and XDG dirs (no installers, no services)"
+command = './run-dotbot; printf "\n— done · press Enter to close (auto-closes in 60s) —\n"; read -t 60 _ </dev/tty || true'

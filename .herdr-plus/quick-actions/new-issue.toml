@@ -1,0 +1,15 @@
+# A form action: what you type becomes {{.Value}}. Issues for this repo are
+# tracked as GitHub Issues on sandertammesoo/dotfiles (see CLAUDE.md).
+#
+# -w opens the browser's issue form with the title prefilled rather than filing
+# immediately, so the body and labels are still chosen deliberately. Filing
+# straight from here would create a titled issue with an empty body.
+
+name = "New issue"
+description = "Open a prefilled GitHub issue form for this repo"
+type = "form"
+command = "gh issue create -R sandertammesoo/dotfiles -w -t '{{.Value}}'"
+
+[form]
+prompt = "Issue title"
+placeholder = "e.g. yabai signals deminimize windows on reload"

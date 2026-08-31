@@ -1,0 +1,29 @@
+# Overrides wildcard.toml for dotfiles worktrees: same three tabs plus the two
+# things a change to this repo always needs — the ShellSpec suite and a hunk
+# review — so a branch opens ready to verify rather than ready to start.
+
+repo = "dotfiles"
+
+[[tabs]]
+name = "claude"
+command = "claude"
+
+[[tabs]]
+name = "shell"
+
+[[tabs]]
+name = "git"
+command = "lazygit"
+
+# Split: the suite up top, a shell under it for ./run-dotbot and secrets-audit.
+[[tabs]]
+name = "test"
+
+[[tabs.panes]]
+label = "shellspec"
+command = "shellspec"
+
+[[tabs.panes]]
+label = "shell"
+split = "down"
+ratio = 0.4

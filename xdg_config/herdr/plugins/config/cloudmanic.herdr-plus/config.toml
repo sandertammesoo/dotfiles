@@ -1,0 +1,17 @@
+# herdr-plus global settings. Projects live in projects/, worktree auto-layouts
+# in worktrees/, quick actions in quick-actions/ — all beside this file.
+
+[projects]
+# Default is "zoomed", which takes the whole screen. A popup leaves the tiled
+# agent layout underneath alone, matching every other picker in this setup:
+# command-center, telescope, the plugin manager and worktrunk are all popups.
+placement = "popup"
+
+[quick_actions]
+# Default is "overlay", which zooms to fill the active pane. Same reasoning.
+placement = "popup"
+
+# [worktree] branch_prefix is deliberately unset. It prefixes branch names in
+# herdr's OWN worktree-creation dialog, and that path is never taken here:
+# prefix+shift+g is worktrunk's picker, which creates branches through
+# `wt switch --create`, and prefix+alt+o only adopts worktrees that already exist.

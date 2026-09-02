@@ -1,0 +1,269 @@
+#!/usr/bin/env python3
+"""Adjust an Elgato Wave Link mix volume over its local JSON-RPC socket.
+
+Wave Link degrades or silences its own output when macOS changes the volume of
+a Bluetooth output device. Bind the media keys to this script so the keys move
+the Wave Link mix instead of the system volume, and the trigger never fires.
+
+    wl-vol up            raise the active mix by one step
+    wl-vol down          lower it by one step
+    wl-vol mute          toggle mute on the mix
+    wl-vol get           print the current level as a percentage
+    wl-vol set 40        set an absolute percentage
+    wl-vol status        print "<mix name>\t<percentage>\t<muted>", for status bars
+    wl-vol up --mix Jutukuva --step 10
+
+The active mix is the one the Main output listens to, resolved on every call
+from `getOutputDevices`. Name a mix with --mix or WL_VOL_MIX to override that.
+
+When Wave Link is not reachable, the script falls back to the macOS system
+volume so the keys still work. The `status` action does not fall back. It exits
+non-zero instead, so a status bar can tell the two states apart.
+"""
+
+import base64
+import json
+import os
+import socket
+import struct
+import subprocess
+import sys
+
+PORTS = range(1884, 1894)
+DEFAULT_MIX = os.environ.get("WL_VOL_MIX") or None  # None means "follow Main output"
+DEFAULT_STEP = int(os.environ.get("WL_VOL_STEP", "5"))
+TIMEOUT = 2.0
+
+
+class WaveLink:
+    """Minimal JSON-RPC 2.0 client over a hand-rolled WebSocket."""
+
+    def __init__(self, sock):
+        self.sock = sock
+        self.buf = b""
+        self.next_id = 1
+
+    @classmethod
+    def connect(cls):
+        for port in PORTS:
+            try:
+                sock = socket.create_connection(("127.0.0.1", port), TIMEOUT)
+            except OSError:
+                continue
+            sock.settimeout(TIMEOUT)
+            client = cls(sock)
+            if client._handshake(port):
+                return client
+            sock.close()
+        return None
+
+    def _handshake(self, port):
+        key = base64.b64encode(os.urandom(16)).decode()
+        request = (
+            f"GET / HTTP/1.1\r\n"
+            f"Host: 127.0.0.1:{port}\r\n"
+            f"Upgrade: websocket\r\n"
+            f"Connection: Upgrade\r\n"
+            f"Sec-WebSocket-Key: {key}\r\n"
+            f"Sec-WebSocket-Version: 13\r\n"
+            f"Origin: streamdeck://\r\n\r\n"
+        )
+        self.sock.sendall(request.encode())
+        while b"\r\n\r\n" not in self.buf:
+            chunk = self.sock.recv(4096)
+            if not chunk:
+                return False
+            self.buf += chunk
+        head, _, rest = self.buf.partition(b"\r\n\r\n")
+        self.buf = rest
+        return b"101" in head.split(b"\r\n")[0]
+
+    def _send_frame(self, payload):
+        data = payload.encode()
+        header = bytearray([0x81])
+        length = len(data)
+        if length < 126:
+            header.append(0x80 | length)
+        elif length < 65536:
+            header.append(0x80 | 126)
+            header += struct.pack(">H", length)
+        else:
+            header.append(0x80 | 127)
+            header += struct.pack(">Q", length)
+        mask = os.urandom(4)
+        header += mask
+        masked = bytes(b ^ mask[i % 4] for i, b in enumerate(data))
+        self.sock.sendall(bytes(header) + masked)
+
+    def _fill(self, n):
+        while len(self.buf) < n:
+            chunk = self.sock.recv(65536)
+            if not chunk:
+                raise ConnectionError("Wave Link closed the connection")
+            self.buf += chunk
+
+    def _recv_frame(self):
+        self._fill(2)
+        opcode = self.buf[0] & 0x0F
+        length = self.buf[1] & 0x7F
+        offset = 2
+        if length == 126:
+            self._fill(4)
+            length = struct.unpack(">H", self.buf[2:4])[0]
+            offset = 4
+        elif length == 127:
+            self._fill(10)
+            length = struct.unpack(">Q", self.buf[2:10])[0]
+            offset = 10
+        self._fill(offset + length)
+        payload = self.buf[offset:offset + length]
+        self.buf = self.buf[offset + length:]
+        return opcode, payload
+
+    def call(self, method, params=None):
+        request_id = self.next_id
+        self.next_id += 1
+        request = {"id": request_id, "jsonrpc": "2.0", "method": method}
+        if params is not None:
+            request["params"] = params  # a null params is rejected as invalid
+        self._send_frame(json.dumps(request))
+        while True:
+            opcode, payload = self._recv_frame()
+            if opcode == 0x8:
+                raise ConnectionError("Wave Link closed the connection")
+            if opcode != 0x1:
+                continue
+            message = json.loads(payload.decode())
+            if message.get("id") != request_id:
+                continue  # a notification, or an answer to something else
+            if "error" in message:
+                raise RuntimeError(message["error"])
+            return message.get("result")
+
+
+def active_mix_id(client):
+    """The mix that the Main output listens to, or None when nothing is bound."""
+    data = client.call("getOutputDevices", {}) or {}
+    main = data.get("mainOutput") or {}
+    device_id, output_id = main.get("outputDeviceId"), main.get("outputId")
+    for device in data.get("outputDevices", []):
+        if device.get("id") != device_id:
+            continue
+        for output in device.get("outputs", []):
+            if output.get("id") == output_id:
+                return output.get("mixId") or None
+    return None
+
+
+def pick_mix(client, mixes, name):
+    """Resolve the mix to act on. A name wins; otherwise follow the Main output."""
+    if name:
+        return next((m for m in mixes if m.get("name") == name), None)
+    mix_id = active_mix_id(client)
+    if mix_id:
+        target = next((m for m in mixes if m.get("id") == mix_id), None)
+        if target:
+            return target
+    # No output bound to a mix. Prefer the conventional monitor mix.
+    return next((m for m in mixes if m.get("name") == "Monitor"), mixes[0] if mixes else None)
+
+
+def system_volume(delta=None, absolute=None):
+    """Fall back to the macOS volume when Wave Link is not reachable.
+
+    One osascript process costs about 240 ms, so read, clamp, and write inside
+    a single script rather than spawning twice.
+    """
+    if absolute is None:
+        script = (f"set v to (output volume of (get volume settings)) + {delta}\n"
+                  "if v > 100 then set v to 100\n"
+                  "if v < 0 then set v to 0\n"
+                  "set volume output volume v\n"
+                  "return v")
+    else:
+        absolute = max(0, min(100, absolute))
+        script = f"set volume output volume {absolute}\nreturn {absolute}"
+    result = subprocess.run(["osascript", "-e", script],
+                            capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
+def main(argv):
+    action = argv[0] if argv else "get"
+    mix_name = DEFAULT_MIX
+    step = DEFAULT_STEP
+    amount = None
+
+    rest = argv[1:]
+    while rest:
+        token = rest.pop(0)
+        if token == "--mix":
+            mix_name = rest.pop(0)
+        elif token == "--step":
+            step = int(rest.pop(0))
+        elif amount is None:
+            amount = int(token)
+
+    delta = {"up": step, "down": -step}.get(action)
+    if delta is None and action not in ("get", "set", "mute", "status"):
+        print(__doc__, file=sys.stderr)
+        return 2
+    if action == "set" and amount is None:
+        print("wl-vol set needs a percentage", file=sys.stderr)
+        return 2
+
+    client = WaveLink.connect()
+    if client is None:
+        if action == "status":
+            return 1  # a status bar reads the exit code, so stay quiet
+        if action == "get":
+            print(system_volume(delta=0), "(system volume: Wave Link not running)")
+        elif action == "mute":
+            subprocess.run(
+                ["osascript", "-e",
+                 "set volume output muted not (output muted of (get volume settings))"],
+                check=True)
+        else:
+            system_volume(delta=delta, absolute=amount if action == "set" else None)
+        return 0
+
+    try:
+        mixes = (client.call("getMixes", {}) or {}).get("mixes", [])
+        target = pick_mix(client, mixes, mix_name)
+        if target is None:
+            names = ", ".join(repr(m.get("name")) for m in mixes) or "none"
+            wanted = repr(mix_name) if mix_name else "the Main output mix"
+            print(f"cannot resolve {wanted}. Available: {names}", file=sys.stderr)
+            return 1
+
+        level = float(target.get("level", 0.0))
+        percent = round(level * 100)
+        muted = bool(target.get("isMuted"))
+
+        if action == "status":
+            print(f"{target.get('name', '')}\t{percent}\t{'true' if muted else 'false'}")
+            return 0
+
+        if action == "get":
+            state = " (muted)" if muted else ""
+            print(f"{percent}{state}")
+            return 0
+
+        if action == "mute":
+            client.call("setMix", {"id": target["id"], "isMuted": not muted})
+            return 0
+
+        new_level = amount / 100 if action == "set" else level + delta / 100
+        new_level = max(0.0, min(1.0, new_level))
+        client.call("setMix", {"id": target["id"], "level": new_level})
+        return 0
+    finally:
+        client.sock.close()
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except Exception as exc:  # skhd swallows tracebacks, so keep it short
+        print(f"wl-vol: {exc}", file=sys.stderr)
+        sys.exit(1)

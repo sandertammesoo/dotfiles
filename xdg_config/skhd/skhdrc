@@ -446,3 +446,21 @@ normal, moonlander < ctrl + lalt - d : ~/.config/yabai/space_setup_home.sh;
 #   | jq -sre "add | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(.focused == 1))) - 1).id" \
 #   | xargs -I{} yabai -m window --focus {}
 
+
+
+# ############################################################### #
+#                                                                 #
+#                        AUDIO / WAVE LINK                        #
+#                                                                 #
+# ############################################################### #
+
+# While Wave Link runs, the media keys must drive the Wave Link mix and never
+# reach the Bluetooth output device. A macOS volume change on that device makes
+# Wave Link go silent or distort. While Wave Link is not running there is
+# nothing to protect, so no binding is declared and macOS keeps the keys, with
+# the native volume HUD and the feedback click.
+#
+# wl-keys writes the file below and reloads skhd when Wave Link starts or
+# stops. The sketchybar volume plugin calls it. skhd resolves this relative
+# path against this directory, and it does not expand a tilde.
+.load "wavelink-keys.generated"

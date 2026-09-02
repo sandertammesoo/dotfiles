@@ -196,6 +196,12 @@
     ${HOME}/.local/bin/tv-claude-memory:
       relink: true
       path: "xdg_config/television/scripts/tv-claude-memory"
+    ${HOME}/.local/bin/wl-vol:
+      relink: true
+      path: "xdg_config/wavelink/scripts/wl-vol"
+    ${HOME}/.local/bin/wl-keys:
+      relink: true
+      path: "xdg_config/wavelink/scripts/wl-keys"
     # ${XDG_CONFIG_HOME}/.gitconfig:
     #   relink: true
     #   path: "xdg_config/git/.gitconfig"

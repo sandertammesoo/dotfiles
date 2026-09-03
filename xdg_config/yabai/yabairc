@@ -71,6 +71,10 @@ yabai -m rule --add label="Slack help" app="^Slack$" title="^(Help)" manage=off
 yabai -m signal --add label="slack_help_float" event=window_title_changed app="^Slack$" \
   action='win=$(yabai -m query --windows --window "$YABAI_WINDOW_ID"); [[ "$(echo "$win" | jq -r ".title")" =~ ^Help ]] && [[ "$(echo "$win" | jq -r ".\"is-floating\"")" == "false" ]] && yabai -m window "$YABAI_WINDOW_ID" --toggle float'
 
+# ── Dictation ─────────────────────────────────────────────────────────────────
+# yabai reports the process name, which is lower-case; match either spelling.
+yabai -m rule --add label="Jutukuva" app="^[Jj]utukuva$" manage=off
+
 # ── Design & CAD ──────────────────────────────────────────────────────────────
 yabai -m rule --add label="Design and CAD" app="^(DraftSight|Fusion|Inkscape|Sweet Home 3D|Affinity)$" manage=off
 # yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Select file to save to" manage=off

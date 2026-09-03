@@ -14,6 +14,7 @@ DISPLAY_LUT=(
 
 # "App=space" pairs, used for both yabai rules and moving open windows
 APP_SPACES=(
+  "jutukuva=3"
   "Spotify=9"
   "Notion=2"
   "Warp=5"

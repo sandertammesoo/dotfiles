@@ -125,3 +125,19 @@ customCommands:
     command: 'hunk stash show stash@{{"{"}}{{.SelectedStashEntry.Index}}{{"}"}}'
     context: stash
     output: terminal
+  # Bitbucket PR helpers via bkt. Lazygit's built-in PR icons are GitHub-only
+  # (pkg/commands/git_commands/github.go talks to the GitHub GraphQL API and
+  # nothing else); for Bitbucket repos these wrap the bkt CLI instead. bkt
+  # resolves workspace/repo from the origin remote, so no --repo is needed.
+  - key: G
+    description: Open Bitbucket PR for selected branch in browser
+    command: >-
+      bkt pr list --state OPEN --json
+      --jq '.pull_requests[] | select(.source.branch.name == {{.SelectedLocalBranch.Name | quote}}) | .id'
+      | head -1 | xargs -r bkt pr view --web
+    context: localBranches
+  - key: <c-g>
+    description: List open Bitbucket PRs for this repo
+    command: bkt pr list --state OPEN
+    context: localBranches
+    output: terminal

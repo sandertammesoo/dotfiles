@@ -24,7 +24,7 @@ yabai -m signal --add label="borders_focus_refresh" event="window_focused" \
 # D E B U G  L O G G I N G  F O R  M I N I M I Z E  B U G
 yabai -m signal --add event=window_minimized action='date "+[%Y-%m-%d %H:%M:%S:%N] MINIMIZED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP)" >> /tmp/yabai_minimize_debug.log'
 yabai -m signal --add event=window_deminimized action='date "+[%Y-%m-%d %H:%M:%S:%N] DEMINIMIZED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP)" >> /tmp/yabai_minimize_debug.log'
-yabai -m signal --add event=window_focused action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] FOCUSED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP) - is-minimized=$(yabai -m query --windows --window $YABAI_WINDOW_ID 2>/dev/null | jq -r '."is-minimized"')" >> /tmp/yabai_minimize_debug.log'
+yabai -m signal --add event=window_focused action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] FOCUSED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP) - is-minimized=$(yabai -m query --windows --window $YABAI_WINDOW_ID 2>/dev/null | jq -r ".[\"is-minimized\"]")" >> /tmp/yabai_minimize_debug.log'
 yabai -m signal --add event=application_front_switched action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] APP SWITCHED: $YABAI_PROCESS_ID - $(ps -p $YABAI_PROCESS_ID -o comm= 2>/dev/null)" >> /tmp/yabai_minimize_debug.log'
 
 ## Optional signals - disabled by default
@@ -81,6 +81,9 @@ yabai -m rule --add label="Design and CAD" app="^(DraftSight|Fusion|Inkscape|Swe
 
 
 # global settings
+# window_animation_* need Screen Recording permission for yabai (System Settings → Privacy &
+# Security → Screen & System Audio Recording); without it yabai logs "requires Screen Recording
+# permissions! ignoring request" once per config load and animates nothing.
 yabai -m config mouse_follows_focus off \
                 focus_follows_mouse off \
                 window_origin_display default \
@@ -90,7 +93,7 @@ yabai -m config mouse_follows_focus off \
                 window_animation_duration 0.2 \
                 window_animation_easing ease_in_out_cubic \
                 window_opacity_duration 0.2 \
-                active_window_opacity 1 \
+                active_window_opacity 1.0 \
                 normal_window_opacity 0.90 \
                 window_opacity on \
                 insert_feedback_color 0xffd75f5f \

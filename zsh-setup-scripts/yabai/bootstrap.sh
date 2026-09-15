@@ -72,7 +72,24 @@ fi
 log_user "Updating yabai to the latest version..."
 # log_skip "Skipping upgrade to 7.1.17 to avoid installing a broken version."
 # log_warn "See: https://github.com/asmvik/yabai/issues/2747"
-run_cmd="brew upgrade yabai"
+#
+# HEAD builds: macOS 26.6.2 (25G83) changed the Dock so the scripting-addition payload shipped
+# with v7.1.25 (osax 2.1.29) no longer finds addSpace; `space --create` then silently does
+# nothing. The fix (osax 2.1.30) is only on master, so yabai may be installed as a HEAD keg
+# (`brew unlink yabai && brew install asmvik/formulae/yabai --HEAD`). Plain `brew upgrade`
+# ignores HEAD kegs; --fetch-HEAD rebuilds when master moved. Once a tagged release contains
+# the fix, go back with: brew unlink yabai && brew install asmvik/formulae/yabai
+# Reference: https://github.com/asmvik/yabai/issues/2799 and /issues/2821
+#
+# Any rebuild changes the binary's code signature. The sudoers hash is regenerated below, but the
+# macOS Accessibility grant is NOT — see the post-start check at the end of this script.
+YABAI_HASH_BEFORE=$(shasum -a 256 "$(realpath "$(command -v yabai)")" | awk '{print $1}')
+if [[ "$(realpath "$(command -v yabai)")" == */Cellar/yabai/HEAD-* ]]; then
+    log_info "yabai is a HEAD build (master); upgrading with --fetch-HEAD."
+    run_cmd="brew upgrade --fetch-HEAD yabai"
+else
+    run_cmd="brew upgrade yabai"
+fi
 log_verbose "Running command: $run_cmd"
 output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
@@ -88,6 +105,10 @@ fi
 
 # Get the hash of yabai
 YABAI_HASH=$(shasum -a 256 $(which yabai) | awk '{print $1}')
+if [[ "$YABAI_HASH" != "$YABAI_HASH_BEFORE" ]]; then
+    log_warn "yabai binary changed during upgrade. Its Accessibility grant is tied to the old signature;"
+    log_warn "re-add $(command -v yabai) in System Settings → Privacy & Security → Accessibility or yabai will abort on start."
+fi
 
 # Check if sudoers file already contains the correct line
 log_user "Checking if sudoers file for yabai already contains the correct line..."
@@ -172,8 +193,10 @@ if [ "$UPDATE_FILE" = true ]; then
 fi
 
 # Try and load the scripting addition
+# No --verbose here: the sudoers rule written above is `yabai --load-sa` with exact arguments,
+# so any extra flag falls outside NOPASSWD and sudo prompts for a password instead.
 log_user "Loading yabai scripting addition..."
-run_cmd="sudo yabai --load-sa --verbose"
+run_cmd="sudo yabai --load-sa"
 log_verbose "Running command: $run_cmd"
 output=$(eval "$run_cmd" 2>&1)
 exit_code=$?  # Capture exit status
@@ -212,7 +235,7 @@ else
             sudo codesign -f -s - "$LOADER_PATH" 2>/dev/null
             log_success "Loader binary patched and re-signed. Retrying --load-sa..."
 
-            run_cmd="sudo yabai --load-sa --verbose"
+            run_cmd="sudo yabai --load-sa"
             log_verbose "Running command: $run_cmd"
             output=$(eval "$run_cmd" 2>&1)
             exit_code=$?  # Capture exit status
@@ -332,6 +355,43 @@ else
     echo "$output" | output_stream FATAL
     log_fatal "Failed to start yabai service."
     return 1
+fi
+
+# Post-start check 1: is yabai actually running? A rebuilt binary (HEAD build, brew upgrade) loses
+# its Accessibility grant because macOS ties the grant to the code signature. yabai then exits at
+# once with "could not access accessibility features! abort.." while --start-service still returns 0.
+log_user "Waiting for yabai to answer..."
+for _ in {1..10}; do
+    yabai -m query --displays &>/dev/null && break
+    sleep 0.5
+done
+if ! yabai -m query --displays &>/dev/null; then
+    YABAI_ERR_LOG="/tmp/yabai_${USER}.err.log"
+    if ! pgrep -x yabai &>/dev/null && grep -q "could not access accessibility features" "$YABAI_ERR_LOG" 2>/dev/null; then
+        log_error "yabai exited: the current binary has no Accessibility permission."
+        log_error "System Settings → Privacy & Security → Accessibility: remove yabai, add $(command -v yabai), then run: yabai --start-service"
+    else
+        log_error "yabai did not answer within 5 seconds. See $YABAI_ERR_LOG"
+    fi
+    return 1
+fi
+
+# Post-start check 2: does the scripting addition actually work? --load-sa can report success (or
+# the tolerated exit 1 above) while single payload functions failed to resolve against this Dock
+# build. That shows up only as SA commands doing nothing: exit 0, no output, no new space.
+# Seen on macOS 26.6.2 (25G83) with osax 2.1.29 — https://github.com/asmvik/yabai/issues/2821
+log_user "Verifying scripting addition (create + destroy a space)..."
+SA_SPACES_BEFORE=$(yabai -m query --spaces | jq -c '[.[].id]')
+yabai -m space --create &>/dev/null
+SA_NEW_INDEX=$(yabai -m query --spaces | jq -r --argjson before "$SA_SPACES_BEFORE" \
+    '.[] | select(.id as $id | $before | index($id) | not) | .index' | head -n 1)
+if [[ -n "$SA_NEW_INDEX" ]]; then
+    yabai -m space --destroy "$SA_NEW_INDEX" &>/dev/null
+    log_success "Scripting addition works: space create/destroy verified."
+else
+    log_error "Scripting addition is injected but 'space --create' did nothing: the payload's Dock patterns do not match this macOS build."
+    log_error "Fix: brew unlink yabai && brew install asmvik/formulae/yabai --HEAD, rerun this bootstrap, then: killall Dock"
+    log_error "See: https://github.com/asmvik/yabai/issues/2821"
 fi
 
 log_success "Yabai installation and configuration complete!"

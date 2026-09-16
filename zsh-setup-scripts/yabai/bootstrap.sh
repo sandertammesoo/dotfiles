@@ -83,8 +83,19 @@ log_user "Updating yabai to the latest version..."
 #
 # Any rebuild changes the binary's code signature. The sudoers hash is regenerated below, but the
 # macOS Accessibility grant is NOT — see the post-start check at the end of this script.
-YABAI_HASH_BEFORE=$(shasum -a 256 "$(realpath "$(command -v yabai)")" | awk '{print $1}')
-if [[ "$(realpath "$(command -v yabai)")" == */Cellar/yabai/HEAD-* ]]; then
+#
+# Source builds: since macOS 27.0 (26A428, 2026-09-16) not even master has working Dock patterns,
+# so yabai may be a from-source build of the AhsanFazal fork (asmvik/yabai#2802) installed with
+# `make install-local` from ~/.local/src/yabai. Then /opt/homebrew/bin/yabai is a plain file, not
+# a Cellar symlink; brew must not touch it. Rebuild with:
+#   cd ~/.local/src/yabai && git pull && make install-local YABAI_CERT=<identity>
+# Return to Homebrew once upstream supports this macOS: rm /opt/homebrew/bin/yabai && brew link yabai
+YABAI_REAL=$(realpath "$(command -v yabai)")
+YABAI_HASH_BEFORE=$(shasum -a 256 "$YABAI_REAL" | awk '{print $1}')
+if [[ "$YABAI_REAL" != */Cellar/yabai/* ]]; then
+    log_warn "yabai is a from-source build at $YABAI_REAL; skipping brew upgrade. Rebuild from ~/.local/src/yabai if needed."
+    run_cmd="true"
+elif [[ "$YABAI_REAL" == */Cellar/yabai/HEAD-* ]]; then
     log_info "yabai is a HEAD build (master); upgrading with --fetch-HEAD."
     run_cmd="brew upgrade --fetch-HEAD yabai"
 else
@@ -389,9 +400,21 @@ if [[ -n "$SA_NEW_INDEX" ]]; then
     yabai -m space --destroy "$SA_NEW_INDEX" &>/dev/null
     log_success "Scripting addition works: space create/destroy verified."
 else
-    log_error "Scripting addition is injected but 'space --create' did nothing: the payload's Dock patterns do not match this macOS build."
-    log_error "Fix: brew unlink yabai && brew install asmvik/formulae/yabai --HEAD, rerun this bootstrap, then: killall Dock"
-    log_error "See: https://github.com/asmvik/yabai/issues/2821"
+    log_error "Scripting addition is injected but 'space --create' did nothing: the payload's Dock patterns do not match this macOS build ($(sw_vers -productVersion) $(sw_vers -buildVersion))."
+    log_error "Space switching, creation and moves are broken until a payload with matching patterns is installed."
+    if [[ "$(realpath "$(command -v yabai)")" != */Cellar/yabai/* ]]; then
+        log_error "This is a from-source build: pull ~/.local/src/yabai, check the patterns against this Dock, rebuild with make install-local, then killall Dock."
+        log_error "See: https://github.com/asmvik/yabai/issues/2802"
+    elif [[ "$(realpath "$(command -v yabai)")" == */Cellar/yabai/HEAD-* ]]; then
+        # Already on master: upstream has no support for this build. Community patterns for
+        # new macOS majors are collected in https://github.com/asmvik/yabai/issues/2802
+        log_error "Already on a HEAD build: upstream master has no patterns for this build yet."
+        log_error "See: https://github.com/asmvik/yabai/issues/2802 (community offsets) and /issues/2822"
+    else
+        log_error "Fix: brew unlink yabai && brew install asmvik/formulae/yabai --HEAD, rerun this bootstrap, then: killall Dock"
+        log_error "See: https://github.com/asmvik/yabai/issues/2821"
+    fi
+    return 1
 fi
 
 log_success "Yabai installation and configuration complete!"

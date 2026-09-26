@@ -52,7 +52,7 @@ Functions: `log_trace/debug/verbose/info/warn/error/fatal/success/fail/skip/user
 
 ## Code Style
 
-1. All output via `log_*` functions — never raw `echo` in scripts
+1. All output via `log_*` functions — never raw `echo` in scripts. Exception: usage/help text that prints before `helpers.zsh` loads (e.g. `install-all --help`)
 2. Boolean flags: `true`/`false` strings not `0`/`1`; check with `[[ "${FLAG:-false}" == "true" ]]`
 3. Sudo keep-alive: `(for i in {1..60}; ...) &` with `kill -0 $$` parent check + `trap cleanup EXIT`
 4. Variable existence vs empty: `[[ -n "${VAR+x}" ]]`

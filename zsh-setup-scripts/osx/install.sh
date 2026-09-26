@@ -18,7 +18,6 @@ log_info "    Note: This may require an additional password prompt"
 log_info "    Waiting 30 seconds for input, then skipping..."
 log_user "Continue with software update? [Y/n] "
 if ! read -t 30 reply; then
-    echo ""
     log_skip "Timed out waiting for input. Skipping software updates."
     return 1
 fi
@@ -27,7 +26,6 @@ if [[ "$reply" =~ ^[Nn] ]]; then
     log_skip "Skipping software updates."
     return 1
 fi
-echo ""
 
 UPDATES=$(softwareupdate -l --no-scan 2>&1)
 if [[ $UPDATES == *"No new software available."* ]]; then

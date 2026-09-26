@@ -6,6 +6,7 @@
 node = "lts"      # track LTS: projects pin exact versions themselves
 python = "3.14"   # minor-pinned: python minors break packages too often
 go = "latest"     # Go's compatibility promise makes latest safe
+bun = "latest"
 
 [settings]
 # Preserve fnm --use-on-cd / pyenv parity in projects that predate mise:

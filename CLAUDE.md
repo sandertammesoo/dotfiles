@@ -29,18 +29,18 @@ Three rules when a scan fires:
 2. Recurring false positives belong in `.gitleaks.toml` as an allowlist (survives line-number changes), not in `.gitleaksignore` (pinned to `commit:path:rule:line`).
 3. `--config`/`GITLEAKS_CONFIG` **override** a repo-local `.gitleaks.toml` — the hook passes the global baseline only when the repo has none. Do not "simplify" that away.
 
-Secrets belong in 1Password and are read at runtime; `xdg_config/harlequin/scripts/hq-sql` is the reference pattern. It also **caches** what it fetched (0600 file, one hour) so Touch ID does not fire on every agent call — see `docs/adr/0003-hq-sql-credential-cache.md`.
+Secrets belong in 1Password and are read at runtime; `xdg_config/harlequin/scripts/hq-sql` is the reference pattern. It also **caches** what it fetched (0600 file; idle TTL 1 h staging, 15 min production; 8 h hard ceiling) so Touch ID does not fire on every agent call — see `docs/adr/0003-hq-sql-credential-cache.md`.
 
 ## Installation System
 
-`install-all` runs DotBot → whitelisted installers → services. **New `install.sh` scripts must be added to `allowed_installer_paths` in `install-all` before they'll execute** — they are silently skipped otherwise.
+`install-all` runs DotBot → whitelisted installers → services. **New `install.sh` scripts must be added to `allowed_installer_paths` in `install-all` before they'll execute** — otherwise they are skipped with only a `log_skip` line.
 
 ## Logging (`helpers_logging.zsh`)
 
 ```bash
 LOG_LEVEL="INFO"       # TRACE VERBOSE DEBUG INFO WARN ERROR FATAL
 LOG_ENABLED="false"    # debug mode toggle
-LOG_FORMAT="standard"  # minimal | standard | detailed
+LOG_FORMAT="detailed"  # minimal | standard | detailed
 LOG_COLOR="auto"       # auto | always | never
 ```
 

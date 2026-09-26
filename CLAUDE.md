@@ -68,7 +68,6 @@ Functions: `log_trace/debug/verbose/info/warn/error/fatal/success/fail/skip/user
 
 - `.claude/YABAI_MINIMIZE_BUG/` — minimize bug full investigation
 - `.claude/YABAI_SKHD/` — SKHD config reference and fixes
-- `.claude/README.md` — logging framework refactoring docs
 - `docs/adr/0002-secret-scanning.md` — why gitleaks gates and trufflehog audits
 - `docs/adr/0003-hq-sql-credential-cache.md` — why hq-sql caches 1Password credentials on disk
 - `NEW_MACHINE.md` — new machine setup checklist

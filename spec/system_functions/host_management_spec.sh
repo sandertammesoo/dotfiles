@@ -60,7 +60,7 @@ EOF
 
     It 'actually writes entry to hosts file'
       add_host "192.168.1.10" "newhost.local" "$TEST_HOSTS_FILE"
-      When call grep "192.168.1.10.*newhost.local" "$TEST_HOSTS_FILE"
+      When call grep -q "192.168.1.10.*newhost.local" "$TEST_HOSTS_FILE"
       The status should be success
     End
 
@@ -80,6 +80,7 @@ EOF
       # "server" should be allowed even though "server.example.com" exists
       When call add_host "10.0.0.99" "server" "$TEST_HOSTS_FILE"
       The status should be success
+      The output should include "Added: 10.0.0.99 -> server"
     End
   End
 
@@ -135,7 +136,7 @@ EOF
 
     It 'preserves other entries when removing'
       remove_host "test-host" "$TEST_HOSTS_FILE"
-      When call grep "router.local" "$TEST_HOSTS_FILE"
+      When call grep -q "router.local" "$TEST_HOSTS_FILE"
       The status should be success
     End
   End
@@ -165,6 +166,7 @@ EOF
       # Remove the host
       When call remove_host "my-test-host" "$TEST_HOSTS_FILE"
       The status should be success
+      The output should include "Removed: my-test-host"
     End
 
     It 'verifies host is gone after removal'

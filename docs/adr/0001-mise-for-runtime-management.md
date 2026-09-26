@@ -26,3 +26,7 @@ project-local auto-venvs declared in each project's `mise.toml`.
   strict XDG compliance.
 - Do not install direnv or another version manager alongside mise; the
   official docs advise against stacking them.
+- Rust joined later under the same rule: mise's core `rust` tool drives rustup,
+  which reads the XDG `RUSTUP_HOME`/`CARGO_HOME` already exported in `.zshenv`.
+  A fresh machine has no cargo until `mise install` runs (NEW_MACHINE.md step
+  6), so a herdr-sidebar source build during `install-all` has no compiler.

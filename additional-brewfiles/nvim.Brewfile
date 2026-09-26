@@ -7,7 +7,6 @@ brew 'fd'           # Needed for Nvim Telescope. Simple, fast and user-friendly 
 brew 'glow'         # Needed for Nvim Telescope-repo
 brew 'bat'          # Needed for Nvim Telescope-repo
 brew 'wget'         # Needed for Nvim Mason
-brew 'rust'         # Needed for Nvim Mason
 brew 'luarocks'     # Needed for Nvim Mason
 brew 'composer'     # Needed for Nvim Mason
 brew 'php'          # Needed for Nvim Mason

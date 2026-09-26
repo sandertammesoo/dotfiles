@@ -8,7 +8,7 @@ management, and the integrations between them.
 ### Tool provisioning
 
 **Runtime**:
-A language toolchain (Node, Python, Go) whose version is switchable
+A language toolchain (Node, Python, Go, Rust) whose version is switchable
 per-directory. Owned by mise; never installed as a first-class Homebrew
 formula.
 _Avoid_: interpreter, SDK

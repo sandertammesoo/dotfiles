@@ -85,7 +85,6 @@ brew "trufflehog"               # Find and verify leaked credentials https://git
 # System Monitoring & Performance
 # System monitoring and performance analysis tools
 brew "htop"                     # Improved top (interactive process viewer) https://htop.dev/
-brew "macmon"                   # Sudoless performance monitoring for Apple Silicon processors https://github.com/vladkens/macmon
 brew "glances"                  # Cross-platform system monitoring tool https://nicolargo.github.io/glances/
 brew "ncdu"                     # NCurses Disk Usage https://dev.yorhel.nl/ncdu
 brew "duf"                      # Disk Usage/Free Utility https://github.com/muesli/duf
@@ -164,7 +163,6 @@ cask "visual-studio-code"       # Open-source code editor https://code.visualstu
 # Development Utilities & Tools
 # Development utilities, API testing, and code formatting tools  
 cask "insomnia"                 # HTTP and GraphQL Client https://insomnia.rest/
-cask "devtoys"                  # Utilities designed to make common development tasks easier https://github.com/DevToys-app/DevToys
 # brew "uncrustify"             # Source code beautifier https://uncrustify.sourceforge.net/
 # cask "ngrok"                  # Secure introspectable tunnels to localhost https://ngrok.com/
 # brew "asciinema"              # Record and share terminal sessions https://asciinema.org/

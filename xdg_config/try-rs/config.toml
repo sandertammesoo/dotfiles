@@ -1,0 +1,7 @@
+# try-rs config — https://github.com/tassiovirginio/try-rs#2-config-file
+# Picking a theme in the TUI (Ctrl+T) rewrites this file through the symlink
+# and drops these comments; review the git diff before committing.
+# editor is left unset so try-rs falls back to $VISUAL / $EDITOR.
+
+tries_path = "~/projects/tries"
+theme = "Tokyo Night"

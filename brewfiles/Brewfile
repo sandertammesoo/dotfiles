@@ -41,6 +41,7 @@ brew "television"               # General purpose fuzzy finder TUI https://githu
 brew "fd"                       # Simple, fast and user-friendly alternative to find https://github.com/sharkdp/fd
 brew "tree"                     # Display directories as trees (with optional color/HTML output) https://oldmanprogrammer.net/source.php?dir=projects/tree
 brew "zoxide"                   # Shell extension to navigate your filesystem faster https://github.com/ajeetdsouza/zoxide
+brew "try-rs"                   # Organises throwaway experiment dirs with a fuzzy TUI https://try-rs.org/
 
 # File Management & Viewing
 # Enhanced file manipulation and viewing tools - modern replacements for cat, ls, etc.

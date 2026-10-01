@@ -118,6 +118,11 @@
     ${XDG_CONFIG_HOME}/mise/config.toml:
       relink: true
       path: "xdg_config/mise/config.toml"
+    # try-rs: link only config.toml — the try-rs/ dir also holds the
+    # generated try-rs.zsh (see zsh-setup-scripts/try-rs/completion.zsh)
+    ${XDG_CONFIG_HOME}/try-rs/config.toml:
+      relink: true
+      path: "xdg_config/try-rs/config.toml"
     # herdr: link only config.toml — ~/.config/herdr also holds runtime
     # sockets/logs/session state that must not live in the repo
     ${XDG_CONFIG_HOME}/herdr/config.toml:

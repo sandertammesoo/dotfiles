@@ -1,0 +1,35 @@
+#!/usr/bin/env zsh
+# List try-rs experiment folders for the television try-dirs channel.
+# Output: one absolute folder path per line, newest first, across every
+# tries_path. Resolves paths the same way the try-rs binary does: TRY_PATH
+# (one path) wins, else tries_paths, else tries_path, else ~/work/tries.
+
+setopt extended_glob null_glob
+
+config="${TRY_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/try-rs}/${TRY_CONFIG:-config.toml}"
+roots=()
+
+if [[ -n "${TRY_PATH:-}" ]]; then
+    roots=("$TRY_PATH")
+elif [[ -r "$config" ]]; then
+    for key in tries_paths tries_path; do
+        line="$(grep -E "^[[:space:]]*${key}[[:space:]]*=" "$config" | head -n 1)"
+        [[ -n "$line" ]] || continue
+        value="${${line#*=}//\"/}"
+        for entry in ${(s:,:)value}; do
+            entry="${${entry##[[:space:]]#}%%[[:space:]]#}"
+            [[ -n "$entry" ]] && roots+=("${entry/#\~/$HOME}")
+        done
+        break
+    done
+fi
+(( $#roots )) || roots=("$HOME/work/tries")
+
+dirs=()
+for root in $roots; do
+    dirs+=("$root"/*(/))
+done
+# ls -dt sorts the whole list by modification time, newest first
+if (( $#dirs )); then
+    command ls -dt -- $dirs
+fi

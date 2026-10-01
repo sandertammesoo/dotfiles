@@ -3,6 +3,7 @@ cable/*.toml
 !cable/claude-*.toml
 !cable/images.toml
 !cable/videos.toml
+!cable/try-dirs.toml
 
 # OS
 .DS_Store

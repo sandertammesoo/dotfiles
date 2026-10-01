@@ -247,6 +247,7 @@ fallback_channel = "channels"
 "claude-sessions" = ["claude --resume", "claude -r"]
 "claude-history" = ["claude --history"]
 "claude-memory" = ["claude /memory"]
+"try-dirs" = ["try", "try-rs"]
 
 
 [shell_integration.keybindings]

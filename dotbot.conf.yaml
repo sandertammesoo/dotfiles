@@ -201,6 +201,9 @@
     ${HOME}/.local/bin/tv-claude-memory:
       relink: true
       path: "xdg_config/television/scripts/tv-claude-memory"
+    ${HOME}/.local/bin/tv-try-dirs:
+      relink: true
+      path: "xdg_config/television/scripts/tv-try-dirs"
     ${HOME}/.local/bin/wl-vol:
       relink: true
       path: "xdg_config/wavelink/scripts/wl-vol"

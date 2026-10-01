@@ -1,0 +1,30 @@
+[metadata]
+name = "try-dirs"
+description = "try-rs experiment folders across every tries_path, newest first"
+requirements = ["try-rs"]
+
+[source]
+command = "tv-try-dirs"
+# parent/name, so the same name in two tabs stays distinguishable
+display = "{split:/:-2}/{split:/:-1}"
+# try-rs matches a name exactly across all tries_path entries, so insert
+# only the name; with two matches it opens the TUI filtered to that name
+output = "{split:/:-1}"
+# No no_sort: a typed query ranks by match quality, then frecency.
+
+[preview]
+command = "ls -la --color=always '{}'"
+
+[keybindings]
+ctrl-e = "actions:edit"
+
+[actions.cd]
+description = "Open a shell in the selected folder"
+command = "cd '{}' && $SHELL"
+mode = "execute"
+
+[actions.edit]
+description = "Open the folder in the editor"
+command = "${EDITOR:-vim} '{}'"
+shell = "bash"
+mode = "execute"

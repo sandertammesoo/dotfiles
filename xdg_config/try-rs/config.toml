@@ -3,5 +3,6 @@
 # and drops these comments; review the git diff before committing.
 # editor is left unset so try-rs falls back to $VISUAL / $EDITOR.
 
-tries_path = "~/projects/tries"
+# One TUI tab per path (←/→ to switch); the first is where `try <name>` creates.
+tries_path = "~/projects/tries, ~/projects, ~/projects/fractory, ~/projects/fractory/code, ~/projects/fractory/pm-projects"
 theme = "Tokyo Night"

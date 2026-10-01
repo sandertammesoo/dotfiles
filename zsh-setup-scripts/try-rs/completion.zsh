@@ -21,7 +21,14 @@ if (( $+commands[try-rs] )); then
 
     if [[ "$(head -n 1 "$_try_rs_script" 2>/dev/null)" != "$_try_rs_stamp" ]]; then
         mkdir -p "${_try_rs_script:h}"
-        if { print -r -- "$_try_rs_stamp"; command try-rs --setup-stdout zsh } > "${_try_rs_script}.tmp" \
+        # Upstream bug (1.7.11): the completion helper expands `~` in a
+        # comma-separated tries_path with `sed "s|~|$HOME|"`, so only the
+        # first path resolves and the other tabs get no completion. Add `g`.
+        # If upstream rewrites that line, this replacement is a no-op.
+        _try_rs_from='sed "s|~|$HOME|"' _try_rs_to='sed "s|~|$HOME|g"'
+        if _try_rs_content="$(command try-rs --setup-stdout zsh)" \
+            && print -rl -- "$_try_rs_stamp" "${_try_rs_content//"$_try_rs_from"/$_try_rs_to}" \
+                > "${_try_rs_script}.tmp" \
             && mv -f "${_try_rs_script}.tmp" "$_try_rs_script"; then
             log_success "try-rs shell integration generated at $_try_rs_script"
         else
@@ -36,7 +43,7 @@ if (( $+commands[try-rs] )); then
         log_error "Failed to load try-rs shell integration from $_try_rs_script"
     fi
 
-    unset _try_rs_script _try_rs_stamp
+    unset _try_rs_script _try_rs_stamp _try_rs_content _try_rs_from _try_rs_to
 else
     log_skip "try-rs not found, skipping try-rs shell integration"
 fi

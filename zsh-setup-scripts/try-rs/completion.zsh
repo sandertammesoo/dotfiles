@@ -25,6 +25,7 @@ if (( $+commands[try-rs] )); then
         # comma-separated tries_path with `sed "s|~|$HOME|"`, so only the
         # first path resolves and the other tabs get no completion. Add `g`.
         # If upstream rewrites that line, this replacement is a no-op.
+        # Reported: https://github.com/tassiovirginio/try-rs/issues/69
         _try_rs_from='sed "s|~|$HOME|"' _try_rs_to='sed "s|~|$HOME|g"'
         if _try_rs_content="$(command try-rs --setup-stdout zsh)" \
             && print -rl -- "$_try_rs_stamp" "${_try_rs_content//"$_try_rs_from"/$_try_rs_to}" \

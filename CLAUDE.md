@@ -10,7 +10,7 @@ Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant th
 shellspec      # run all 352 tests (also: mise run test / mise run link)
 ```
 
-Language runtimes (node, python, go) are owned by **mise**, never Homebrew — see `docs/adr/0001-mise-for-runtime-management.md` and CONTEXT.md "Tool provisioning".
+Language runtimes (node, python, go) are owned by **mise**, never Homebrew — see `docs/adr/0001-mise-for-runtime-management.md` and GLOSSARY.md "Tool provisioning".
 
 ## Secret Scanning
 
@@ -84,4 +84,4 @@ Default label vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `read
 
 ### Domain docs
 
-Single-context — one `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context — one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

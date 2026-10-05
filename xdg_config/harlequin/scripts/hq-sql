@@ -72,7 +72,7 @@ CACHE_MAX_AGE="${HQ_SQL_CACHE_MAX_AGE:-28800}"
 LOCK_WAIT_MAX="${HQ_SQL_LOCK_WAIT:-30}"
 LOCK_STALE_AGE="${HQ_SQL_LOCK_STALE:-60}"
 
-# The five connection fields, named in CONTEXT.md. The keys match the JSON
+# The five connection fields, named in GLOSSARY.md. The keys match the JSON
 # keys of the credential cache, so neither store translates. Every key is
 # initialized, because zsh under `set -u` errors on a missing key.
 CRED_KEYS=(host port database user password)

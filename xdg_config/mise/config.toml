@@ -1,5 +1,5 @@
 # Global mise configuration — https://mise.jdx.dev/configuration.html
-# mise owns all runtimes (see CONTEXT.md "Tool provisioning" and ADR 0001);
+# mise owns all runtimes (see GLOSSARY.md "Tool provisioning" and ADR 0001);
 # Homebrew provides system tools only.
 
 [tools]

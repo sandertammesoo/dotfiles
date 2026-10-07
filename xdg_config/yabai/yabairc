@@ -70,6 +70,12 @@ yabai -m rule --add label="Slack help" app="^Slack$" title="^(Help)" manage=off
 # before Slack sets the window title. This signal floats it once the title is set.
 yabai -m signal --add label="slack_help_float" event=window_title_changed app="^Slack$" \
   action='win=$(yabai -m query --windows --window "$YABAI_WINDOW_ID"); [[ "$(echo "$win" | jq -r ".title")" =~ ^Help ]] && [[ "$(echo "$win" | jq -r ".\"is-floating\"")" == "false" ]] && yabai -m window "$YABAI_WINDOW_ID" --toggle float'
+# Python script window; yabai reports the app as "python".
+yabai -m rule --add label="AFK Checkin" app="^[Pp]ython" title="^(AFK Checkin|Configuration)$" manage=off
+# Center it on the focused display. Scoped by app and title, and the script
+# queries only this window, so it avoids the global window_created bug above.
+yabai -m signal --add label="afk_checkin_center" event=window_created app="^[Pp]ython" title="^AFK Checkin$" \
+  action="$HOME/.config/yabai/center_window.sh"
 
 # ── Dictation ─────────────────────────────────────────────────────────────────
 # yabai reports the process name, which is lower-case; match either spelling.

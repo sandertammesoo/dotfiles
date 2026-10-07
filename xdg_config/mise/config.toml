@@ -8,6 +8,7 @@ python = "3.14"   # minor-pinned: python minors break packages too often
 go = "latest"     # Go's compatibility promise makes latest safe
 bun = "latest"
 rust = "stable"   # via rustup; RUSTUP_HOME/CARGO_HOME are XDG paths from .zshenv
+pipx = "latest"
 
 [settings]
 # Preserve fnm --use-on-cd / pyenv parity in projects that predate mise:

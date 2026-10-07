@@ -139,7 +139,7 @@ brew "mise"                     # Polyglot runtime version manager, env vars, ta
 # brew "goenv"                  # Go version management https://github.com/go-nv/goenv
 
 # Python Development
-brew "pipx"                    # Install and run Python applications in isolated environments https://pypa.github.io/pipx/
+#brew "pipx"                    # Install and run Python applications in isolated environments https://pypa.github.io/pipx/
 
 # JavaScript/Node.js Development
 # brew "node"                   # Owned by mise — do not re-enable https://nodejs.org/

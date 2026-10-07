@@ -243,6 +243,20 @@ moonlander < hyper - p : ~/.config/yabai/move_window_scpace_cycle_next.sh;
 normal < shift + lalt - b : yabai -m space --balance
 moonlander < hyper - b : yabai -m space --balance
 
+# Cycle focused space layout: bsp -> stack -> float -> bsp
+normal < shift + lalt - space : \
+  case "$(yabai -m query --spaces --space | jq -r '.type')" in \
+    bsp) yabai -m space --layout stack ;; \
+    stack) yabai -m space --layout float ;; \
+    *) yabai -m space --layout bsp ;; \
+  esac
+moonlander < hyper - space : \
+  case "$(yabai -m query --spaces --space | jq -r '.type')" in \
+    bsp) yabai -m space --layout stack ;; \
+    stack) yabai -m space --layout float ;; \
+    *) yabai -m space --layout bsp ;; \
+  esac
+
 # toggle window zoom
 normal < shift + lalt - z : yabai -m window --toggle zoom-parent
 normal < shift + lalt - f : yabai -m window --toggle zoom-fullscreen

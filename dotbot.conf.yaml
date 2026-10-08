@@ -204,6 +204,9 @@
     ${HOME}/.local/bin/tv-try-dirs:
       relink: true
       path: "xdg_config/television/scripts/tv-try-dirs"
+    ${HOME}/.local/bin/try-paths:
+      relink: true
+      path: "xdg_config/try-rs/scripts/try-paths"
     ${HOME}/.local/bin/wl-vol:
       relink: true
       path: "xdg_config/wavelink/scripts/wl-vol"

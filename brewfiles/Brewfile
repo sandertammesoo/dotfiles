@@ -90,6 +90,7 @@ brew "ncdu"                     # NCurses Disk Usage https://dev.yorhel.nl/ncdu
 brew "duf"                      # Disk Usage/Free Utility https://github.com/muesli/duf
 brew "procs"                    # Modern replacement for ps written in Rust https://github.com/dalance/procs
 brew "progress"                 # Coreutils progress viewer https://github.com/Xfennec/progress
+brew "hyperfine"                # Command-line benchmarking tool https://github.com/sharkdp/hyperfine
 
 # Shell Enhancement & Documentation
 # Tools to enhance shell experience, provide documentation, and improve terminal output

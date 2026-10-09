@@ -15,6 +15,7 @@ tap "buo/cask-upgrade"          # Enhanced cask management - upgrade all apps: b
 # Essential System Tools
 # Core system utilities required for basic functionality
 brew "mas"                      # Mac App Store command-line interface https://github.com/mas-cli/mas
+brew "media-control"            # Reads macOS Now Playing (needed by aw-watcher-media since macOS 15.4) https://github.com/ungive/media-control
 
 brew "taproom"      # Homebrew tap management utilities
 

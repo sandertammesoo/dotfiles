@@ -2,8 +2,9 @@
 # Add or remove try-rs source folders (TUI tabs) in config.toml.
 #
 #   try-paths                      list the tabs, numbered
-#   try-paths add <dir> [--at N]   append a folder, or insert it as tab N
-#                                  and push the later tabs back by one
+#   try-paths add [dir] [--at N]   append a folder (default: the current
+#                                  folder), or insert it as tab N and push
+#                                  the later tabs back by one
 #   try-paths add <dir> --first    same as --at 1: the folder where
 #                                  `try <name>` creates
 #   try-paths rm <dir|number>      remove a folder by path or list number
@@ -20,7 +21,7 @@ prog="${0:t}"
 die() { print -u2 -- "${prog}: $*"; exit 1; }
 
 usage() {
-    print -- "usage: ${prog} [list] | add <dir> [--at N | --first] | rm <dir|number>"
+    print -- "usage: ${prog} [list] | add [dir] [--at N | --first] | rm <dir|number>"
 }
 
 # Absolute path with ~ expanded, no trailing slash, symlinks kept as written.
@@ -102,8 +103,7 @@ case "$cmd" in
             esac
             shift
         done
-        [[ -n "$dir" ]] || { usage >&2; exit 1; }
-        abs="$(expand "$dir")"
+        abs="$(expand "${dir:-$PWD}")"
         [[ -d "$abs" ]] || die "not a folder: $abs (create it first)"
         (( $(index_of "$abs") == 0 )) || die "already a tab: $(abbrev "$abs")"
         (( pos = $#paths + 1 ))

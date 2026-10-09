@@ -7,7 +7,8 @@
 #                                  the later tabs back by one
 #   try-paths add <dir> --first    same as --at 1: the folder where
 #                                  `try <name>` creates
-#   try-paths rm <dir|number>      remove a folder by path or list number
+#   try-paths rm [dir|number]      remove a folder by path or list number
+#                                  (default: the current folder)
 #
 # Edits only the tries_path line, so the comments in config.toml stay. The
 # write goes to the symlink target, so the dotfiles repo gets the change.
@@ -21,7 +22,7 @@ prog="${0:t}"
 die() { print -u2 -- "${prog}: $*"; exit 1; }
 
 usage() {
-    print -- "usage: ${prog} [list] | add [dir] [--at N | --first] | rm <dir|number>"
+    print -- "usage: ${prog} [list] | add [dir] [--at N | --first] | rm [dir|number]"
 }
 
 # Absolute path with ~ expanded, no trailing slash, symlinks kept as written.
@@ -117,13 +118,14 @@ case "$cmd" in
         list
         ;;
     rm|remove)
-        (( $# == 1 )) || { usage >&2; exit 1; }
-        if [[ "$1" == <-> ]]; then
-            idx="$1"
+        (( $# <= 1 )) || { usage >&2; exit 1; }
+        target="${1:-$PWD}"
+        if [[ "$target" == <-> ]]; then
+            idx="$target"
             (( idx >= 1 && idx <= $#paths )) || die "no tab number $idx"
         else
-            idx="$(index_of "$1")"
-            (( idx > 0 )) || die "not a tab: $1"
+            idx="$(index_of "$target")"
+            (( idx > 0 )) || die "not a tab: $(abbrev "$(expand "$target")")"
         fi
         (( $#paths > 1 )) || die "cannot remove the last tab"
         paths[idx]=()

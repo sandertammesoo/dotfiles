@@ -1,0 +1,142 @@
+.Dd October 9, 2026
+.Dt TRY-PATHS 1
+.Os
+.Sh NAME
+.Nm try-paths
+.Nd list, add, and remove try-rs source folders
+.Sh SYNOPSIS
+.Nm
+.Op Cm list
+.Nm
+.Cm add
+.Op Ar dir
+.Op Fl -at Ar N | Fl -first
+.Nm
+.Cm rm
+.Op Ar dir | number
+.Nm
+.Fl h | -help
+.Sh DESCRIPTION
+.Nm
+changes the
+.Va tries_path
+setting of try-rs.
+Each folder in
+.Va tries_path
+is one tab in the try-rs TUI.
+Use the left and right arrow keys to move between the tabs.
+The first folder is the folder where
+.Ql try <name>
+creates a new try.
+.Pp
+.Nm
+rewrites only the
+.Va tries_path
+line.
+The comments and the other settings in the file do not change.
+If the config file is a symlink,
+.Nm
+writes to the target of the symlink and keeps the symlink.
+Paths under
+.Ev HOME
+are stored in the
+.Pa ~/...
+form.
+.Pp
+After each change,
+.Nm
+prints the new list of tabs.
+.Sh COMMANDS
+.Bl -tag -width Ds
+.It Cm list , Cm ls
+Print each tab with its number.
+This is the default command.
+.It Cm add Oo Ar dir Oc Op Fl -at Ar N | Fl -first
+Add
+.Ar dir
+as the last tab.
+If there is no
+.Ar dir ,
+add the current folder.
+.Ar dir
+can be absolute, relative, or start with
+.Pa ~ .
+The folder must exist and must not already be a tab.
+.It Cm rm , Cm remove Op Ar dir | number
+Remove a tab by its path or by its number from
+.Cm list .
+If there is no argument, remove the current folder.
+.Nm
+does not remove the last tab.
+.El
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl -at Ar N , Fl -at= Ns Ar N
+Insert the folder as tab
+.Ar N .
+Tab
+.Ar N
+and each tab after it move back by one.
+.Ar N
+must be from 1 to the number of tabs plus 1.
+.It Fl -first
+The same as
+.Fl -at Ar 1 .
+The new folder becomes the folder where
+.Ql try <name>
+creates a new try.
+.It Fl h , Fl -help
+Print the help text.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width Ds
+.It Ev TRY_CONFIG_DIR
+The folder that contains the config file.
+The default is
+.Pa $XDG_CONFIG_HOME/try-rs .
+.It Ev TRY_CONFIG
+The name of the config file.
+The default is
+.Pa config.toml .
+.It Ev XDG_CONFIG_HOME
+The default is
+.Pa ~/.config .
+.El
+.Pp
+.Ev TRY_PATH
+overrides
+.Va tries_path
+in try-rs, but
+.Nm
+ignores it.
+.Sh FILES
+.Bl -tag -width Ds
+.It Pa ~/.config/try-rs/config.toml
+The try-rs config file.
+In the dotfiles, this is a symlink to
+.Pa xdg_config/try-rs/config.toml .
+.El
+.Sh EXIT STATUS
+.Ex -std
+.Nm
+exits with 1 if the config file is missing, if a folder does not exist,
+if a folder is already a tab or is not a tab, if a number is out of range,
+or if the arguments are not correct.
+.Sh EXAMPLES
+Add the current folder as the last tab:
+.Dl $ cd ~/projects/activitywatch && try-paths add
+.Pp
+Add a folder as tab 3:
+.Dl $ try-paths add ~/projects/activitywatch --at 3
+.Pp
+Make a folder the folder where new tries go:
+.Dl $ try-paths add ~/projects/tries --first
+.Pp
+Remove tab 4:
+.Dl $ try-paths rm 4
+.Pp
+Remove the current folder:
+.Dl $ try-paths rm
+.Sh SEE ALSO
+try-rs:
+.Lk https://github.com/tassiovirginio/try-rs

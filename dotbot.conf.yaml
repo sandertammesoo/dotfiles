@@ -207,6 +207,9 @@
     ${HOME}/.local/bin/try-paths:
       relink: true
       path: "xdg_config/try-rs/scripts/try-paths"
+    ${HOME}/.local/share/man/man1/try-paths.1:
+      relink: true
+      path: "xdg_config/try-rs/man/try-paths.1"
     ${HOME}/.local/bin/wl-vol:
       relink: true
       path: "xdg_config/wavelink/scripts/wl-vol"

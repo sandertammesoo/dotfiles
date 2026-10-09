@@ -5,7 +5,7 @@
 #   try-paths add [dir] [--at N]   append a folder (default: the current
 #                                  folder), or insert it as tab N and push
 #                                  the later tabs back by one
-#   try-paths add <dir> --first    same as --at 1: the folder where
+#   try-paths add [dir] --first    same as --at 1: the folder where
 #                                  `try <name>` creates
 #   try-paths rm [dir|number]      remove a folder by path or list number
 #                                  (default: the current folder)
@@ -13,6 +13,7 @@
 # Edits only the tries_path line, so the comments in config.toml stay. The
 # write goes to the symlink target, so the dotfiles repo gets the change.
 # Paths under $HOME are stored as ~/..., the same as the hand-written ones.
+# Manual: man try-paths (xdg_config/try-rs/man/try-paths.1).
 
 setopt extended_glob
 
@@ -23,6 +24,24 @@ die() { print -u2 -- "${prog}: $*"; exit 1; }
 
 usage() {
     print -- "usage: ${prog} [list] | add [dir] [--at N | --first] | rm [dir|number]"
+}
+
+help() {
+    print -r -- "${prog} - list, add, and remove try-rs source folders (TUI tabs)
+
+usage:
+  ${prog} [list]                     print each tab with its number
+  ${prog} add [dir]                  add dir as the last tab
+  ${prog} add [dir] --at N           insert dir as tab N; later tabs move back by one
+  ${prog} add [dir] --first          same as --at 1: new tries go to this folder
+  ${prog} rm [dir|number]            remove a tab by path or by number
+
+If there is no dir, add and rm use the current folder.
+The first tab is the folder where \`try <name>\` creates a new try.
+
+config: ${config}
+
+See man ${prog} for the full manual."
 }
 
 # Absolute path with ~ expanded, no trailing slash, symlinks kept as written.
@@ -133,7 +152,7 @@ case "$cmd" in
         list
         ;;
     -h|--help|help)
-        usage
+        help
         ;;
     *)
         usage >&2

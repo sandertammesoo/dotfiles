@@ -131,7 +131,10 @@ switch_workspace = "prefix+shift+1..9"   # numbered by herdr-automatic-rename
 [[keys.command]]
 key = "prefix+alt+g"
 type = "pane"
-command = "lazygit"
+# Pane commands run through sh, so the zsh `lazygit -ucd` alias does not apply.
+# Without the flag, lazygit on macOS reads ~/Library/Application Support/lazygit.
+command = "lazygit -ucd \"$HOME/.config/lazygit\""
+description = "open lazygit"
 
 # prefix+p is herdr's default previous_tab — bind the plugin manager alongside
 # lazygit under prefix+alt+ instead of shadowing tab navigation.

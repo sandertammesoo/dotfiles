@@ -128,9 +128,10 @@ init_submodules() {
 
 # run-dotbot is sourced and sets a global exit_code from dotbot. The local
 # here catches that value, so it does not overwrite this script's exit_code.
+# Return 2 = run-dotbot could not run dotbot at all (same as install-all).
 run_dotbot() {
   local exit_code=0
-  source ./run-dotbot || return 1
+  source ./run-dotbot || return 2
   return $exit_code
 }
 

@@ -119,14 +119,28 @@ else
 fi
 
 # 1. Homebrew and links. run-dotbot installs Homebrew when it is missing.
+# dotbot.conf.yaml links the atuin theme from a submodule, and a plain
+# clone leaves submodules empty. The other submodules are workstation-only.
+init_submodules() {
+  setopt localoptions pipefail
+  git submodule update --init git-submodules/atuin-tokyo-night 2>&1 | output_stream
+}
+
+# run-dotbot is sourced and sets a global exit_code from dotbot. The local
+# here catches that value, so it does not overwrite this script's exit_code.
+run_dotbot() {
+  local exit_code=0
+  source ./run-dotbot || return 1
+  return $exit_code
+}
+
 if [[ "$SKIP_DOTBOT" == "true" ]]; then
   log_skip "Skipping DotBot links."
   source zsh-setup-scripts/homebrew/is_installed.sh || exit 1
-elif source ./run-dotbot; then
-  log_success "DotBot links complete"
 else
-  log_fatal "DotBot failed!"
-  exit 1
+  run_step "Git submodules" init_submodules
+  run_step "DotBot links" run_dotbot
+  command -v brew &>/dev/null || { log_fatal "Homebrew is not available."; exit 1; }
 fi
 
 # 2. Server packages

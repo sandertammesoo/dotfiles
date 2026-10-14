@@ -1,13 +1,14 @@
 # CLAUDE.md
 
-Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant throughout. Modular zsh config loaded by file suffix (`env.zsh`, `aliases.zsh`, `functions.zsh`, `completion.zsh`) via `get_zsh_files()`. 352 ShellSpec tests.
+Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant throughout. Modular zsh config loaded by file suffix (`env.zsh`, `aliases.zsh`, `functions.zsh`, `completion.zsh`) via `get_zsh_files()`. 367 ShellSpec tests.
 
 ## Commands
 
 ```bash
 ./run-dotbot   # symlinks + XDG dirs only (first step on new machine)
 ./install-all  # full setup; see source for --skip-* and logging flags
-shellspec      # run all 352 tests (also: mise run test / mise run link)
+./install-server  # headless server profile (jupiter): server.Brewfile + pmset, sshd, tailscale, batt; see NEW_MACHINE.md
+shellspec      # run all 367 tests (also: mise run test / mise run link)
 ```
 
 Language runtimes (node, python, go) are owned by **mise**, never Homebrew — see `docs/adr/0001-mise-for-runtime-management.md` and GLOSSARY.md "Tool provisioning".

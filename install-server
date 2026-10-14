@@ -1,0 +1,190 @@
+#!/usr/bin/env zsh
+#
+# Server profile: the dotfiles shell environment plus an always-on, headless
+# Mac reachable over SSH and Tailscale. The workstation equivalent is
+# ./install-all. See NEW_MACHINE.md, "Headless server".
+#
+# Run it in an SSH session on the server, from ~/projects/dotfiles — the
+# path that .zshenv expects.
+
+local -A opts
+zparseopts -D -E -F -A opts -- \
+  h -help \
+  d -skip-dotbot \
+  b -skip-brew \
+  s -skip-system \
+  n: -hostname: \
+  T -trace \
+  V -verbose \
+  D -debug \
+  Q -quiet || {
+    echo "Error parsing options"
+    echo "Usage: ./install-server [options] [--help]"
+    exit 1
+  }
+
+if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
+  echo "Usage: ./install-server [options]"
+  echo ""
+  echo "Steps, in order:"
+  echo "  1. Homebrew, then DotBot links (./run-dotbot)"
+  echo "  2. brewfiles/server.Brewfile"
+  echo "  3. Hostname, power (no sleep), key-only sshd, Tailscale, battery limit"
+  echo "  4. mise runtimes"
+  echo ""
+  echo "Options:"
+  echo "  -h, --help            Show this help message"
+  echo "  -d, --skip-dotbot     Skip the DotBot links"
+  echo "  -b, --skip-brew       Skip brew update/upgrade and server.Brewfile"
+  echo "  -s, --skip-system     Skip step 3 (pmset, sshd, services)"
+  echo "  -n, --hostname NAME   Set ComputerName, HostName and LocalHostName"
+  echo "  -T, --trace           Show trace output"
+  echo "  -V, --verbose         Show verbose output"
+  echo "  -D, --debug           Show debug output"
+  echo "  -Q, --quiet           Suppress output except for errors"
+  exit 0
+fi
+
+if (( ${+opts[-T]} || ${+opts[--trace]} )); then
+  typeset -gx LOG_LEVEL="TRACE" LOG_ENABLED=true
+elif (( ${+opts[-V]} || ${+opts[--verbose]} )); then
+  typeset -gx LOG_LEVEL="VERBOSE" LOG_ENABLED=true
+elif (( ${+opts[-D]} || ${+opts[--debug]} )); then
+  typeset -gx LOG_LEVEL="DEBUG" LOG_ENABLED=true
+elif (( ${+opts[-Q]} || ${+opts[--quiet]} )); then
+  typeset -gx LOG_LEVEL="ERROR" LOG_ENABLED=false
+else
+  typeset -gx LOG_LEVEL="INFO" LOG_ENABLED=true
+fi
+
+local SKIP_DOTBOT=false SKIP_BREW=false SKIP_SYSTEM=false
+(( ${+opts[-d]} || ${+opts[--skip-dotbot]} )) && SKIP_DOTBOT=true
+(( ${+opts[-b]} || ${+opts[--skip-brew]} )) && SKIP_BREW=true
+(( ${+opts[-s]} || ${+opts[--skip-system]} )) && SKIP_SYSTEM=true
+local HOSTNAME_ARG="${opts[-n]:-${opts[--hostname]}}"
+
+BASEDIR="${0:A:h}"
+cd "$BASEDIR" || exit 1
+
+# helpers.zsh and run-dotbot read the helpers through ~/.config/.dotfiles,
+# the link that DotBot itself creates. Create it first on a new machine.
+if [[ ! -e "$HOME/.config/.dotfiles" ]]; then
+  mkdir -p "$HOME/.config" && ln -s "$BASEDIR" "$HOME/.config/.dotfiles"
+fi
+source helpers.zsh
+source zsh-setup-scripts/server/setup.sh
+
+local exit_code=0
+local -a failed_steps
+
+# run_step LABEL COMMAND... — run one step, record a failure, keep going.
+run_step() {
+  local label="$1"; shift
+  log_user "$label..."
+  if "$@"; then
+    return 0
+  fi
+  log_warn "$label failed; continuing with the remaining steps."
+  failed_steps+=("$label")
+  exit_code=1
+  return 1
+}
+
+cleanup() {
+  if [[ -n "$SUDO_KEEPALIVE_PID" ]]; then
+    kill "$SUDO_KEEPALIVE_PID" &>/dev/null
+    unset SUDO_KEEPALIVE_PID
+  fi
+}
+trap cleanup EXIT
+
+if [[ "$(uname -s)" != "Darwin" ]]; then
+  log_fatal "install-server supports macOS only."
+  exit 1
+fi
+
+if [[ "$BASEDIR" != "$HOME/projects/dotfiles" ]]; then
+  log_warn "This repo is at $BASEDIR. .zshenv sources $HOME/projects/dotfiles/helpers.zsh,"
+  log_warn "so the shell will not load until the repo is at that path."
+fi
+
+log_user "Requesting sudo privileges..."
+if sudo -v; then
+  log_success "Sudo access granted"
+  # Max 60 iterations = 30 minutes, stops if parent process exits
+  (for i in {1..60}; do
+    sudo -n true 2>/dev/null || break
+    kill -0 $$ 2>/dev/null || break
+    sleep 30
+  done) &
+  SUDO_KEEPALIVE_PID="$!"
+else
+  log_fatal "Sudo access denied"
+  exit 1
+fi
+
+# Same values as xdg_config/zsh/.zshenv. On a new machine that file is not
+# linked yet, and run-dotbot's own fallbacks differ (XDG_DATA_HOME=~/.data,
+# no XDG_STATE_HOME), so the links and dirs would land in the wrong place.
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# 1. Homebrew and links. run-dotbot installs Homebrew when it is missing.
+if [[ "$SKIP_DOTBOT" == "true" ]]; then
+  log_skip "Skipping DotBot links."
+  source zsh-setup-scripts/homebrew/is_installed.sh || exit 1
+elif source ./run-dotbot; then
+  log_success "DotBot links complete"
+else
+  log_fatal "DotBot failed!"
+  exit 1
+fi
+
+# 2. Server packages
+install_server_packages() {
+  setopt localoptions pipefail
+  brew_trust_brewfile_taps "./brewfiles/server.Brewfile"
+  brew update 2>&1 | output_stream || return 1
+  brew upgrade 2>&1 | output_stream || return 1
+  brew bundle --file="./brewfiles/server.Brewfile" 2>&1 | output_stream || return 1
+  log_success "server.Brewfile packages installed"
+}
+if [[ "$SKIP_BREW" == "true" ]]; then
+  log_skip "Skipping Homebrew packages."
+else
+  run_step "Homebrew packages (server.Brewfile)" install_server_packages
+fi
+
+# Not fatal: core.hooksPath and the hook come from the links in step 1.
+run_step "Secret gate check" source zsh-setup-scripts/gitleaks/install.sh
+
+# 3. System configuration
+if [[ "$SKIP_SYSTEM" == "true" ]]; then
+  log_skip "Skipping system configuration."
+else
+  run_step "Hostname" server_set_hostname "$HOSTNAME_ARG"
+  run_step "Power settings" server_configure_power
+  run_step "SSH hardening" server_harden_sshd
+  run_step "Tailscale" server_configure_tailscale
+  run_step "Battery charge limit" server_configure_battery
+fi
+
+# 4. Language runtimes — owned by mise (docs/adr/0001)
+install_runtimes() {
+  setopt localoptions pipefail
+  command -v mise &>/dev/null || { log_error "mise is not installed"; return 1; }
+  mise install 2>&1 | output_stream
+}
+run_step "mise runtimes" install_runtimes
+
+if [[ $exit_code -eq 0 ]]; then
+  log_success "Server setup complete. Open a new SSH session to load the shell."
+else
+  log_warn "Server setup finished with failures:"
+  for step in "${failed_steps[@]}"; do
+    log_warn "  - $step"
+  done
+fi
+exit $exit_code

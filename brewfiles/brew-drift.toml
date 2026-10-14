@@ -1,0 +1,13 @@
+# Repo config for brew-drift (~/projects/utils/brew-drift).
+# It applies to all machines. Each machine selects one profile in its local
+# config, $XDG_CONFIG_HOME/brew-drift/config.toml, which install-all and
+# install-server write. This repo is public: put no hostnames here.
+
+# additional-brewfiles/ is in no profile, by decision: no installer installs
+# those lists, and brew-drift does not read them. Their installed packages
+# show as untracked.
+
+# Each profile is a list of Brewfiles, relative to this file.
+[profiles]
+mac = ["Brewfile"]
+server = ["server.Brewfile"]

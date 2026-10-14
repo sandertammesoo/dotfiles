@@ -99,6 +99,9 @@ brew "hyperfine"                # Command-line benchmarking tool https://github.
 # Shell Prompt & Customization
 brew "starship"                 # Cross-shell prompt for astronauts https://starship.rs/
 brew "grc"                      # Generic Colouriser https://kassiopeia.juls.savba.sk/~garabik/software/grc.html
+brew "zsh-autosuggestions"      # Fish-like autosuggestions for zsh (zsh/plugins.zsh sources it)
+brew "zsh-syntax-highlighting"  # Fish shell like syntax highlighting for zsh (zsh/plugins.zsh sources it)
+brew "sandertammesoo/formulae/zunit" # Unit testing framework for zsh https://zunit.xyz
 
 # Terminal Workspace Management
 brew "herdr"                    # Terminal workspace manager for AI coding agents https://herdr.dev/

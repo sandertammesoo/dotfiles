@@ -28,7 +28,7 @@ if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
   echo ""
   echo "Steps, in order:"
   echo "  1. Homebrew, then DotBot links (./run-dotbot)"
-  echo "  2. brewfiles/server.Brewfile"
+  echo "  2. brewfiles/server.Brewfile, brew-drift local config (profile server)"
   echo "  3. Hostname, power (no sleep), key-only sshd, Tailscale, battery limit"
   echo "  4. mise runtimes"
   echo ""
@@ -68,6 +68,7 @@ cd "$BASEDIR" || exit 1
 
 source helpers.zsh
 source zsh-setup-scripts/server/setup.sh
+source zsh-setup-scripts/brew-drift/setup.sh
 
 local exit_code=0
 local -a failed_steps
@@ -158,6 +159,10 @@ if [[ "$SKIP_BREW" == "true" ]]; then
 else
   run_step "Homebrew packages (server.Brewfile)" install_server_packages
 fi
+
+# No weekly reminder here: a headless server has no GUI session for the
+# notification. Run `brew-drift status` over SSH.
+run_step "brew-drift local config" brew_drift_write_local_config server
 
 # Not fatal: core.hooksPath and the hook come from the links in step 1.
 run_step "Secret gate check" source zsh-setup-scripts/gitleaks/install.sh

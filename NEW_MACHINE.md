@@ -13,6 +13,12 @@
       xdg_config/mise/config.toml
 7. mise trust ~/projects/dotfiles/mise.toml
     - Allows the repo's task definitions (`mise run test`, `mise run link`)
+8. Install brew-drift: `make install` in `~/projects/utils/brew-drift`
+    - `install-all` already wrote `~/.config/brew-drift/config.toml`
+      (profile `mac`) and a launchd agent that runs `brew-drift status`
+      each Monday at 10:00. It shows a notification when it finds drift.
+    - The notification comes from Script Editor. If you see none, allow
+      notifications for Script Editor in System Settings → Notifications.
 
 ## Headless server (e.g. jupiter)
 
@@ -37,6 +43,8 @@ Then, in an SSH session on the server:
     - sshd: key-only login (`/etc/ssh/sshd_config.d/050-server.conf`)
     - tailscale and batt as root services; battery capped at 80%
     - `mise install`
+    - `~/.config/brew-drift/config.toml` with profile `server`. There is no
+      weekly reminder on a server: run `brew-drift status` over SSH.
 4. Open a new SSH session. Test key-only login with `ssh -S none <host> true`
    — `-S none` skips a shared ControlMaster connection, which would
    otherwise pass the test without a new login.

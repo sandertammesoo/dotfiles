@@ -37,12 +37,16 @@ else
   fi
 fi
 
+# Defaults match xdg_config/zsh/.zshenv. On a new machine that file is not
+# linked yet, so these are the values dotbot.conf.yaml expands.
 # Ensure XDG_CONFIG_HOME is set (default to ~/.config if not defined)
 typeset -gx XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-# Ensure XDG_DATA_HOME is set (default to ~/.data if not defined)
-typeset -gx XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.data}"
+# Ensure XDG_DATA_HOME is set (default to ~/.local/share if not defined)
+typeset -gx XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 # Ensure XDG_CACHE_HOME is set (default to ~/.cache if not defined)
 typeset -gx XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+# Ensure XDG_STATE_HOME is set (default to ~/.local/state if not defined)
+typeset -gx XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 CONFIG="dotbot.conf.yaml"
 

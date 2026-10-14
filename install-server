@@ -66,11 +66,6 @@ local HOSTNAME_ARG="${opts[-n]:-${opts[--hostname]}}"
 BASEDIR="${0:A:h}"
 cd "$BASEDIR" || exit 1
 
-# helpers.zsh and run-dotbot read the helpers through ~/.config/.dotfiles,
-# the link that DotBot itself creates. Create it first on a new machine.
-if [[ ! -e "$HOME/.config/.dotfiles" ]]; then
-  mkdir -p "$HOME/.config" && ln -s "$BASEDIR" "$HOME/.config/.dotfiles"
-fi
 source helpers.zsh
 source zsh-setup-scripts/server/setup.sh
 
@@ -122,14 +117,6 @@ else
   log_fatal "Sudo access denied"
   exit 1
 fi
-
-# Same values as xdg_config/zsh/.zshenv. On a new machine that file is not
-# linked yet, and run-dotbot's own fallbacks differ (XDG_DATA_HOME=~/.data,
-# no XDG_STATE_HOME), so the links and dirs would land in the wrong place.
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 # 1. Homebrew and links. run-dotbot installs Homebrew when it is missing.
 if [[ "$SKIP_DOTBOT" == "true" ]]; then

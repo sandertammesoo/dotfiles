@@ -29,7 +29,8 @@ for base in "$HOME_DIR/startups" "$HOME_DIR/projects"; do
     done < <(find "$base" -maxdepth 6 -path "*/.claude/rules/*.md" -type f -print0 2>/dev/null)
 done
 
-for f in "${files[@]}"; do
+# ${files[@]+...}: macOS bash 3.2 treats an empty array as unset under set -u.
+for f in ${files[@]+"${files[@]}"}; do
     # Shorten path for display
     short="$f"
     short="${short/$HOME_DIR\/.claude\/projects\/${HOME_DIR//\//-}-/}"

@@ -60,7 +60,76 @@ Describe 'XDG home tidy (xdg/setup.sh)'
     End
   End
 
+  Describe 'xdg_migrate_home_dirs'
+    It 'moves tool data to the XDG path that .zshenv sets'
+      mkdir -p "$XDG_TIDY_HOME/.codex/sessions" "$XDG_TIDY_HOME/.gemini"
+      touch "$XDG_TIDY_HOME/.codex/auth.json" "$XDG_TIDY_HOME/.duckdb_history"
+      When call xdg_migrate_home_dirs
+      The status should be success
+      The path "$XDG_TIDY_HOME/.codex" should not be exist
+      The path "$XDG_DATA_HOME/codex/auth.json" should be file
+      The path "$XDG_DATA_HOME/codex/sessions" should be directory
+      The path "$XDG_DATA_HOME/gemini/.gemini" should be directory
+      The path "$XDG_STATE_HOME/duckdb/history" should be file
+    End
+
+    It 'backs up the copy in HOME when the XDG path already exists'
+      mkdir -p "$XDG_TIDY_HOME/.gnupg" "$XDG_CONFIG_HOME/gnupg"
+      touch "$XDG_TIDY_HOME/.gnupg/stray" "$XDG_CONFIG_HOME/gnupg/real"
+      When call xdg_migrate_home_dirs
+      The status should be success
+      The path "$XDG_CONFIG_HOME/gnupg/real" should be file
+      The path "$XDG_CONFIG_HOME/gnupg/stray" should not be exist
+      The path "$(backup_dir)/.gnupg/stray" should be file
+    End
+
+    It 'moves into an empty target that dotbot created, instead of backing up'
+      mkdir -p "$XDG_TIDY_HOME/.gnupg" "$XDG_CONFIG_HOME/gnupg"
+      touch "$XDG_TIDY_HOME/.gnupg/pubring.kbx"
+      When call xdg_migrate_home_dirs
+      The status should be success
+      The path "$XDG_CONFIG_HOME/gnupg/pubring.kbx" should be file
+      The path "$XDG_STATE_HOME/dotfiles" should not be exist
+    End
+
+    It 'rewrites the herdr hook path in the moved Codex hooks.json'
+      mkdir -p "$XDG_TIDY_HOME/.codex"
+      print -r -- "{\"command\": \"bash '$XDG_TIDY_HOME/.codex/herdr-agent-state.sh' session\"}" \
+        > "$XDG_TIDY_HOME/.codex/hooks.json"
+      When call xdg_migrate_home_dirs
+      The status should be success
+      The contents of file "$XDG_DATA_HOME/codex/hooks.json" should include "$XDG_DATA_HOME/codex/herdr-agent-state.sh"
+      The contents of file "$XDG_DATA_HOME/codex/hooks.json" should not include "$XDG_TIDY_HOME/.codex/"
+    End
+
+    It 'moves the netrw history and removes the then empty .vim'
+      mkdir -p "$XDG_TIDY_HOME/.vim"
+      touch "$XDG_TIDY_HOME/.vim/.netrwhist" "$XDG_TIDY_HOME/.viminfo"
+      When call xdg_migrate_home_dirs
+      The status should be success
+      The path "$XDG_TIDY_HOME/.vim" should not be exist
+      The path "$XDG_STATE_HOME/vim/.netrwhist" should be file
+      The path "$XDG_STATE_HOME/vim/viminfo" should be file
+    End
+
+    It 'keeps .vim when it holds more than the netrw history'
+      mkdir -p "$XDG_TIDY_HOME/.vim/pack"
+      When call xdg_migrate_home_dirs
+      The status should be success
+      The path "$XDG_TIDY_HOME/.vim/pack" should be directory
+    End
+  End
+
   Describe 'xdg_move_home_leftovers'
+    It 'moves shell startup files that zsh never reads, because ZDOTDIR is set'
+      touch "$XDG_TIDY_HOME/.zprofile" "$XDG_TIDY_HOME/.profile" "$XDG_TIDY_HOME/.tcshrc"
+      When call xdg_move_home_leftovers
+      The status should be success
+      The path "$XDG_TIDY_HOME/.zprofile" should not be exist
+      The path "$(backup_dir)/.profile" should be exist
+      The path "$(backup_dir)/.tcshrc" should be exist
+    End
+
     It 'moves the known leftovers into one dated backup directory'
       touch "$XDG_TIDY_HOME/.zsh_history" "$XDG_TIDY_HOME/.lesshst"
       mkdir -p "$XDG_TIDY_HOME/.zsh_sessions" "$XDG_TIDY_HOME/.cargo/bin" "$XDG_TIDY_HOME/.rustup"

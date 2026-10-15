@@ -67,6 +67,18 @@ if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]
   export_n_log MISE_CACHE_DIR="$XDG_CACHE_HOME/mise"  # macOS default is ~/Library/Caches/mise
   export_n_log COMPOSER_HOME="$XDG_DATA_HOME/composer"
   export_n_log COMPOSER_CACHE_DIR="$XDG_CACHE_HOME/composer"
+  export_n_log CODEX_HOME="$XDG_DATA_HOME/codex"
+  export_n_log COPILOT_HOME="$XDG_DATA_HOME/copilot"
+  export_n_log GEMINI_CLI_HOME="$XDG_DATA_HOME/gemini"  # parent dir: the CLI adds .gemini/
+  export_n_log ANSIBLE_HOME="$XDG_DATA_HOME/ansible"
+  export_n_log ANSIBLE_SSH_CONTROL_PATH_DIR="$XDG_CACHE_HOME/ansible/cp"  # ignores ANSIBLE_HOME
+  export_n_log SHIV_ROOT="$XDG_CACHE_HOME/shiv"
+  export_n_log JEV_DATA="$XDG_STATE_HOME/jev"
+  export_n_log DUCKDB_HISTORY="$XDG_STATE_HOME/duckdb/history"
+  export_n_log MPLCONFIGDIR="$XDG_CONFIG_HOME/matplotlib"  # matplotlib ignores XDG on macOS
+  export_n_log BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle/config"
+  export_n_log BUNDLE_USER_CACHE="$XDG_CACHE_HOME/bundle"
+  export_n_log BUNDLE_USER_PLUGIN="$XDG_DATA_HOME/bundle/plugin"
   # Terminal.app session restore. /etc/zshrc_Apple_Terminal overwrites
   # SHELL_SESSION_DIR with ${ZDOTDIR:-$HOME}/.zsh_sessions, so the directory
   # cannot move. Atuin keeps the history, so turn the feature off.

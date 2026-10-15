@@ -12,9 +12,9 @@
     - "${XDG_DATA_HOME}"
     - "${XDG_CACHE_HOME}"
     - "${XDG_STATE_HOME}"
-    - "${XDG_DATA_HOME}/gnupg"
     - "${XDG_STATE_HOME}/zsh"
     - "${XDG_STATE_HOME}/less"
+    - "${XDG_STATE_HOME}/duckdb"
     - "${XDG_STATE_HOME}/python"
     - "${XDG_STATE_HOME}/node"
     - "${XDG_CACHE_HOME}/npm"
@@ -28,6 +28,13 @@
     - "${XDG_CONFIG_HOME}/docker"
     - "${XDG_CONFIG_HOME}/ipython"
     - "${XDG_CONFIG_HOME}/jupyter"
+
+# A separate block: `create` takes a list of paths or a mapping, not a mix.
+- create:
+    # GNUPGHOME (zsh-setup-scripts/gnupg/env.zsh); gpg warns about a home
+    # that others can read.
+    ${XDG_CONFIG_HOME}/gnupg:
+      mode: 0700
 
 - clean:
     ~/:

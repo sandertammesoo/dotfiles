@@ -1,0 +1,15 @@
+" Vim 9.1.0327+ reads $XDG_CONFIG_HOME/vim/vimrc when ~/.vimrc and
+" ~/.vim/vimrc do not exist. .vimrc in this directory is an older config
+" that Vim does not load.
+
+" A user vimrc stops Vim from loading defaults.vim, so load it here.
+unlet! skip_defaults_vim
+source $VIMRUNTIME/defaults.vim
+
+" Keep state out of $HOME (default: ~/.viminfo and ~/.vim/.netrwhist).
+let s:state = (empty($XDG_STATE_HOME) ? $HOME . '/.local/state' : $XDG_STATE_HOME) . '/vim'
+if !isdirectory(s:state)
+  call mkdir(s:state, 'p', 0700)
+endif
+let &viminfofile = s:state . '/viminfo'
+let g:netrw_home = s:state

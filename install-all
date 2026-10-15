@@ -161,15 +161,8 @@ if [[ "$SKIP_DOTBOT" == "true" ]]; then
 else
   # Run DotBot install script
   log_user "Running DotBot installation..."
-  # run-dotbot is sourced and sets a global exit_code from dotbot itself.
-  # The local here catches that value, so it does not overwrite this
-  # script's exit_code. Return 2 = run-dotbot could not run dotbot at all.
-  run_dotbot() {
-    local exit_code=0
-    source ./run-dotbot || return 2
-    return $exit_code
-  }
-  run_dotbot
+  # Status 0 = done, 1 = some links failed, 2 = dotbot could not run.
+  source ./run-dotbot
   case $? in
     0) log_success "Dotbot completed successfully!" ;;
     2) log_fatal "Dotbot failed!"; exit 1 ;;

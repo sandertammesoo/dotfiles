@@ -1,111 +1,82 @@
 #!/usr/bin/env zsh
+#
+# Symlinks and XDG dirs via DotBot. Run it as ./run-dotbot, or source it
+# from install-all / install-server (both run it from the repo root).
+#
+# Status: 0 = all links done, 1 = dotbot ran but some links or tasks
+# failed, 2 = dotbot could not run (no Homebrew, no dotbot, no config).
+#
+# All work happens inside _run_dotbot with local variables, so a caller
+# that sources this file gets only the status — no exit_code or output
+# leaks into its scope. The XDG_* exports are the one intended effect.
+
 source helpers.zsh
 
-# Ensure Homebrew is installed
-if source zsh-setup-scripts/homebrew/is_installed.sh; then
-  log_success "Homebrew is installed"
-else
-  log_fail "Homebrew installation failed. Please check the logs above."
-  return 1
-fi
+_run_dotbot() {
+  local output dotbot_status reenable_debug=false
+  local config="dotbot.conf.yaml"
 
-# Ensure dotbot is installed
-if ! command -v dotbot &>/dev/null; then
-  log_warn "Dotbot not installed. Installing now..."
-  if brew install dotbot 2>&1 | output_stream; then
-    log_success "Dotbot installed successfully!"
+  if source zsh-setup-scripts/homebrew/is_installed.sh; then
+    log_success "Homebrew is installed"
   else
-    log_fail "Dotbot installation failed!"
-    return 1
+    log_fail "Homebrew installation failed. Please check the logs above."
+    return 2
   fi
-else
-  log_success "Dotbot already installed"
 
-  # Upgrade Dotbot submodule
-  log_user "Updating Dotbot..."
-  output=$(brew upgrade dotbot 2>&1)
-  exit_code=$?  # Capture exit status
-
-  # Filter output but maintain original exit code
-  echo "$output" | grep -v "already installed" | output_stream 2>/dev/null
-
-  if [ $exit_code -eq 0 ]; then
-    log_success "Dotbot update successful"
-  else
-    log_fatal "Dotbot update failed"
-    return 1
-  fi
-fi
-
-# Defaults match xdg_config/zsh/.zshenv. On a new machine that file is not
-# linked yet, so these are the values dotbot.conf.yaml expands.
-# Ensure XDG_CONFIG_HOME is set (default to ~/.config if not defined)
-typeset -gx XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-# Ensure XDG_DATA_HOME is set (default to ~/.local/share if not defined)
-typeset -gx XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-# Ensure XDG_CACHE_HOME is set (default to ~/.cache if not defined)
-typeset -gx XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-# Ensure XDG_STATE_HOME is set (default to ~/.local/state if not defined)
-typeset -gx XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-
-CONFIG="dotbot.conf.yaml"
-
-if [[ ! -s "$CONFIG" ]]; then
-  log_fatal "Dotbot config file '$CONFIG' is missing or empty!" >&2
-  return 1
-fi
-
-# Check if file contains env vars like $XDG_CONFIG_HOME
-if [[ -s "$CONFIG" ]]; then
-  if grep -q '\$' "$CONFIG"; then
-    # Ensure envsubst binary is installed
-    if ! command -v envsubst &>/dev/null; then
-      log_warn "envsubst binary not installed. Installing gettext now..."
-      if brew install gettext 2>&1 | output_stream; then
-        log_success "gettext installed successfully!"
-      else
-        log_fatal "gettext installation failed!"
-        return 1
-      fi
-    fi
-    
-    # Try to use system envsubst; if unavailable, fallback to ./bin/envsubst if present
-    if command -v envsubst &>/dev/null; then
-      # Create a temporary file to hold the substituted config
-      TMPFILE="$(mktemp)"
-      
-      # Perform environment variable substitution
-      envsubst < "$CONFIG" > "$TMPFILE"
-
-      # Run DotBot with environment variable substitution
-      log_user "Starting Dotbot with envsubst..."
-      [[ is_debug_enabled ]] && _disable_debug && should_reenable_debug=true
-      output=$(dotbot --force-color -c "$CONFIG" "$@" 2>&1)
-      exit_code=$?  # Capture exit status
-      [[ "$should_reenable_debug" == true ]] && _enable_debug
-
-      # Capture output but maintain original exit code
-      echo "$output" | output_stream 2>/dev/null
-
-      # Clean up temporary file
-      rm -f "$TMPFILE"
-      
+  if ! command -v dotbot &>/dev/null; then
+    log_warn "Dotbot not installed. Installing now..."
+    if brew install dotbot 2>&1 | output_stream; then
+      log_success "Dotbot installed successfully!"
     else
-      log_fatal "envsubst not found. Please install gettext."
-      return 1
+      log_fail "Dotbot installation failed!"
+      return 2
     fi
-
   else
-    log_user "Starting Dotbot..."
-    [[ is_debug_enabled ]] && _disable_debug && should_reenable_debug=true
-    output=$(dotbot --force-color -c "$CONFIG" "$@" 2>&1)
-    exit_code=$?  # Capture exit status
-    [[ "$should_reenable_debug" == true ]] && _enable_debug
-
-    # Capture output but maintain original exit code
-    echo "$output" | output_stream 2>/dev/null
+    log_success "Dotbot already installed"
+    log_user "Updating Dotbot..."
+    if output=$(brew upgrade dotbot 2>&1); then
+      print -r -- "$output" | grep -v "already installed" | output_stream 2>/dev/null
+      log_success "Dotbot update successful"
+    else
+      print -r -- "$output" | output_stream 2>/dev/null
+      log_fatal "Dotbot update failed"
+      return 2
+    fi
   fi
-else
-  log_fatal "Config file $CONFIG is missing or empty!"
-  return 1
-fi
+
+  # Defaults match xdg_config/zsh/.zshenv. On a new machine that file is not
+  # linked yet, so these are the values dotbot.conf.yaml expands. DotBot
+  # expands ${VAR} in the config itself; no envsubst pass is needed.
+  typeset -gx XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+  typeset -gx XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+  typeset -gx XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+  typeset -gx XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+  if [[ ! -s "$config" ]]; then
+    log_fatal "Dotbot config file '$config' is missing or empty!"
+    return 2
+  fi
+
+  # dotbot.conf.yaml links the atuin theme from this submodule, and a plain
+  # clone leaves it empty. Init it only when missing, so a submodule that
+  # was moved on purpose stays where it is.
+  if [[ ! -e git-submodules/atuin-tokyo-night/.git ]]; then
+    log_user "Initialising the atuin theme submodule..."
+    git submodule update --init git-submodules/atuin-tokyo-night 2>&1 | output_stream
+  fi
+
+  log_user "Starting Dotbot..."
+  if is_debug_enabled; then
+    _disable_debug
+    reenable_debug=true
+  fi
+  output=$(dotbot --force-color -c "$config" "$@" 2>&1)
+  dotbot_status=$?
+  [[ "$reenable_debug" == "true" ]] && _enable_debug
+
+  print -r -- "$output" | output_stream 2>/dev/null
+  (( dotbot_status == 0 )) || return 1
+  return 0
+}
+
+_run_dotbot "$@"

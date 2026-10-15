@@ -13,6 +13,7 @@ zparseopts -D -E -F -A opts -- \
   d -skip-dotbot \
   b -skip-brew \
   s -skip-system \
+  r -skip-runtimes \
   n: -hostname: \
   T -trace \
   V -verbose \
@@ -37,6 +38,7 @@ if (( ${+opts[-h]} )) || (( ${+opts[--help]} )); then
   echo "  -d, --skip-dotbot     Skip the DotBot links"
   echo "  -b, --skip-brew       Skip brew update/upgrade and server.Brewfile"
   echo "  -s, --skip-system     Skip step 3 (pmset, sshd, services)"
+  echo "  -r, --skip-runtimes   Skip step 4 (mise install)"
   echo "  -n, --hostname NAME   Set ComputerName, HostName and LocalHostName"
   echo "  -T, --trace           Show trace output"
   echo "  -V, --verbose         Show verbose output"
@@ -57,10 +59,11 @@ else
   typeset -gx LOG_LEVEL="INFO" LOG_ENABLED=true
 fi
 
-local SKIP_DOTBOT=false SKIP_BREW=false SKIP_SYSTEM=false
+local SKIP_DOTBOT=false SKIP_BREW=false SKIP_SYSTEM=false SKIP_RUNTIMES=false
 (( ${+opts[-d]} || ${+opts[--skip-dotbot]} )) && SKIP_DOTBOT=true
 (( ${+opts[-b]} || ${+opts[--skip-brew]} )) && SKIP_BREW=true
 (( ${+opts[-s]} || ${+opts[--skip-system]} )) && SKIP_SYSTEM=true
+(( ${+opts[-r]} || ${+opts[--skip-runtimes]} )) && SKIP_RUNTIMES=true
 local HOSTNAME_ARG="${opts[-n]:-${opts[--hostname]}}"
 
 BASEDIR="${0:A:h}"
@@ -99,7 +102,7 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
   exit 1
 fi
 
-if [[ "$BASEDIR" != "$HOME/projects/dotfiles" ]]; then
+if [[ "$BASEDIR" != "${HOME:A}/projects/dotfiles" ]]; then
   log_warn "This repo is at $BASEDIR. .zshenv sources $HOME/projects/dotfiles/helpers.zsh,"
   log_warn "so the shell will not load until the repo is at that path."
 fi
@@ -120,28 +123,18 @@ else
 fi
 
 # 1. Homebrew and links. run-dotbot installs Homebrew when it is missing.
-# dotbot.conf.yaml links the atuin theme from a submodule, and a plain
-# clone leaves submodules empty. The other submodules are workstation-only.
-init_submodules() {
-  setopt localoptions pipefail
-  git submodule update --init git-submodules/atuin-tokyo-night 2>&1 | output_stream
-}
-
-# run-dotbot is sourced and sets a global exit_code from dotbot. The local
-# here catches that value, so it does not overwrite this script's exit_code.
-# Return 2 = run-dotbot could not run dotbot at all (same as install-all).
-run_dotbot() {
-  local exit_code=0
-  source ./run-dotbot || return 2
-  return $exit_code
+# A sourced file sees its caller's "$@", and run-dotbot passes "$@" on to
+# dotbot. Inside run_step that would be "source ./run-dotbot"; this
+# function gives it an empty argument list.
+link_dotfiles() {
+  source ./run-dotbot
 }
 
 if [[ "$SKIP_DOTBOT" == "true" ]]; then
   log_skip "Skipping DotBot links."
   source zsh-setup-scripts/homebrew/is_installed.sh || exit 1
 else
-  run_step "Git submodules" init_submodules
-  run_step "DotBot links" run_dotbot
+  run_step "DotBot links" link_dotfiles
   command -v brew &>/dev/null || { log_fatal "Homebrew is not available."; exit 1; }
 fi
 
@@ -184,7 +177,11 @@ install_runtimes() {
   command -v mise &>/dev/null || { log_error "mise is not installed"; return 1; }
   mise install 2>&1 | output_stream
 }
-run_step "mise runtimes" install_runtimes
+if [[ "$SKIP_RUNTIMES" == "true" ]]; then
+  log_skip "Skipping mise runtimes."
+else
+  run_step "mise runtimes" install_runtimes
+fi
 
 if [[ $exit_code -eq 0 ]]; then
   log_success "Server setup complete. Open a new SSH session to load the shell."

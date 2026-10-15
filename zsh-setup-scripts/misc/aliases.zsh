@@ -60,7 +60,13 @@ fi
 
 
 # Recursively delete `.DS_Store` files
-alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+# fd skips hidden and git-ignored files by default; -H -I make it see .DS_Store
+if command -v fd &> /dev/null; then
+    alias cleanup="fd -H -I -t f -g '*.DS_Store' -X rm -v"
+else
+    log_skip "fd not found, cleanup alias uses find"
+    alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+fi
 
 # mac OS shortcuts
 #check if Visual Studio Code application is installed

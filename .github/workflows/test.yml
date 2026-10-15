@@ -1,0 +1,92 @@
+name: Test
+
+# Two guardrails that otherwise run only when someone remembers them:
+#
+#   shellspec  — the full suite.
+#   bootstrap  — install-server on a fresh clone with an empty HOME. This is
+#                the path that no developer machine exercises: there is no
+#                ~/.config yet, no linked .zshenv, and the submodules are
+#                empty. Four bugs reached a real machine through it (helpers
+#                read through a missing link, wrong XDG defaults, an empty
+#                submodule, a leaked exit_code).
+#
+# macOS runners have Homebrew and passwordless sudo, which install-server
+# needs. Both jobs are macOS-only because the repo is.
+
+on:
+  push:
+    branches: [master, sander]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shellspec:
+    name: shellspec
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # gitleaks: without it the secret-gate specs are skipped, not run.
+      - name: Install shellspec and gitleaks
+        run: brew install shellspec gitleaks
+
+      - name: Run the suite
+        run: shellspec
+
+  bootstrap:
+    name: install-server (fresh clone)
+    runs-on: macos-latest
+    env:
+      LOG_COLOR: never
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Like a plain `git clone`: run-dotbot must initialise what it needs.
+          submodules: false
+
+      # .zshenv sources $HOME/projects/dotfiles/helpers.zsh, so the repo must
+      # sit at that path under the fresh HOME.
+      - name: Create a fresh HOME with the repo at ~/projects/dotfiles
+        run: |
+          fresh_home="$RUNNER_TEMP/home"
+          mkdir -p "$fresh_home/projects"
+          cp -R "$GITHUB_WORKSPACE" "$fresh_home/projects/dotfiles"
+          echo "FRESH_HOME=$fresh_home" >> "$GITHUB_ENV"
+
+      # --skip-brew:     server.Brewfile has casks and a Mac App Store app,
+      #                  which need a GUI session and an Apple Account.
+      # --skip-system:   pmset, sshd, Tailscale and batt change the runner itself.
+      # --skip-runtimes: mise is part of server.Brewfile, so it is not installed.
+      - name: Run install-server
+        run: |
+          cd "$FRESH_HOME/projects/dotfiles"
+          env HOME="$FRESH_HOME" ./install-server --skip-brew --skip-system --skip-runtimes
+
+      - name: Check the links and XDG dirs
+        run: |
+          h="$FRESH_HOME"
+          rc=0
+          for path in \
+            .zshenv \
+            .config/.dotfiles/helpers.zsh \
+            .config/.zsh/.zshrc \
+            .config/git/hooks/pre-commit \
+            .config/atuin/themes/tokyo-night.toml \
+            .local/share \
+            .local/state; do
+            if [[ -e "$h/$path" ]]; then
+              echo "ok      ~/$path"
+            else
+              echo "MISSING ~/$path"
+              rc=1
+            fi
+          done
+          # run-dotbot once defaulted XDG_DATA_HOME to ~/.data
+          if [[ -e "$h/.data" ]]; then
+            echo "UNEXPECTED ~/.data (wrong XDG_DATA_HOME default)"
+            rc=1
+          fi
+          exit $rc

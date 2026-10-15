@@ -2,6 +2,10 @@
     link:
       create: true
       relink: true
+    # Without a mode, dotbot chmods each new directory to 0777 and skips the
+    # umask. 0755 is what mkdir gives under the default umask.
+    create:
+      mode: 0755
 
 - create:
     - "${XDG_CONFIG_HOME}"

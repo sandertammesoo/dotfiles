@@ -5,7 +5,7 @@ Personal macOS dotfiles (Intel + Apple Silicon). XDG Base Directory compliant th
 ## Commands
 
 ```bash
-./run-dotbot   # symlinks + XDG dirs only (first step on new machine)
+./run-dotbot   # symlinks + XDG dirs, then tidies ~: dir modes + leftovers (zsh-setup-scripts/xdg/setup.sh)
 ./install-all  # full setup; see source for --skip-* and logging flags
 ./install-server  # headless server profile (jupiter): server.Brewfile + pmset, sshd, tailscale, batt; see NEW_MACHINE.md
 shellspec      # run all tests (also: mise run test / mise run link)

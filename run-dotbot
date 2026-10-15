@@ -75,6 +75,12 @@ _run_dotbot() {
   [[ "$reenable_debug" == "true" ]] && _enable_debug
 
   print -r -- "$output" | output_stream 2>/dev/null
+
+  # Runs when some links failed too: the XDG directories exist by now.
+  source zsh-setup-scripts/xdg/setup.sh
+  log_user "Tidying \$HOME..."
+  xdg_tidy_home || dotbot_status=1
+
   (( dotbot_status == 0 )) || return 1
   return 0
 }

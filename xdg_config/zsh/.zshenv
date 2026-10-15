@@ -67,8 +67,10 @@ if [[ -z "$SHELLSPEC_SPECDIR" && -z "$SHELLSPEC_ROOT" && ! "$0" =~ "shellspec" ]
   export_n_log MISE_CACHE_DIR="$XDG_CACHE_HOME/mise"  # macOS default is ~/Library/Caches/mise
   export_n_log COMPOSER_HOME="$XDG_DATA_HOME/composer"
   export_n_log COMPOSER_CACHE_DIR="$XDG_CACHE_HOME/composer"
-  export_n_log SHELL_SESSION_DIR="${XDG_STATE_HOME}/zsh/sessions"
-  export_n_log SHELL_SESSION_FILE="$SHELL_SESSION_DIR/$TERM_SESSION_ID.session"
+  # Terminal.app session restore. /etc/zshrc_Apple_Terminal overwrites
+  # SHELL_SESSION_DIR with ${ZDOTDIR:-$HOME}/.zsh_sessions, so the directory
+  # cannot move. Atuin keeps the history, so turn the feature off.
+  export_n_log SHELL_SESSIONS_DISABLE="1"
 
   # Add directories to PATH (ensure no duplicates)
   paths=(

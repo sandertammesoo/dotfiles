@@ -78,10 +78,6 @@ zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
 
-# Set up the session directory/file.
-export SHELL_SESSION_DIR="${XDG_STATE_HOME}/zsh/sessions" # TODO: use XDG_DATA_HOME
-export SHELL_SESSION_FILE="$SHELL_SESSION_DIR/$TERM_SESSION_ID.session"
-#mkdir -m 700 -p "$SHELL_SESSION_DIR"
 
 
 # Shell colors and appearance

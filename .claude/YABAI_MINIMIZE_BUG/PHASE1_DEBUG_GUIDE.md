@@ -1,5 +1,11 @@
 # Phase 1 Debug Implementation - Complete Guide
 
+> **Archived (2026-10-15).** The scripts this guide names (`debug_minimize.sh`,
+> `enhanced_debug.sh`, `investigate_bug.sh`) were deleted from
+> `xdg_config/yabai/`. To use them again, restore them from git history:
+> `git log --diff-filter=D --oneline -- xdg_config/yabai/enhanced_debug.sh`,
+> then `git checkout <commit>^ -- xdg_config/yabai/<script>`.
+
 ## ✅ What Was Implemented
 
 1. **Added debug signals to yabairc** (lines 17-20):

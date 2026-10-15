@@ -45,7 +45,7 @@ LOG_FORMAT="detailed"  # minimal | standard | detailed
 LOG_COLOR="auto"       # auto | always | never
 ```
 
-Functions: `log_trace/debug/verbose/info/warn/error/fatal/success/fail/skip/user`, `enable_debug`, `disable_debug`, `set_log_level`, `print_log_level`, `try_source FILE [LOGLEVEL]`, `export_n_log VAR VALUE` (redacts secrets), `add_to VAR PATH` (no duplicates), `output_stream`.
+Functions: `log_trace/debug/verbose/info/warn/error/fatal/success/failure/skip/user`, `log_stream`, `enable_debug`, `disable_debug`, `set_log_level`, `print_log_level`, `try_source FILE [LOGLEVEL]`, `export_n_log VAR VALUE` (redacts secrets), `add_to VAR PATH` (no duplicates), `output_stream`.
 
 ## Yabai (`xdg_config/yabai/yabairc`)
 

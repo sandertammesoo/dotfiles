@@ -137,7 +137,7 @@ Describe 'Framework Initialization'
         # Should preserve DEBUG level because guard prevents re-initialization
         # which would otherwise reset to default INFO level
         The variable LOG_LEVEL should equal "DEBUG"
-        The variable HELPERS_LOGGING_LOADED should equal "1"
+        The variable HELPERS_LOGGING_LOADED should equal "true"
       End
     End
 

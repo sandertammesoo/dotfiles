@@ -60,7 +60,7 @@
 #   - an explicit --config-path merges last, so a cwd .harlequin.toml
 #     cannot hijack the profile
 #   - nothing about the cache reaches stdout, which carries --json output.
-#     HQ_SQL_DEBUG=1 sends hit and miss to stderr.
+#     HQ_SQL_DEBUG=true sends hit and miss to stderr ("1" is still accepted).
 
 set -u
 
@@ -91,7 +91,7 @@ tmp_config=""
 err() { print -u2 "hq-sql: $*"; }
 
 dbg() {
-    if [[ "${HQ_SQL_DEBUG:-0}" == "1" ]]; then
+    if [[ "${HQ_SQL_DEBUG:-false}" == "true" || "${HQ_SQL_DEBUG:-}" == "1" ]]; then
         print -u2 "hq-sql: $*"
     fi
 }
@@ -149,6 +149,7 @@ case "$env_name" in
     *)
         err "usage: hq-sql [--tui] [--refresh] <staging|prod|production> [options...]"
         err "       hq-sql --forget"
+        err "env:   HQ_SQL_DEBUG=true reports cache hit/miss on stderr"
         exit 2
         ;;
 esac

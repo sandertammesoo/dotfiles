@@ -32,10 +32,10 @@
 # Guard against double-loading
 # Check both the variable AND that key public functions are actually defined
 # (Warp terminal can cache env vars but not functions between sessions)
-if [[ -n "$HELPERS_LOGGING_LOADED" ]] && (( ${+functions[log_info]} )); then
+if [[ "${HELPERS_LOGGING_LOADED:-false}" == "true" ]] && (( ${+functions[log_info]} )); then
   return 0
 fi
-typeset -gx HELPERS_LOGGING_LOADED=1
+typeset -gx HELPERS_LOGGING_LOADED="true"
 
 ################################################################################
 # Configuration Variables
@@ -195,7 +195,7 @@ function print_log_level() {
 #   fi
 ################################################################################
 function is_debug_enabled() {
-  [[ "$LOG_ENABLED" == "true" ]]
+  [[ "${LOG_ENABLED:-false}" == "true" ]]
 }
 
 ################################################################################
@@ -852,7 +852,7 @@ function init_logging() {
       typeset -gx LOG_COLOR="never"
     fi
   fi
-  typeset -gx HELPERS_LOGGING_INITIALIZED=1  
+  typeset -gx HELPERS_LOGGING_INITIALIZED="true"
   
   # Load logging helper functions
   autoload -Uz throw catch

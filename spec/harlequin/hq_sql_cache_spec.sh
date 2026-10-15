@@ -606,7 +606,7 @@ STUB
     It 'reports a miss on stderr under HQ_SQL_DEBUG'
       warm_cache
       backdate "$(cache_file)" 3700
-      export HQ_SQL_DEBUG=1
+      export HQ_SQL_DEBUG=true
       When call hq staging -c "SELECT 1"
       The status should be success
       The stderr should include "idle window"

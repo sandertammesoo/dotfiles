@@ -84,7 +84,7 @@ touches the mtime, so the mtime measures the last use only.
   again. A failure of the `nc` reachability check does not. Every Tailscale
   outage otherwise turns into a prompt.
 - Nothing about the cache prints on stdout. An agent parses `--json` output
-  from stdout, and a status line corrupts it. `HQ_SQL_DEBUG=1` prints hit and
+  from stdout, and a status line corrupts it. `HQ_SQL_DEBUG=true` prints hit and
   miss to stderr.
 - The headless path buffers the runner's stderr into a temporary file and
   replays it after the run. The retry must read the error text. The cost is

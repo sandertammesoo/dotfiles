@@ -19,7 +19,7 @@ _run_dotbot() {
   if source zsh-setup-scripts/homebrew/is_installed.sh; then
     log_success "Homebrew is installed"
   else
-    log_fail "Homebrew installation failed. Please check the logs above."
+    log_failure "Homebrew installation failed. Please check the logs above."
     return 2
   fi
 
@@ -28,7 +28,7 @@ _run_dotbot() {
     if brew install dotbot 2>&1 | output_stream; then
       log_success "Dotbot installed successfully!"
     else
-      log_fail "Dotbot installation failed!"
+      log_failure "Dotbot installation failed!"
       return 2
     fi
   else

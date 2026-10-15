@@ -22,10 +22,18 @@ on:
 permissions:
   contents: read
 
+# A new push to the same branch makes the running check stale; stop it so
+# the macOS runner slot frees up.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   shellspec:
     name: shellspec
     runs-on: macos-latest
+    # Both jobs take about 1 minute. Without a limit, a stuck job runs 6 hours.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
 
@@ -39,6 +47,7 @@ jobs:
   bootstrap:
     name: install-server (fresh clone)
     runs-on: macos-latest
+    timeout-minutes: 20
     env:
       LOG_COLOR: never
     steps:

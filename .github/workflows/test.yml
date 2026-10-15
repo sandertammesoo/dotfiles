@@ -40,13 +40,20 @@ jobs:
       - name: Diagnose the secret-gate override case
         if: failure()
         run: |
-          env | grep -i -E 'leaks|^git_' || echo "no gitleaks/git env vars"
-          git config --global --list || true
-          t="$(mktemp -d)"; r="$t/repo"; mkdir -p "$r"; git -C "$r" init -q
+          git config --global --list | grep -v '^advice\.' || true
+          t="$(mktemp -d)"; r="$t/repo"; x="$t/xdg"
+          mkdir -p "$r" "$x/git/hooks" "$x/gitleaks"
+          cp xdg_config/git/hooks/pre-commit "$x/git/hooks/"; chmod +x "$x/git/hooks/pre-commit"
+          cp xdg_config/gitleaks/gitleaks.toml "$x/gitleaks/"
+          git -C "$r" init -q
+          git -C "$r" config user.email test@example.com; git -C "$r" config user.name Test
+          git -C "$r" config core.hooksPath "$x/git/hooks"
+          ls -la "$r/.git/hooks" | grep -v sample || true
           printf 'title="local"\n[extend]\nuseDefault=true\ndisabledRules=["github-pat","generic-api-key"]\n' > "$r/.gitleaks.toml"
           printf 'export GH_TOKEN=%s\n' 'ghp_A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8' > "$r/creds.sh"  # gitleaks:allow
           git -C "$r" add -A
-          cd "$r" && gitleaks git --staged --no-banner --log-level debug "$r" || echo "gitleaks exit=$?"
+          XDG_CONFIG_HOME="$x" bash -x "$x/git/hooks/pre-commit" 2>&1 | tail -30 || true
+          XDG_CONFIG_HOME="$x" git -C "$r" commit -m test 2>&1 | tail -20; echo "commit exit=${PIPESTATUS[0]}"
 
   bootstrap:
     name: install-server (fresh clone)

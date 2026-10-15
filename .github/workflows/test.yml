@@ -36,6 +36,18 @@ jobs:
       - name: Run the suite
         run: shellspec
 
+      # Temporary: the repo-config override spec fails only on the runner.
+      - name: Diagnose the secret-gate override case
+        if: failure()
+        run: |
+          env | grep -i -E 'leaks|^git_' || echo "no gitleaks/git env vars"
+          git config --global --list || true
+          t="$(mktemp -d)"; r="$t/repo"; mkdir -p "$r"; git -C "$r" init -q
+          printf 'title="local"\n[extend]\nuseDefault=true\ndisabledRules=["github-pat","generic-api-key"]\n' > "$r/.gitleaks.toml"
+          printf 'export GH_TOKEN=%s\n' 'ghp_A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8' > "$r/creds.sh"  # gitleaks:allow
+          git -C "$r" add -A
+          cd "$r" && gitleaks git --staged --no-banner --log-level debug "$r" || echo "gitleaks exit=$?"
+
   bootstrap:
     name: install-server (fresh clone)
     runs-on: macos-latest

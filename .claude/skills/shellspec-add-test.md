@@ -12,7 +12,6 @@ User wants to add tests for a new function, extend existing test coverage, or ve
 - Config: `.shellspec` at repo root
 - Run all tests: `shellspec`
 - Run one file: `shellspec spec/logging_helpers/utilities_spec.sh`
-- Total: 285 tests across 11 spec files
 
 ## Which suite does the new test belong to?
 

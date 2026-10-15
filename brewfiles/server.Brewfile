@@ -1,9 +1,10 @@
 # Headless server profile — installed by ./install-server
 #
 # A subset of brewfiles/Brewfile: the shell environment, the CLI tools that
-# are useful over SSH, and the server services. No GUI apps, no window
-# management, no casks. Keep each line identical to its Brewfile line so a
-# tool behaves the same on both machines.
+# are useful over SSH, the server services, and what development on the
+# server needs — casks and Mac App Store apps included. No window
+# management. Keep each line identical to its Brewfile line so a tool
+# behaves the same on both machines.
 
 # Dotfiles bootstrap — run-dotbot needs both
 brew "dotbot"                   # Bootstrap your dotfiles https://github.com/anishathalye/dotbot

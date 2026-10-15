@@ -66,6 +66,28 @@ Describe 'helpers_logging.zsh - Utilities'
     End
   End
 
+  Describe 'export_n_log'
+    BeforeEach 'setup_test_environment'
+    AfterEach 'cleanup_test_environment'
+
+    Context 'at TRACE level'
+      setup_trace() {
+        source "$SHELLSPEC_SPECDIR/../helpers_logging.zsh"
+        LOG_ENABLED=true LOG_LEVEL=TRACE LOG_COLOR=never
+      }
+      BeforeEach 'setup_trace'
+
+      It 'logs the variable name but never the value'
+        When call export_n_log "TEST_SECRET_TOKEN=do-not-print-me"
+        The status should be success
+        The variable TEST_SECRET_TOKEN should equal "do-not-print-me"
+        The output should include "TEST_SECRET_TOKEN"
+        The output should not include "do-not-print-me"
+        The error should not include "do-not-print-me"
+      End
+    End
+  End
+
   Describe 'add_to'
     BeforeEach 'setup_test_environment'
     AfterEach 'cleanup_test_environment'

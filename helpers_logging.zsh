@@ -942,11 +942,9 @@ try_source() {
 
 export_n_log() {
   _export_n_log "$1"
-  # Only log variable name (not value) to avoid exposing sensitive data
-  local assignment="$1"
-  local varname="${assignment%%=*}"
-  local value="${assignment#*=}"
-  _log TRACE "$(color_text ${LOG_COLORS[TRACE]} bold "Exported variable:") $varname = ${value}"
+  # Log the name only: values include tokens (HASS_TOKEN) and TRACE output
+  # reaches the terminal and installer logs.
+  _log TRACE "$(color_text ${LOG_COLORS[TRACE]} bold "Exported variable:") ${1%%=*}"
 }
 
 ################################################################################

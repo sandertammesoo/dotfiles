@@ -75,6 +75,8 @@ fi
 
 repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
 
+# Expanded below as ${config_args[@]+"${config_args[@]}"}: macOS's bash 3.2
+# treats a plain "${config_args[@]}" of an empty array as unset under set -u.
 config_args=()
 if [[ ! -f "${repo_root}/.gitleaks.toml" && ! -f "${repo_root}/gitleaks.toml" ]]; then
     global_config="${XDG_CONFIG_HOME:-$HOME/.config}/gitleaks/gitleaks.toml"
@@ -84,7 +86,7 @@ fi
 # --- 6. scan the staged diff -------------------------------------------------
 
 if gitleaks git --staged --no-banner --redact=80 \
-    --log-level warn "${config_args[@]}" "$repo_root"; then
+    --log-level warn ${config_args[@]+"${config_args[@]}"} "$repo_root"; then
     exit 0
 fi
 

@@ -145,6 +145,22 @@ Describe 'Pre-commit secret gate'
       The status should be success
       The output should be present
     End
+
+    # macOS ships bash 3.2, where `set -u` treats an empty array as unset.
+    # A Mac without Homebrew bash (a new machine, a CI runner) runs the hook
+    # with it, and this case leaves config_args empty.
+    It 'lets a repository .gitleaks.toml override the baseline under macOS bash 3.2'
+      Skip if "gitleaks not installed" test -z "$(command -v gitleaks)"
+      Skip if "no /bin/bash" test ! -x /bin/bash
+      mkdir -p "${TEST_DIR}/bash32"
+      ln -s /bin/bash "${TEST_DIR}/bash32/bash"
+      printf 'title="local"\n[extend]\nuseDefault=true\ndisabledRules=["github-pat","generic-api-key"]\n' > "${REPO}/.gitleaks.toml"
+      stage_secret
+      commit_with_system_bash() { PATH="${TEST_DIR}/bash32:${PATH}" commit; }
+      When call commit_with_system_bash
+      The status should be success
+      The output should not include "unbound variable"
+    End
   End
 
   Describe 'worktrees'

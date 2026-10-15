@@ -24,7 +24,9 @@ yabai -m signal --add label="borders_focus_refresh" event="window_focused" \
 # D E B U G  L O G G I N G  F O R  M I N I M I Z E  B U G
 yabai -m signal --add event=window_minimized action='date "+[%Y-%m-%d %H:%M:%S:%N] MINIMIZED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP)" >> /tmp/yabai_minimize_debug.log'
 yabai -m signal --add event=window_deminimized action='date "+[%Y-%m-%d %H:%M:%S:%N] DEMINIMIZED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP)" >> /tmp/yabai_minimize_debug.log'
-yabai -m signal --add event=window_focused action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] FOCUSED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP) - is-minimized=$(yabai -m query --windows --window $YABAI_WINDOW_ID 2>/dev/null | jq -r ".[\"is-minimized\"]")" >> /tmp/yabai_minimize_debug.log'
+## DISABLED: runs a window query on every focus change and the log grows without
+## limit. Uncomment only while you debug the minimize bug, then comment it out again.
+# yabai -m signal --add event=window_focused action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] FOCUSED: $YABAI_WINDOW_ID ($YABAI_WINDOW_APP) - is-minimized=$(yabai -m query --windows --window $YABAI_WINDOW_ID 2>/dev/null | jq -r ".[\"is-minimized\"]")" >> /tmp/yabai_minimize_debug.log'
 yabai -m signal --add event=application_front_switched action='echo "[$(date "+%Y-%m-%d %H:%M:%S:%N")] APP SWITCHED: $YABAI_PROCESS_ID - $(ps -p $YABAI_PROCESS_ID -o comm= 2>/dev/null)" >> /tmp/yabai_minimize_debug.log'
 
 ## Optional signals - disabled by default
@@ -155,6 +157,10 @@ unset _force_opacity_apps
 _browser_always_pages="(Fractory|MP) (-|—)|YouTube|Netflix|Disney\\+|Meet|Figma|\\.pdf|Picture in Picture"
 _browser_focus_pages="Reddit"
 _browser_app_pattern="Brave Browser|Safari"
+# Window IDs that the focus-opaque action made opaque. The reset action reads
+# this file instead of a global "query --windows" (see CLAUDE.md "Yabai").
+# Expanded at run time, so it resolves to yabai's own TMPDIR.
+_browser_focus_state="\${TMPDIR:-/tmp}/yabai_opacity_focus_ids"
 
 # Always-opaque: 1.0 regardless of focus (video, meetings, PDFs, design tools)
 _opacity_browser_always=$(cat <<EOACTION
@@ -166,27 +172,36 @@ EOACTION
 )
 
 # Focus-opaque: 1.0 when focused, global active/normal opacity otherwise.
-# The elif guards against resetting always-opaque pages that don't match focus-opaque list.
+# Leaving the focus list drops the ID from the state file; the inner check keeps
+# always-opaque pages at 1.0.
 _opacity_browser_focus=$(cat <<EOACTION
 title=\$(yabai -m query --windows --window "\$YABAI_WINDOW_ID" 2>/dev/null | jq -r ".title // empty")
+state="${_browser_focus_state}"
 if printf "%s" "\$title" | grep -qE "${_browser_focus_pages}"; then
   yabai -m window "\$YABAI_WINDOW_ID" --opacity 1.0
-elif ! printf "%s" "\$title" | grep -qE "${_browser_always_pages}"; then
-  yabai -m window "\$YABAI_WINDOW_ID" --opacity 0.0
+  grep -qx "\$YABAI_WINDOW_ID" "\$state" 2>/dev/null || printf "%s\\n" "\$YABAI_WINDOW_ID" >> "\$state"
+else
+  if [ -s "\$state" ]; then
+    grep -vx "\$YABAI_WINDOW_ID" "\$state" > "\$state.\$\$" 2>/dev/null; mv -f "\$state.\$\$" "\$state"
+  fi
+  if ! printf "%s" "\$title" | grep -qE "${_browser_always_pages}"; then
+    yabai -m window "\$YABAI_WINDOW_ID" --opacity 0.0
+  fi
 fi
 EOACTION
 )
 
-# Reset focus-opaque browser windows when a non-browser app gains focus
+# Reset focus-opaque browser windows when a non-browser app gains focus.
+# Resets only the recorded IDs, with no window query; a closed window just errors.
 _opacity_browser_focus_reset=$(cat <<EOACTION
 printf "%s" "\$YABAI_WINDOW_APP" | grep -qE "^(${_browser_app_pattern})$" && exit 0
-yabai -m query --windows 2>/dev/null | jq -c ".[]" | while IFS= read -r win; do
-  wid=\$(printf "%s" "\$win" | jq -r ".id")
-  wtitle=\$(printf "%s" "\$win" | jq -r ".title // empty")
-  if printf "%s" "\$wtitle" | grep -qE "${_browser_focus_pages}"; then
-    yabai -m window "\$wid" --opacity 0.0
-  fi
-done
+state="${_browser_focus_state}"
+[ -s "\$state" ] || exit 0
+mv -f "\$state" "\$state.\$\$" 2>/dev/null || exit 0
+while IFS= read -r wid; do
+  [ -n "\$wid" ] && yabai -m window "\$wid" --opacity 0.0 2>/dev/null
+done < "\$state.\$\$"
+rm -f "\$state.\$\$"
 EOACTION
 )
 
@@ -199,7 +214,7 @@ yabai -m signal --add label="opacity_safari_always_title_changed" event=window_t
 yabai -m signal --add label="opacity_safari_focus_focused"        event=window_focused       app="^Safari$"        action="$_opacity_browser_focus"
 yabai -m signal --add label="opacity_safari_focus_title_changed"  event=window_title_changed app="^Safari$"        action="$_opacity_browser_focus"
 yabai -m signal --add label="opacity_browser_focus_reset"         event=window_focused                             action="$_opacity_browser_focus_reset"
-unset _opacity_browser_always _opacity_browser_focus _opacity_browser_focus_reset _browser_always_pages _browser_focus_pages _browser_app_pattern
+unset _opacity_browser_always _opacity_browser_focus _opacity_browser_focus_reset _browser_focus_state _browser_always_pages _browser_focus_pages _browser_app_pattern
 
 # Apply all rules to already-open windows (rules only fire on window_created by
 # default, so existing windows are not managed correctly after a restart).

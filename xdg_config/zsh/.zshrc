@@ -99,10 +99,6 @@ _rebuild_completion_cache  # Safely rebuild completion cache (now defined in zsh
 # Cleanup
 unset config_files env_files func_files alias_files completion_files other_files
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 # Display reload summary (only if log_debugis enabled)
 if is_debug_enabled; then
   local ZSHRC_DURATION=$((SECONDS - ZSHRC_START_TIME))

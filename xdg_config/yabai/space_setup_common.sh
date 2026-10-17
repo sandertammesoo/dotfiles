@@ -5,6 +5,11 @@
 #   DISPLAY_LUT  - space->display lookup rows, one row per display count
 #   APP_SPACES   - "App=space" pairs for rules and moving open windows
 
+# Meta Quest (Horizon) virtual screens: 1 wide centre + 2 portrait sides.
+# Used instead of DISPLAY_LUT when every display yabai sees is one of them.
+QUEST_VENDOR_ID="2ec6"
+QUEST_DISPLAY_LUT="1 1 1 1 1 2 2 3 3"
+
 LOG_FILE="/tmp/yabai_${USER}.out.log"
 DEBUG_LOG_FILE="/tmp/yabai_minimize_debug.log"
 
@@ -17,6 +22,13 @@ debug_log "Script started"
 # Redirect stdout and stderr to log file
 exec > "$LOG_FILE" 2>&1
 
+# Count the Meta Quest virtual displays macOS reports (by vendor ID).
+quest_display_count() {
+  system_profiler SPDisplaysDataType -json 2>/dev/null |
+    jq --arg vid "$QUEST_VENDOR_ID" \
+      '[.SPDisplaysDataType[].spdisplays_ndrvs[]? | select(.["_spdisplays_display-vendor-id"] == $vid)] | length'
+}
+
 #
 # setup spaces
 #
@@ -28,6 +40,12 @@ run_setup_spaces() {
   local displays
   displays=$(yabai -m query --displays | jq 'length')
   local targets=(${DISPLAY_LUT[$displays - 1]})
+  # The built-in screen is mirrored while the Quest is on, so yabai
+  # only sees the virtual screens: all of them must be Quest screens.
+  if (( displays == 3 )) && (( $(quest_display_count) == displays )); then
+    debug_log "Meta Quest virtual displays detected; using QUEST_DISPLAY_LUT"
+    targets=(${QUEST_DISPLAY_LUT})
+  fi
 
   # Ensure exactly 9 spaces exist before moving anything, so the
   # LUT indices below refer to a settled space count.

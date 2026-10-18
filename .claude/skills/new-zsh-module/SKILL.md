@@ -1,10 +1,9 @@
+---
+name: new-zsh-module
+description: 'Add a new tool or module to zsh-setup-scripts/ (env.zsh, aliases.zsh, functions.zsh, completion.zsh, install.sh). Use when the user wants support for a new tool in the dotfiles: "add [tool] support", "create a module for [tool]", "set up [tool] in dotfiles".'
+---
+
 # New Zsh Module
-
-Guide the user through adding a new tool/module to the dotfiles zsh configuration.
-
-## When to use
-
-User says things like "add [tool] support", "create a new module for [tool]", "set up [tool] in dotfiles".
 
 ## Workflow
 

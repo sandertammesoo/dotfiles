@@ -37,9 +37,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # gitleaks: without it the secret-gate specs are skipped, not run.
-      - name: Install shellspec and gitleaks
-        run: brew install shellspec gitleaks
+      # gitleaks and starship: without them the secret-gate and rendered-prompt
+      # specs are skipped, not run.
+      - name: Install shellspec, gitleaks and starship
+        run: brew install shellspec gitleaks starship
 
       - name: Run the suite
         run: shellspec

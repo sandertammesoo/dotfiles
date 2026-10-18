@@ -1,10 +1,9 @@
-# ShellSpec Add Test
+---
+name: shellspec-add-test
+description: 'Write a new ShellSpec test for the dotfiles repo. Use when adding tests for a new function or module, extending coverage, or pinning a bug fix with a regression test.'
+---
 
-Guide the user through writing a new ShellSpec test for the dotfiles project.
-
-## When to use
-
-User wants to add tests for a new function, extend existing test coverage, or verify a bug fix with a regression test.
+# Shellspec Add Test
 
 ## Key facts
 

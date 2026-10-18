@@ -1,10 +1,9 @@
+---
+name: yabai-debug
+description: 'Diagnose yabai window manager issues with a structured checklist covering known macOS 26 Tahoe failure modes. Use when yabai does not start, windows do not tile, focus breaks, windows deminimize, signals misfire, or the scripting addition fails.'
+---
+
 # Yabai Debug
-
-Diagnose yabai window manager issues using a structured checklist. Covers known failure modes on macOS 26 Tahoe.
-
-## When to use
-
-Yabai not starting, windows not tiling, focus broken, minimize/deminimize bugs, signal issues, scripting addition failures.
 
 ## Quick diagnostic commands
 

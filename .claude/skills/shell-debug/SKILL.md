@@ -1,10 +1,9 @@
+---
+name: shell-debug
+description: 'Diagnose zsh startup, config loading, and prompt rendering in WezTerm + herdr. Use when shell functions or env vars are missing, startup is slow, a config change has no effect, or the prompt renders wrong (duplicate or wrapped prompts, Starship warnings, garbage after a pane resize).'
+---
+
 # Shell Debug
-
-Diagnose shell startup issues, configuration loading problems, and missing functions/variables.
-
-## When to use
-
-Shell functions not available, env vars missing, slow startup, `.zshenv` not loading, zsh config errors, unexpected tool behavior after config changes.
 
 ## Shell loading chain
 
@@ -92,6 +91,24 @@ source ~/.zshenv   # reload env + helpers
 # or use the alias if defined:
 reload!
 ```
+
+## Prompt rendering under herdr
+
+Reproduce a rendering bug yourself in a scratch pane instead of asking the user for screenshots, and run the same loop again on the fix before calling it done. Every `herdr pane` call returns JSON; the new pane's id is `.result.pane.pane_id`.
+
+```bash
+herdr pane split --current --direction right --ratio 0.5   # → new pane id, e.g. w37:p1T
+herdr pane run <new> 'export STARSHIP_CONFIG=/path/old.toml; clear'  # optional: pin a config to compare
+herdr pane run <new> 'echo one'
+herdr pane resize --pane <current> --direction right --amount 0.1   # repeat: narrows <new>
+herdr pane read <new> --source visible --format text
+herdr pane close <new>
+```
+
+- Warnings and timeouts: `STARSHIP_LOG=warn starship prompt` and `starship prompt --right` print them to stderr. `spec/starship/` asserts both stay empty.
+- Starship config is `xdg_config/zsh/starship.toml`. Its first line must not reach full width (no `$fill`): the right-hand modules live in `right_format`, with `TRANSIENT_RPROMPT` set in `zsh/config.zsh`.
+- `starship config` with no arguments opens `$EDITOR` and blocks the shell. Read the file instead.
+- `starship.toml` contains raw Nerd Font glyphs that look like spaces. Edit it with the Edit tool on a copied line, not with a retyped string.
 
 ## Common fixes
 

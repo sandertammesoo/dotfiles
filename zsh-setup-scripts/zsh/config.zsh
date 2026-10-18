@@ -31,6 +31,7 @@ setopt PUSHD_SILENT     # Don't print dirstack after pushd/popd
 setopt PUSHD_TO_HOME    # Have pushd with no arguments act like 'pushd $HOME'
 
 setopt PROMPT_SUBST # allow variable and command substitution in prompts
+setopt TRANSIENT_RPROMPT # drop starship's right_format once a line is accepted; else it re-wraps in scrollback when herdr narrows the pane
 setopt CORRECT # autocorrect commands
 setopt COMPLETE_IN_WORD # complete in the middle of a word
 setopt IGNORE_EOF # don't exit on Ctrl-D

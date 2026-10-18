@@ -17,17 +17,17 @@ $username\
 $hostname\
 $localip\
 $directory\
-$git_branch$git_status\
-$fill \
-$all\
-${custom.git_config_email}
+$git_branch$git_status
 [╰─](bold white)$character"""
 
-# Fill character (empty space) between the left and right prompt
+# Everything else goes to zsh's RPROMPT on the input line. Do not move it back
+# to `format` behind a $fill: a full-width line wraps when herdr resizes the
+# pane, and zsh then redraws the prompt without erasing the old copy.
+right_format = """$all${custom.git_config_email}"""
+
+# Not used: keep it out of $all in right_format
 [fill]
-symbol = ' '
-# symbol = '─'
-# style =  "bold white"
+disabled = true
 
 # Disable the line break between the first and second prompt lines
 [line_break]
@@ -153,7 +153,10 @@ format = 'took [$duration](bold yellow) '
 [custom.git_config_email]
 description = "Output the current git user's configured email address."
 command = "git config user.email"
-format = "\n[│](bold white)[$symbol(  $output)]($style)"
+# Default shell is $STARSHIP_SHELL (zsh), which sources .zshenv on every prompt
+# (~150 ms, enough to hit command_timeout right after reload!). sh reads no rc.
+shell = ["sh"]
+format = "[$symbol(  $output)]($style) "
 # Only when inside git repository — native check, no shell-out (a `when`
 # command here spawns a subprocess per prompt and can hit command_timeout).
 # `require_repo` alone is not a display condition, hence `when = true`.

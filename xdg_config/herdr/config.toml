@@ -374,6 +374,15 @@ show_agent_labels_on_pane_borders = true
 # New tabs can still be created with the configured keybinding.
 # hide_tab_bar_when_single_tab = false
 
+# Ordered status entries at the right edge of the desktop tab bar.
+# Shows the attached session name: named sessions keep their socket under
+# sessions/<name>/, the default session at the config root. Command entries
+# run on the server, so a saved machine shows its own session when its
+# config has this entry too.
+tab_bar_right = [
+  { type = "command", command = 'p=$(dirname "$HERDR_SOCKET_PATH"); case "$p" in */sessions/*) basename "$p" ;; *) echo default ;; esac', interval_seconds = 3600, timeout_seconds = 2 },
+]
+
 # Agent panel ordering: "spaces" (grouped by space) or "priority" (attention queue).
 # "workspaces" is accepted as an alias for "spaces".
 agent_panel_sort = "priority"

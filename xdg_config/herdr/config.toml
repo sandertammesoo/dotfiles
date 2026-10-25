@@ -487,7 +487,11 @@ resume_agents_on_restore = true
 # picks the adapter by probe and ignores YAZI_ADAPTER.
 kitty_graphics = true
 # Save recent pane screen history across full server restarts.
-pane_history = false
+# On, so plain shell panes show their recent output again after a reboot. Agent
+# panes resume through resume_agents_on_restore instead. The history sits in
+# plain text in session-history.json beside each session.json, hq-sql output
+# included — treat ~/.config/herdr like shell history.
+pane_history = true
 # While prefix mode is active, temporarily switch the macOS host input
 # source to an ASCII-capable keyboard layout so prefix commands register
 # even when a CJK IME is active, then restore the previous input source

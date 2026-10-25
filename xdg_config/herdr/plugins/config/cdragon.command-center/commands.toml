@@ -153,6 +153,14 @@ command = "ray.plugin-manager.open"
 description = "Install, update and toggle herdr plugins — same as prefix+alt+p"
 
 [[commands]]
+id = "machine-manager"
+slot = "h"
+label = "Manage SSH machines"
+type = "plugin_action"
+command = "herdr.machine-manager.open"
+description = "Connect, disconnect and edit saved SSH hosts — same as prefix+m"
+
+[[commands]]
 id = "tab-rename-reset"
 slot = "r"
 label = "Re-adopt a hand-renamed tab"

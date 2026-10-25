@@ -41,6 +41,9 @@ local -a herdr_plugins=(
   "herdr-sidebar alexarthurs/herdr-sidebar/plugins/herdr-sidebar"
   "herdr-navigator thanhdat77/herdr-navigator"
   "cloudmanic.herdr-plus cloudmanic/herdr-plus"
+  # Builds from source with go (mise) when present, else downloads the release
+  # binary and checks it against the release's checksums.txt.
+  "herdr.machine-manager vika2603/herdr-machine-manager"
 )
 
 local result=0

@@ -209,6 +209,16 @@ type = "plugin_action"
 command = "herdr-sidebar.open-git"
 description = "Sidebar: source control"
 
+# Machine Manager keeps a list of SSH machines and connects or disconnects them
+# through `herdr machine add`. Its README suggests prefix+shift+s, which is the
+# sidebar's source-control key above, so it takes prefix+m, which no herdr
+# default claims. Command Center slot h as well.
+[[keys.command]]
+key = "prefix+m"
+type = "plugin_action"
+command = "herdr.machine-manager.open"
+description = "Manage SSH machines"
+
 # herdr-navigator jumps to a workspace, agent, project, session or directory —
 # the "where" picker, where telescope on prefix+t is the "what" one. Its README
 # offers prefix+t, prefix+l and prefix+shift+t, all three of which are taken here

@@ -197,6 +197,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     "zsh-setup-scripts/herdr/install.sh"
     "zsh-setup-scripts/yazi/install.sh"
     "zsh-setup-scripts/brew-drift/install.sh"
+    "zsh-setup-scripts/mise/install.sh"
     # "zsh-setup-scripts/lazyman/install.sh"
   )
 

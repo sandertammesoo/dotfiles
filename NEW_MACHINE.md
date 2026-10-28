@@ -6,8 +6,11 @@
     - Installs dotbot
     - Creates ~/.config and symblinks
 5. ./install-all
-    - Installs Brewfile packages, including mise (owner of all language
-      runtimes — see docs/adr/0001-mise-for-runtime-management.md)
+    - Installs Brewfile packages
+    - Installs mise to `~/.local/bin/mise` with `curl https://mise.run | sh`,
+      not Homebrew (owner of all language runtimes — see
+      docs/adr/0001-mise-for-runtime-management.md). Update it with
+      `mise self-update`.
 6. mise install
     - Installs the global runtimes (node, python, go) pinned in
       xdg_config/mise/config.toml
@@ -42,7 +45,7 @@ Then, in an SSH session on the server:
     - pmset: no sleep, lid close ignored, display off after 1 min
     - sshd: key-only login (`/etc/ssh/sshd_config.d/050-server.conf`)
     - tailscale and batt as root services; battery capped at 80%
-    - `mise install`
+    - mise from `mise.run` (to `~/.local/bin/mise`), then `mise install`
     - `~/.config/brew-drift/config.toml` with profile `server`. There is no
       weekly reminder on a server: run `brew-drift status` over SSH.
 4. Open a new SSH session. Test key-only login with `ssh -S none <host> true`

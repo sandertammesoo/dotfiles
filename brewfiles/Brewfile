@@ -137,7 +137,7 @@ brew "harlequin"                # SQL IDE for the terminal https://harlequin.sh
 # All language runtimes (node, python, go, ...) are owned by mise — see
 # xdg_config/mise/config.toml and docs/adr/0001-mise-for-runtime-management.md.
 # Do not add runtimes here; Homebrew provides system tools only.
-brew "mise"                     # Polyglot runtime version manager, env vars, task runner https://mise.jdx.dev/
+# brew "mise"                   # Installed by zsh-setup-scripts/mise/install.sh (mise.run) — do not re-enable https://mise.jdx.dev/
 
 # Go Development
 # brew "go"                     # Owned by mise — do not re-enable https://go.dev/

@@ -17,7 +17,7 @@ brew "starship"                 # Cross-shell prompt for astronauts https://star
 brew "atuin"                    # Improved shell history https://atuin.sh/
 brew "zoxide"                   # Shell extension to navigate your filesystem faster https://github.com/ajeetdsouza/zoxide
 brew "fzf"                      # Command-line fuzzy finder written in Go https://github.com/junegunn/fzf
-brew "mise"                     # Polyglot runtime version manager, env vars, task runner https://mise.jdx.dev/
+# brew "mise"                   # Installed by zsh-setup-scripts/mise/install.sh (mise.run) — do not re-enable https://mise.jdx.dev/
 
 # Everyday CLI
 brew "coreutils"                # GNU File, Shell, and Text utilities https://www.gnu.org/software/coreutils
